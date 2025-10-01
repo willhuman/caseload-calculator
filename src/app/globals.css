@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Font Configuration */
+  --font-sans: var(--font-inter);
+  --font-mono: ui-monospace, monospace;
+
+  /* Nesso Brand Colors */
+  --color-nesso-bg: #F8F5F2;
+  --color-nesso-navy: #1E2B4D;
+  --color-nesso-blue: #4461FF;
+  --color-nesso-peach: #FF8660;
+  --color-nesso-orange: #FFB347;
+  --color-nesso-purple: #A948D5;
+  --color-nesso-coral: #FAB5A7;
+  --color-nesso-card: #FFFFFF;
+  --color-nesso-ink: #22304B;
+
+  /* Component Colors mapped to Nesso palette */
+  --color-background: var(--nesso-bg);
+  --color-foreground: var(--nesso-navy);
+  --color-card: var(--nesso-card);
+  --color-card-foreground: var(--nesso-navy);
+  --color-popover: var(--nesso-card);
+  --color-popover-foreground: var(--nesso-navy);
+  --color-primary: var(--nesso-peach);
+  --color-primary-foreground: white;
+  --color-secondary: var(--nesso-bg);
+  --color-secondary-foreground: var(--nesso-navy);
+  --color-muted: var(--nesso-bg);
+  --color-muted-foreground: var(--nesso-ink);
+  --color-accent: var(--nesso-blue);
+  --color-accent-foreground: white;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: white;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-input: rgba(0, 0, 0, 0.1);
+  --color-ring: var(--nesso-blue);
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+:root {
+  --radius: 1rem;
+
+  /* Nesso Brand Color Variables */
+  --nesso-bg: #F8F5F2;
+  --nesso-navy: #1E2B4D;
+  --nesso-blue: #4461FF;
+  --nesso-peach: #FF8660;
+  --nesso-orange: #FFB347;
+  --nesso-purple: #A948D5;
+  --nesso-coral: #FAB5A7;
+  --nesso-card: #FFFFFF;
+  --nesso-ink: #22304B;
+
+  /* Legacy CSS Custom Properties (mapped to Nesso colors) */
+  --background: var(--nesso-bg);
+  --foreground: var(--nesso-navy);
+  --card: var(--nesso-card);
+  --card-foreground: var(--nesso-navy);
+  --popover: var(--nesso-card);
+  --popover-foreground: var(--nesso-navy);
+  --primary: var(--nesso-peach);
+  --primary-foreground: white;
+  --secondary: var(--nesso-bg);
+  --secondary-foreground: var(--nesso-navy);
+  --muted: var(--nesso-bg);
+  --muted-foreground: var(--nesso-ink);
+  --accent: var(--nesso-blue);
+  --accent-foreground: white;
+  --destructive: #ef4444;
+  --destructive-foreground: white;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: rgba(0, 0, 0, 0.1);
+  --ring: var(--nesso-blue);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
