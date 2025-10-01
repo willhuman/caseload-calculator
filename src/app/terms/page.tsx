@@ -216,14 +216,12 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold text-nesso-navy mb-4">Contact Information</h2>
             <p className="text-nesso-ink leading-relaxed mb-4">
-              If you have any questions about these Terms of Service, please contact us:
+              If you have questions about these Terms, please contact us at:
             </p>
             <div className="bg-nesso-navy/5 rounded-xl p-6">
-              <p className="text-nesso-ink mb-2"><strong>Email:</strong> legal@nessoapp.com</p>
-              <p className="text-nesso-ink mb-2"><strong>Website:</strong> www.nessoapp.com</p>
-              <p className="text-nesso-ink">
-                <strong>Response Time:</strong> We aim to respond to legal inquiries within 5 business days.
-              </p>
+              <p className="text-nesso-ink mb-2"><strong>Nesso Labs, Inc.</strong></p>
+              <p className="text-nesso-ink mb-2"><strong>Email:</strong> hello@nessoapp.com</p>
+              <p className="text-nesso-ink"><strong>Website:</strong> www.nessoapp.com</p>
             </div>
           </section>
         </div>
