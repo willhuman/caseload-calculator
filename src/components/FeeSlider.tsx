@@ -63,8 +63,8 @@ export function FeeSlider({
       <style jsx>{`
         .slider-thumb::-webkit-slider-thumb {
           appearance: none;
-          width: 20px;
-          height: 20px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           background: #1A3B5D;
           cursor: pointer;
@@ -73,13 +73,25 @@ export function FeeSlider({
         }
 
         .slider-thumb::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
           background: #1A3B5D;
           cursor: pointer;
           border: 3px solid white;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 768px) {
+          .slider-thumb::-webkit-slider-thumb {
+            width: 20px;
+            height: 20px;
+          }
+
+          .slider-thumb::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+          }
         }
 
         .slider-thumb:focus {
