@@ -198,11 +198,6 @@ function PlanPageContent() {
             </form>
           </CardContent>
         </Card>
-
-        {/* Footer Note */}
-        <div className="text-center mt-12 text-sm text-nesso-ink/50">
-          <p>We&apos;ll show you the reality of what it takes to meet your goals.</p>
-        </div>
       </main>
 
       <footer className="bg-nesso-card border-t border-black/5 py-8">
