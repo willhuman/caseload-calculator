@@ -154,7 +154,7 @@ function PlanPageContent() {
                   placeholder="$8,000"
                   value={formData.monthlyIncome}
                   onChange={handleChange}
-                  className={`text-xl py-6 ${errors.monthlyIncome ? 'border-red-500' : ''}`}
+                  className={`text-xl py-6 placeholder:text-gray-400 ${errors.monthlyIncome ? 'border-red-500' : ''}`}
                 />
                 {errors.monthlyIncome && (
                   <p className="text-sm text-red-600">{errors.monthlyIncome}</p>
@@ -175,7 +175,7 @@ function PlanPageContent() {
                     placeholder="30"
                     value={formData.weeklyHours}
                     onChange={handleChange}
-                    className={`text-xl py-6 ${errors.weeklyHours ? 'border-red-500' : ''}`}
+                    className={`text-xl py-6 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${errors.weeklyHours ? 'border-red-500' : ''}`}
                     min="1"
                     max="80"
                   />

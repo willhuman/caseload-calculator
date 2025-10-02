@@ -20,7 +20,7 @@ export function WeekTimeline({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-nesso-navy">Your week breaks down</h3>
+      <h3 className="text-lg font-semibold text-nesso-navy">Here&apos;s what your week would look like</h3>
 
       {/* Visual Bar */}
       <div className="relative h-12 rounded-lg overflow-hidden bg-nesso-sand/20 flex">

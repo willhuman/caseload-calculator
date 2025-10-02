@@ -104,17 +104,6 @@ function ReviewPageContent() {
         </div>
 
         <div className="space-y-6">
-          {/* Fee Slider Card */}
-          <Card className="p-6 border-2 border-nesso-navy/10 shadow-lg">
-            <FeeSlider
-              value={sessionFee}
-              onChange={setSessionFee}
-              min={75}
-              max={300}
-              step={5}
-            />
-          </Card>
-
           {/* Summary Card */}
           <Card className="p-6 border-2 border-nesso-navy/10 shadow-lg">
             <h2 className="text-2xl font-bold text-nesso-navy mb-4">
@@ -195,6 +184,17 @@ function ReviewPageContent() {
                 )}
               </div>
             </div>
+          </Card>
+
+          {/* Fee Slider Card */}
+          <Card className="p-6 border-2 border-nesso-navy/10 shadow-lg">
+            <FeeSlider
+              value={sessionFee}
+              onChange={setSessionFee}
+              min={75}
+              max={300}
+              step={5}
+            />
           </Card>
 
           {/* Week Timeline Card */}
