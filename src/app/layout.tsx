@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "@/components/ui/sonner";
 import { inter } from "./fonts";
 import "./globals.css";
@@ -30,6 +31,7 @@ export default function RootLayout({
           richColors
           closeButton
         />
+        <Analytics />
       </body>
     </html>
   );
