@@ -103,7 +103,7 @@ export function ScenarioCard({ title, results, incomeGoal, sessionFee, onEmailCl
       <div className="space-y-1.5">
         <h4 className="text-xs font-semibold text-nesso-navy uppercase tracking-wide">What this looks like</h4>
         <p className="text-sm text-nesso-ink/80 leading-relaxed">
-          You'd see around {formatRange(results.caseloadRange.low, results.caseloadRange.high)} clients each week. This accounts for
+          You&apos;d see around {formatRange(results.caseloadRange.low, results.caseloadRange.high)} clients each week. This accounts for
           the reality that some sessions get cancelled or rescheduled.
         </p>
       </div>
@@ -156,7 +156,7 @@ export function ScenarioCard({ title, results, incomeGoal, sessionFee, onEmailCl
                 </svg>
               )}
             </div>
-            <span className="text-xs text-nesso-ink">You'd meet your income goal</span>
+            <span className="text-xs text-nesso-ink">You&apos;d meet your income goal</span>
           </div>
 
           <div className="flex items-center gap-2">

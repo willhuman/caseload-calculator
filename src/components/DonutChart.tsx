@@ -39,11 +39,11 @@ export function DonutChart({ sessionHours, docHours, adminHours, totalHours, siz
     admin: '#1A3B5D' // nesso-navy
   };
 
-  // Helper to format label
-  const formatLabel = (hours: number, percent: number) => {
-    if (percent < 3) return ''; // Hide label if too small
-    return `${hours.toFixed(1)}h`;
-  };
+  // Helper to format label (currently unused but may be used in future enhancements)
+  // const formatLabel = (hours: number, percent: number) => {
+  //   if (percent < 3) return ''; // Hide label if too small
+  //   return `${hours.toFixed(1)}h`;
+  // };
 
   const ariaLabel = `Weekly time distribution: ${sessionHours.toFixed(1)} hours sessions, ${docHours.toFixed(1)} hours documentation, ${adminHours.toFixed(1)} hours admin, total ${totalHours.toFixed(1)} hours`;
 

@@ -6,7 +6,7 @@ import { Header } from '@/components/Header';
 import { ScenarioCard } from '@/components/ScenarioCard';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { calculateCaseload, formatCurrency, getRecommendation } from '@/lib/calculations';
+import { calculateCaseload, formatCurrency, getRecommendation, type CalculationResults } from '@/lib/calculations';
 
 interface PlanState {
   monthlyIncome: number;
@@ -258,11 +258,11 @@ interface EmailCaptureModalProps {
   onClose: () => void;
   scenario: 'scenario1' | 'scenario2' | 'all';
   planState: PlanState;
-  scenario1Results: any;
-  scenario2Results: any;
+  scenario1Results: CalculationResults;
+  scenario2Results: CalculationResults;
 }
 
-function EmailCaptureModal({ isOpen, onClose, scenario, planState, scenario1Results, scenario2Results }: EmailCaptureModalProps) {
+function EmailCaptureModal({ isOpen, onClose, scenario, planState, scenario1Results: _scenario1Results, scenario2Results: _scenario2Results }: EmailCaptureModalProps) {
   const [email, setEmail] = useState('');
   const [optIn, setOptIn] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
