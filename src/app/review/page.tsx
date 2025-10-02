@@ -214,6 +214,24 @@ function ReviewPageContent() {
           />
         </div>
       </main>
+
+      <footer className="bg-nesso-card border-t border-black/5 py-8 mt-16">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="flex justify-center space-x-8 text-sm text-gray-600">
+              <a href="/privacy" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
+                Privacy
+              </a>
+              <a href="/terms" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
+                Terms
+              </a>
+            </div>
+            <div className="text-sm text-nesso-ink/50">
+              © 2025 Nesso Labs, Inc
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
