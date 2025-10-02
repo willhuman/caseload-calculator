@@ -36,6 +36,7 @@ function ReviewPageContent() {
   const [sessionFee, setSessionFee] = useState(0);
   const [isEditingAssumptions, setIsEditingAssumptions] = useState(false);
   const [assumptions, setAssumptions] = useState({
+    sessionMinutes: 50,
     adminHours: 6,
     documentationMinutesPerClient: 20,
     cancellationRate: 0.10
@@ -148,7 +149,7 @@ function ReviewPageContent() {
                 {!isEditingAssumptions ? (
                   <>
                     <div className="flex items-center justify-between py-1">
-                      <span>50 min sessions, {(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate, {assumptions.adminHours}h admin/week, {assumptions.documentationMinutesPerClient} min documentation/client</span>
+                      <span>{assumptions.sessionMinutes} min sessions, {(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate, {assumptions.adminHours}h admin/week, {assumptions.documentationMinutesPerClient} min documentation/client</span>
                       <button
                         onClick={handleEditAssumptions}
                         className="text-nesso-coral hover:text-nesso-coral/80 text-xs font-medium"
@@ -160,6 +161,21 @@ function ReviewPageContent() {
                 ) : (
                   <div className="mt-3 p-3 bg-nesso-sand/20 rounded-lg space-y-3">
                     <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="sessionMinutes" className="text-xs mb-1">
+                          Session length (minutes)
+                        </Label>
+                        <Input
+                          id="sessionMinutes"
+                          type="number"
+                          value={tempAssumptions.sessionMinutes}
+                          onChange={(e) => handleTempAssumptionChange('sessionMinutes', parseFloat(e.target.value))}
+                          className="text-sm h-8"
+                          min="30"
+                          max="90"
+                        />
+                      </div>
+
                       <div>
                         <Label htmlFor="adminHours" className="text-xs mb-1">
                           Admin hours/week

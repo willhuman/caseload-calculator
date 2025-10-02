@@ -317,6 +317,7 @@ export interface RealityPlanInputs {
   monthlyIncome: number;
   weeklyHours: number;
   sessionFee: number; // User adjustable via slider
+  sessionMinutes?: number; // Default: 50
   adminHours?: number;
   documentationMinutesPerClient?: number;
   cancellationRate?: number;
@@ -352,6 +353,7 @@ export interface RealityPlanResults {
 
 export function calculateRealityPlan(inputs: RealityPlanInputs): RealityPlanResults {
   // Apply defaults
+  const sessionMinutes = inputs.sessionMinutes ?? DEFAULT_SESSION_MINUTES;
   const adminHours = inputs.adminHours ?? DEFAULT_ADMIN_HOURS;
   const documentationMinutesPerClient = inputs.documentationMinutesPerClient ?? DEFAULT_DOCUMENTATION_MINUTES;
   const cancellationRate = inputs.cancellationRate ?? DEFAULT_CANCELLATION_RATE;
@@ -365,8 +367,9 @@ export function calculateRealityPlan(inputs: RealityPlanInputs): RealityPlanResu
   // Account for cancellations - need to schedule more
   const scheduledSessionsPerWeek = sessionsPerWeek / (1 - cancellationRate);
 
-  // Calculate hours breakdown
-  const sessionHours = sessionsPerWeek * AVERAGE_SESSION_LENGTH_HOURS;
+  // Calculate hours breakdown using actual session minutes
+  const sessionLengthHours = sessionMinutes / 60;
+  const sessionHours = sessionsPerWeek * sessionLengthHours;
   const docHours = (sessionsPerWeek * documentationMinutesPerClient) / 60;
   const totalHours = sessionHours + docHours + adminHours;
 
