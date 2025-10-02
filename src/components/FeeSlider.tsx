@@ -11,8 +11,8 @@ interface FeeSliderProps {
 export function FeeSlider({
   value,
   onChange,
-  min = 75,
-  max = 300,
+  min = 50,
+  max = 500,
   step = 5
 }: FeeSliderProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

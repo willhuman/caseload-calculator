@@ -69,7 +69,7 @@ function ReviewPageContent() {
   }
 
   const handleAdjustGoals = () => {
-    router.push(`/plan`);
+    router.push(`/plan?income=${monthlyIncome}&hours=${weeklyHours}`);
   };
 
   const handleEditAssumptions = () => {
@@ -117,14 +117,12 @@ function ReviewPageContent() {
                 Make {formatCurrency(monthlyIncome)}/month working {weeklyHours} hrs/week
               </span>
             </div>
-            <Button
+            <button
               onClick={handleAdjustGoals}
-              variant="ghost"
-              size="sm"
-              className="text-nesso-coral hover:text-nesso-coral/80 text-xs"
+              className="px-3 py-1.5 text-xs font-semibold bg-nesso-coral hover:bg-nesso-coral/90 text-black rounded-md transition-colors"
             >
-              ← Adjust
-            </Button>
+              Adjust goals
+            </button>
           </div>
         </div>
 
@@ -152,7 +150,7 @@ function ReviewPageContent() {
                       <span>{assumptions.sessionMinutes} min sessions, {(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate, {assumptions.adminHours}h admin/week, {assumptions.documentationMinutesPerClient} min documentation/client</span>
                       <button
                         onClick={handleEditAssumptions}
-                        className="text-nesso-coral hover:text-nesso-coral/80 text-xs font-medium"
+                        className="px-3 py-1.5 text-xs font-semibold bg-nesso-coral hover:bg-nesso-coral/90 text-black rounded-md transition-colors"
                       >
                         Edit
                       </button>
@@ -250,8 +248,8 @@ function ReviewPageContent() {
             <FeeSlider
               value={sessionFee}
               onChange={setSessionFee}
-              min={75}
-              max={300}
+              min={50}
+              max={500}
               step={5}
             />
           </Card>
@@ -263,14 +261,10 @@ function ReviewPageContent() {
               docHours={plan.breakdown.docHours}
               adminHours={plan.breakdown.adminHours}
               totalHours={plan.breakdown.totalHours}
+              sustainability={plan.sustainability}
+              sustainabilityMessage={plan.sustainabilityMessage}
             />
           </Card>
-
-          {/* Sustainability Indicator */}
-          <SustainabilityIndicator
-            status={plan.sustainability}
-            message={plan.sustainabilityMessage}
-          />
         </div>
       </main>
 

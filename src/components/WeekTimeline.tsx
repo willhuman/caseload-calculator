@@ -5,13 +5,17 @@ interface WeekTimelineProps {
   docHours: number;
   adminHours: number;
   totalHours: number;
+  sustainability?: 'sustainable' | 'not-sustainable';
+  sustainabilityMessage?: string;
 }
 
 export function WeekTimeline({
   sessionHours,
   docHours,
   adminHours,
-  totalHours
+  totalHours,
+  sustainability,
+  sustainabilityMessage
 }: WeekTimelineProps) {
   // Calculate percentages for visual display
   const sessionPercent = (sessionHours / totalHours) * 100;
@@ -83,6 +87,43 @@ export function WeekTimeline({
           <span className="text-lg font-semibold text-nesso-navy">{totalHours} hours</span>
         </div>
       </div>
+
+      {/* Sustainability Assessment */}
+      {sustainability && sustainabilityMessage && (
+        <div
+          className={`mt-4 p-3 rounded-lg border ${
+            sustainability === 'sustainable'
+              ? 'bg-green-50 border-green-200'
+              : 'bg-red-50 border-red-200'
+          }`}
+        >
+          <div className="flex items-start gap-2">
+            <div
+              className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-sm ${
+                sustainability === 'sustainable' ? 'bg-green-100' : 'bg-red-100'
+              }`}
+            >
+              {sustainability === 'sustainable' ? '💚' : '⚠️'}
+            </div>
+            <div className="flex-1">
+              <h4
+                className={`text-sm font-semibold mb-0.5 ${
+                  sustainability === 'sustainable' ? 'text-green-900' : 'text-red-900'
+                }`}
+              >
+                {sustainability === 'sustainable' ? 'Sustainable' : 'Not sustainable'}
+              </h4>
+              <p
+                className={`text-xs leading-relaxed ${
+                  sustainability === 'sustainable' ? 'text-green-800' : 'text-red-800'
+                }`}
+              >
+                {sustainabilityMessage}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

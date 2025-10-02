@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,10 +20,12 @@ interface ValidationErrors {
 
 function PlanPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // Initialize from URL params if present
   const [formData, setFormData] = useState<FormData>({
-    monthlyIncome: '',
-    weeklyHours: ''
+    monthlyIncome: searchParams.get('income') ? `$${parseFloat(searchParams.get('income') || '0').toLocaleString()}` : '',
+    weeklyHours: searchParams.get('hours') || ''
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -126,25 +128,25 @@ function PlanPageContent() {
     <div className="min-h-screen bg-gradient-to-b from-nesso-sand/30 to-white">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 pt-12 pb-24">
+      <main className="max-w-xl mx-auto px-4 pt-8 pb-16">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-nesso-ink mb-4">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-nesso-ink mb-3">
             What are your goals?
           </h1>
-          <p className="text-lg text-nesso-ink/70">
+          <p className="text-base text-nesso-ink/70">
             Tell us what you want, and we&apos;ll show you what it takes.
           </p>
         </div>
 
         {/* Form Card */}
-        <Card className="border-2 border-nesso-navy/10 shadow-lg">
-          <CardContent className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-8">
+        <Card className="border border-nesso-navy/10 shadow-sm">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* Monthly Income */}
-              <div className="space-y-3">
-                <Label htmlFor="monthlyIncome" className="text-base font-medium flex items-center gap-2">
-                  <span className="text-2xl">💰</span>
+              <div className="space-y-2">
+                <Label htmlFor="monthlyIncome" className="text-sm font-medium flex items-center gap-2">
+                  <span className="text-xl">💰</span>
                   Monthly income goal
                 </Label>
                 <Input
@@ -154,7 +156,7 @@ function PlanPageContent() {
                   placeholder="$8,000"
                   value={formData.monthlyIncome}
                   onChange={handleChange}
-                  className={`text-xl py-6 placeholder:text-gray-400 ${errors.monthlyIncome ? 'border-red-500' : ''}`}
+                  className={`text-lg py-5 placeholder:text-gray-400 ${errors.monthlyIncome ? 'border-red-500' : ''}`}
                 />
                 {errors.monthlyIncome && (
                   <p className="text-sm text-red-600">{errors.monthlyIncome}</p>
@@ -162,9 +164,9 @@ function PlanPageContent() {
               </div>
 
               {/* Weekly Hours */}
-              <div className="space-y-3">
-                <Label htmlFor="weeklyHours" className="text-base font-medium flex items-center gap-2">
-                  <span className="text-2xl">⏰</span>
+              <div className="space-y-2">
+                <Label htmlFor="weeklyHours" className="text-sm font-medium flex items-center gap-2">
+                  <span className="text-xl">⏰</span>
                   Weekly hours goal
                 </Label>
                 <div className="relative">
@@ -175,11 +177,11 @@ function PlanPageContent() {
                     placeholder="30"
                     value={formData.weeklyHours}
                     onChange={handleChange}
-                    className={`text-xl py-6 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${errors.weeklyHours ? 'border-red-500' : ''}`}
+                    className={`text-lg py-5 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${errors.weeklyHours ? 'border-red-500' : ''}`}
                     min="1"
                     max="80"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-nesso-ink/50">
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-nesso-ink/50 text-sm">
                     hours
                   </span>
                 </div>
@@ -191,7 +193,7 @@ function PlanPageContent() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full py-6 text-lg bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-xl transition-colors"
+                className="w-full py-5 text-base bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors"
               >
                 Calculate my plan →
               </Button>

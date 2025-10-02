@@ -403,7 +403,7 @@ export function calculateRealityPlan(inputs: RealityPlanInputs): RealityPlanResu
     goalIncome: monthlyIncome,
     goalHours: weeklyHours,
     sessionFee,
-    clientsPerWeek,
+    clientsPerWeek: { min: clientsPerWeek.low, max: clientsPerWeek.high },
     breakdown: {
       sessionHours: Math.round(sessionHours * 10) / 10,
       docHours: Math.round(docHours * 10) / 10,
