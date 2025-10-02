@@ -23,17 +23,17 @@ export function FeeSlider({
   const percentage = ((value - min) / (max - min)) * 100;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Fee Display */}
       <div className="text-center">
-        <div className="text-sm text-nesso-ink/60 mb-1">Your session fee</div>
-        <div className="text-4xl font-bold text-nesso-navy">
+        <div className="text-xs text-nesso-ink/60 mb-1">Your session fee</div>
+        <div className="text-3xl font-bold text-nesso-navy">
           ${value}
         </div>
       </div>
 
       {/* Slider */}
-      <div className="relative pt-6 pb-2">
+      <div className="relative pt-4 pb-1">
         {/* Custom styled range input */}
         <input
           type="range"
@@ -49,22 +49,22 @@ export function FeeSlider({
         />
 
         {/* Min/Max Labels */}
-        <div className="flex justify-between mt-2 text-xs text-nesso-ink/50">
+        <div className="flex justify-between mt-1 text-xs text-nesso-ink/50">
           <span>${min}</span>
           <span>${max}</span>
         </div>
       </div>
 
       {/* Instruction Text */}
-      <p className="text-sm text-center text-nesso-ink/60">
+      <p className="text-xs text-center text-nesso-ink/60">
         Adjust to see how that affects your time and money goals
       </p>
 
       <style jsx>{`
         .slider-thumb::-webkit-slider-thumb {
           appearance: none;
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: #1A3B5D;
           cursor: pointer;
@@ -73,8 +73,8 @@ export function FeeSlider({
         }
 
         .slider-thumb::-moz-range-thumb {
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           background: #1A3B5D;
           cursor: pointer;

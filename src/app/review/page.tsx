@@ -34,12 +34,13 @@ function ReviewPageContent() {
 
   // Calculate optimal starting fee
   const [sessionFee, setSessionFee] = useState(0);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [isEditingAssumptions, setIsEditingAssumptions] = useState(false);
   const [assumptions, setAssumptions] = useState({
     adminHours: 6,
     documentationMinutesPerClient: 20,
     cancellationRate: 0.10
   });
+  const [tempAssumptions, setTempAssumptions] = useState(assumptions);
 
   // Initialize session fee on mount
   useEffect(() => {
@@ -70,8 +71,31 @@ function ReviewPageContent() {
     router.push(`/plan`);
   };
 
-  const handleAssumptionChange = (field: string, value: number) => {
-    setAssumptions(prev => ({ ...prev, [field]: value }));
+  const handleEditAssumptions = () => {
+    setTempAssumptions(assumptions);
+    setIsEditingAssumptions(true);
+  };
+
+  const handleSaveAssumptions = () => {
+    setAssumptions(tempAssumptions);
+    setIsEditingAssumptions(false);
+  };
+
+  const handleCancelEdit = () => {
+    setTempAssumptions(assumptions);
+    setIsEditingAssumptions(false);
+  };
+
+  const handleTempAssumptionChange = (field: string, value: number) => {
+    setTempAssumptions(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Helper to display client count
+  const getClientDisplay = (clientsPerWeek: { min: number; max: number }) => {
+    if (clientsPerWeek.min === clientsPerWeek.max) {
+      return `${clientsPerWeek.min}`;
+    }
+    return `${clientsPerWeek.min}-${clientsPerWeek.max}`;
   };
 
   if (!plan) {
@@ -82,10 +106,10 @@ function ReviewPageContent() {
     <div className="min-h-screen bg-gradient-to-b from-nesso-sand/30 to-white">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 pt-8 pb-24">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-16">
         {/* Goals Display */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-6 px-6 py-3 bg-white rounded-xl border border-nesso-sand shadow-sm">
+        <div className="mb-6 text-center">
+          <div className="inline-flex items-center gap-4 px-5 py-2 bg-white rounded-lg border border-nesso-sand shadow-sm">
             <div className="text-sm">
               <span className="text-nesso-ink/60">Your goals: </span>
               <span className="font-semibold text-nesso-navy">
@@ -96,89 +120,108 @@ function ReviewPageContent() {
               onClick={handleAdjustGoals}
               variant="ghost"
               size="sm"
-              className="text-nesso-coral hover:text-nesso-coral/80"
+              className="text-nesso-coral hover:text-nesso-coral/80 text-xs"
             >
-              ← Adjust goals
+              ← Adjust
             </Button>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Summary Card */}
-          <Card className="p-6 border-2 border-nesso-navy/10 shadow-lg">
-            <h2 className="text-2xl font-bold text-nesso-navy mb-4">
+          <Card className="p-5 border border-nesso-navy/10 shadow-sm">
+            <h2 className="text-xl font-bold text-nesso-navy mb-3">
               To make {formatCurrency(monthlyIncome)} in {weeklyHours} hours:
             </h2>
 
-            <div className="space-y-4">
-              <p className="text-lg text-nesso-ink">
+            <div className="space-y-3">
+              <p className="text-base text-nesso-ink leading-relaxed">
                 You need to charge <span className="font-bold text-nesso-navy">${sessionFee} per session</span> and
-                schedule <span className="font-bold text-nesso-navy">{plan.clientsPerWeek.min}-{plan.clientsPerWeek.max} clients per week</span>.
+                schedule <span className="font-bold text-nesso-navy">{getClientDisplay(plan.clientsPerWeek)} clients per week</span>.
               </p>
 
-              <div className="pt-4 pb-2 text-sm text-nesso-ink/70 leading-relaxed">
+              <div className="pt-3 text-sm text-nesso-ink/70 leading-relaxed">
                 <p className="mb-2">
-                  To calculate this, we&apos;re taking a few additional numbers into account that are pretty standard in your industry:
+                  We&apos;re using these industry-standard assumptions:
                 </p>
-                <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li>{(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate</li>
-                  <li>{assumptions.adminHours} hours admin time per week</li>
-                  <li>{assumptions.documentationMinutesPerClient} minutes per client for documentation</li>
-                </ul>
 
-                <button
-                  onClick={() => setShowAdvanced(!showAdvanced)}
-                  className="mt-3 text-nesso-coral hover:text-nesso-coral/80 text-sm font-medium inline-flex items-center gap-1"
-                >
-                  Adjust these assumptions {showAdvanced ? '▲' : '▼'}
-                </button>
+                {!isEditingAssumptions ? (
+                  <>
+                    <div className="flex items-center justify-between py-1">
+                      <span>{(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate, {assumptions.adminHours}h admin/week, {assumptions.documentationMinutesPerClient} min documentation/client</span>
+                      <button
+                        onClick={handleEditAssumptions}
+                        className="text-nesso-coral hover:text-nesso-coral/80 text-xs font-medium"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="mt-3 p-3 bg-nesso-sand/20 rounded-lg space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="adminHours" className="text-xs mb-1">
+                          Admin hours/week
+                        </Label>
+                        <Input
+                          id="adminHours"
+                          type="number"
+                          value={tempAssumptions.adminHours}
+                          onChange={(e) => handleTempAssumptionChange('adminHours', parseFloat(e.target.value))}
+                          className="text-sm h-8"
+                          min="0"
+                          max="40"
+                        />
+                      </div>
 
-                {/* Advanced Settings */}
-                {showAdvanced && (
-                  <div className="mt-4 p-4 bg-nesso-sand/20 rounded-lg space-y-4">
-                    <div>
-                      <Label htmlFor="adminHours" className="text-sm">
-                        Weekly admin hours (emails, billing, etc.)
-                      </Label>
-                      <Input
-                        id="adminHours"
-                        type="number"
-                        value={assumptions.adminHours}
-                        onChange={(e) => handleAssumptionChange('adminHours', parseFloat(e.target.value))}
-                        className="mt-1"
-                        min="0"
-                        max="40"
-                      />
+                      <div>
+                        <Label htmlFor="docMinutes" className="text-xs mb-1">
+                          Doc minutes/client
+                        </Label>
+                        <Input
+                          id="docMinutes"
+                          type="number"
+                          value={tempAssumptions.documentationMinutesPerClient}
+                          onChange={(e) => handleTempAssumptionChange('documentationMinutesPerClient', parseFloat(e.target.value))}
+                          className="text-sm h-8"
+                          min="0"
+                          max="120"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="cancellationRate" className="text-xs mb-1">
+                          Cancellation rate (%)
+                        </Label>
+                        <Input
+                          id="cancellationRate"
+                          type="number"
+                          value={(tempAssumptions.cancellationRate * 100).toFixed(0)}
+                          onChange={(e) => handleTempAssumptionChange('cancellationRate', parseFloat(e.target.value) / 100)}
+                          className="text-sm h-8"
+                          min="0"
+                          max="50"
+                        />
+                      </div>
                     </div>
 
-                    <div>
-                      <Label htmlFor="docMinutes" className="text-sm">
-                        Documentation minutes per client each week
-                      </Label>
-                      <Input
-                        id="docMinutes"
-                        type="number"
-                        value={assumptions.documentationMinutesPerClient}
-                        onChange={(e) => handleAssumptionChange('documentationMinutesPerClient', parseFloat(e.target.value))}
-                        className="mt-1"
-                        min="0"
-                        max="120"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="cancellationRate" className="text-sm">
-                        Average % of cancellations or no shows
-                      </Label>
-                      <Input
-                        id="cancellationRate"
-                        type="number"
-                        value={(assumptions.cancellationRate * 100).toFixed(0)}
-                        onChange={(e) => handleAssumptionChange('cancellationRate', parseFloat(e.target.value) / 100)}
-                        className="mt-1"
-                        min="0"
-                        max="50"
-                      />
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        onClick={handleCancelEdit}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs h-7"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleSaveAssumptions}
+                        size="sm"
+                        className="bg-nesso-coral hover:bg-nesso-coral/90 text-black text-xs h-7"
+                      >
+                        Save
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -187,7 +230,7 @@ function ReviewPageContent() {
           </Card>
 
           {/* Fee Slider Card */}
-          <Card className="p-6 border-2 border-nesso-navy/10 shadow-lg">
+          <Card className="p-5 border border-nesso-navy/10 shadow-sm">
             <FeeSlider
               value={sessionFee}
               onChange={setSessionFee}
@@ -198,7 +241,7 @@ function ReviewPageContent() {
           </Card>
 
           {/* Week Timeline Card */}
-          <Card className="p-6 border-2 border-nesso-navy/10 shadow-lg">
+          <Card className="p-5 border border-nesso-navy/10 shadow-sm">
             <WeekTimeline
               sessionHours={plan.breakdown.sessionHours}
               docHours={plan.breakdown.docHours}
@@ -215,7 +258,7 @@ function ReviewPageContent() {
         </div>
       </main>
 
-      <footer className="bg-nesso-card border-t border-black/5 py-8 mt-16">
+      <footer className="bg-nesso-card border-t border-black/5 py-8 mt-12">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="flex flex-col items-center space-y-4">
             <div className="flex justify-center space-x-8 text-sm text-gray-600">

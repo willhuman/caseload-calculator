@@ -13,16 +13,16 @@ export function SustainabilityIndicator({
 
   return (
     <div
-      className={`p-6 rounded-xl border-2 transition-all ${
+      className={`p-4 rounded-lg border transition-all ${
         isSustainable
           ? 'bg-green-50 border-green-200'
           : 'bg-red-50 border-red-200'
       }`}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         {/* Icon */}
         <div
-          className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-2xl ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xl ${
             isSustainable ? 'bg-green-100' : 'bg-red-100'
           }`}
         >
@@ -32,7 +32,7 @@ export function SustainabilityIndicator({
         {/* Content */}
         <div className="flex-1">
           <h3
-            className={`text-lg font-semibold mb-1 ${
+            className={`text-base font-semibold mb-0.5 ${
               isSustainable ? 'text-green-900' : 'text-red-900'
             }`}
           >
