@@ -45,10 +45,11 @@ export interface CalculationResults {
 
 // Constants
 const WEEKS_PER_MONTH = 4.33;
-const AVERAGE_SESSION_LENGTH_HOURS = 1.0;
+const AVERAGE_SESSION_LENGTH_HOURS = 50 / 60; // 50 minutes = 0.833 hours
 const DEFAULT_ADMIN_HOURS = 6;
 const DEFAULT_DOCUMENTATION_MINUTES = 20;
 const DEFAULT_CANCELLATION_RATE = 0.10; // 10%
+const DEFAULT_SESSION_MINUTES = 50; // 50-minute sessions
 const HEALTHY_HOURS_THRESHOLD = 34; // Default healthy weekly hours threshold
 
 export function calculateCaseload(inputs: CalculationInputs): CalculationResults {

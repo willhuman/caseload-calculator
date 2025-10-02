@@ -148,7 +148,7 @@ function ReviewPageContent() {
                 {!isEditingAssumptions ? (
                   <>
                     <div className="flex items-center justify-between py-1">
-                      <span>{(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate, {assumptions.adminHours}h admin/week, {assumptions.documentationMinutesPerClient} min documentation/client</span>
+                      <span>50 min sessions, {(assumptions.cancellationRate * 100).toFixed(0)}% cancellation rate, {assumptions.adminHours}h admin/week, {assumptions.documentationMinutesPerClient} min documentation/client</span>
                       <button
                         onClick={handleEditAssumptions}
                         className="text-nesso-coral hover:text-nesso-coral/80 text-xs font-medium"
