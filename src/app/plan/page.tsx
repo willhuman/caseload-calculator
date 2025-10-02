@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,7 +19,7 @@ interface ValidationErrors {
   sessionFee?: string;
 }
 
-export default function PlanPage() {
+function PlanPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -262,5 +262,13 @@ export default function PlanPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function PlanPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <PlanPageContent />
+    </Suspense>
   );
 }

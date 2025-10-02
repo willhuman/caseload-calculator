@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { ScenarioCard } from '@/components/ScenarioCard';
@@ -16,7 +16,7 @@ interface PlanState {
   cancellationRate: number;
 }
 
-export default function ReviewPage() {
+function ReviewPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [planState, setPlanState] = useState<PlanState | null>(null);
@@ -376,5 +376,13 @@ function EmailCaptureModal({ isOpen, onClose, scenario, planState, scenario1Resu
         </form>
       </div>
     </div>
+  );
+}
+
+export default function ReviewPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <ReviewPageContent />
+    </Suspense>
   );
 }
