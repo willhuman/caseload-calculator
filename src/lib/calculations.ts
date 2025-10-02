@@ -3,105 +3,166 @@
  */
 
 export interface CalculationInputs {
-  weeklyHours: number;
   monthlyIncome: number;
   sessionFee: number;
-  noShowRate: number;
+  adminHours?: number; // Default: 6
+  documentationMinutesPerClient?: number; // Default: 20
+  cancellationRate?: number; // Default: 0.10 (10%)
+  capacityTarget?: number; // Auto-determined from income or set manually
 }
 
 export interface CalculationResults {
-  baseSessionsNeededPerMonth: number;
-  baseWeeklyCaseload: number;
-  actualSessionsAttended: number;
-  weeklyCaseload: number;
-  estimatedHoursPerWeek: number;
+  // Core metrics
+  sessionsPerMonth: number;
+  sessionsPerWeek: number;
+  scheduledSessionsPerWeek: number;
+  attendedSessionsPerWeek: number;
+
+  // Hours breakdown
   sessionHours: number;
   docHours: number;
+  adminHours: number;
   totalHours: number;
-  revenueProjection: number;
-  sustainabilityStatus: 'sustainable' | 'over-goal' | 'under-goal';
+
+  // Revenue
+  revenueMonthly: number;
+
+  // Capacity and wellness
+  capacityTarget: number;
   caseloadRange: { low: number; high: number };
-  hoursRange: { low: number; high: number };
+
+  // Wellness checks
+  financialOK: boolean;
+  timeOK: boolean;
+  qualityOK: boolean;
+  overallLabel: 'sustainable' | 'challenging' | 'room-to-grow';
+  overallSnippet: string;
+
+  // Hours comparison
+  hoursLeft: number;
+  hoursOver: number;
 }
 
-// Constants - easy to change as requested
-const MINUTES_PER_SESSION = 60;
-const DOC_MINUTES_PER_CLIENT = 20; // Average documentation time per client per week
-const ADMIN_MINUTES_PER_CLIENT = 10; // Legacy admin time (for backward compatibility)
-const TIME_PER_CLIENT_HOURS = (MINUTES_PER_SESSION + ADMIN_MINUTES_PER_CLIENT) / 60;
+// Constants
 const WEEKS_PER_MONTH = 4.33;
+const AVERAGE_SESSION_LENGTH_HOURS = 1.0;
+const DEFAULT_ADMIN_HOURS = 6;
+const DEFAULT_DOCUMENTATION_MINUTES = 20;
+const DEFAULT_CANCELLATION_RATE = 0.10; // 10%
+const HEALTHY_HOURS_THRESHOLD = 34; // Default healthy weekly hours threshold
 
 export function calculateCaseload(inputs: CalculationInputs): CalculationResults {
-  const { weeklyHours, monthlyIncome, sessionFee, noShowRate } = inputs;
+  // Apply defaults
+  const adminHours = inputs.adminHours ?? DEFAULT_ADMIN_HOURS;
+  const documentationMinutesPerClient = inputs.documentationMinutesPerClient ?? DEFAULT_DOCUMENTATION_MINUTES;
+  const cancellationRate = inputs.cancellationRate ?? DEFAULT_CANCELLATION_RATE;
+  const capacityTarget = inputs.capacityTarget ?? HEALTHY_HOURS_THRESHOLD;
 
-  // Step 1: Calculate sessions needed per month (before considering cancellations)
-  const baseSessionsNeededPerMonth = monthlyIncome / sessionFee;
+  const { monthlyIncome, sessionFee } = inputs;
 
-  // Step 2: Weekly base caseload = sessions per month / 4.33
-  const baseWeeklyCaseload = baseSessionsNeededPerMonth / WEEKS_PER_MONTH;
+  // Step 1: Sessions per month = income ÷ session fee
+  const sessionsPerMonth = monthlyIncome / sessionFee;
 
-  // Step 3: Add extra sessions to account for cancellations/no-shows
-  // If 2 clients cancel per week, we need to schedule 2 extra to maintain income
-  const weeklyCaseload = baseWeeklyCaseload + noShowRate;
+  // Step 2: Sessions per week = sessions per month ÷ 4.33
+  const sessionsPerWeek = sessionsPerMonth / WEEKS_PER_MONTH;
 
-  // Step 4: Calculate separate time components
-  const sessionHours = weeklyCaseload * (MINUTES_PER_SESSION / 60); // Just session time
-  const docHours = (weeklyCaseload * DOC_MINUTES_PER_CLIENT) / 60; // Documentation time
-  const totalHours = sessionHours + docHours; // Total working time
+  // Step 3: Scheduled sessions = sessions needed ÷ (1 - cancellation rate)
+  // If 10% cancel, we need to schedule more to ensure we get the sessions we need
+  const scheduledSessionsPerWeek = sessionsPerWeek / (1 - cancellationRate);
 
-  // Legacy calculation for backward compatibility
-  const estimatedHoursPerWeek = weeklyCaseload * TIME_PER_CLIENT_HOURS;
+  // Step 4: Attended sessions = what we actually need
+  const attendedSessionsPerWeek = sessionsPerWeek;
 
-  // Step 5: Revenue projection - only count sessions that are actually attended
-  // weeklyCaseload includes buffer for cancellations, so subtract those
-  const actualSessionsAttended = weeklyCaseload - noShowRate;
-  const revenueProjection = actualSessionsAttended * sessionFee * WEEKS_PER_MONTH;
+  // Step 5: Calculate hours
+  const sessionHours = attendedSessionsPerWeek * AVERAGE_SESSION_LENGTH_HOURS;
+  const docHours = (attendedSessionsPerWeek * documentationMinutesPerClient) / 60;
+  const totalHours = sessionHours + docHours + adminHours;
 
-  // Step 6: Sustainability status based on total hours vs weekly goal
-  const sustainabilityStatus = getSustainabilityStatus(totalHours, weeklyHours);
+  // Step 6: Revenue (actual attended sessions)
+  const revenueMonthly = attendedSessionsPerWeek * sessionFee * WEEKS_PER_MONTH;
 
-  // Single caseload number (rounded to nearest whole number)
-  const roundedCaseload = Math.round(weeklyCaseload);
-  const caseloadRange = {
-    low: roundedCaseload,
-    high: roundedCaseload
-  };
+  // Step 7: Caseload range (handle fractional clients)
+  const caseloadRange = getCaseloadRange(attendedSessionsPerWeek);
 
-  // Hours range based on caseload range using total hours
-  const hoursRange = {
-    low: caseloadRange.low * (MINUTES_PER_SESSION + DOC_MINUTES_PER_CLIENT) / 60,
-    high: caseloadRange.high * (MINUTES_PER_SESSION + DOC_MINUTES_PER_CLIENT) / 60
-  };
+  // Step 8: Wellness checks (updated threshold logic)
+  const financialOK = revenueMonthly >= monthlyIncome;
+  const timeOK = totalHours <= capacityTarget;
+  const qualityOK = financialOK && timeOK;
+
+  // Step 9: Overall label and snippet
+  const { overallLabel, overallSnippet } = getOverallAssessment(
+    financialOK,
+    timeOK,
+    totalHours,
+    capacityTarget
+  );
+
+  // Step 10: Hours comparison
+  const hoursLeft = Math.max(capacityTarget - totalHours, 0);
+  const hoursOver = Math.max(totalHours - capacityTarget, 0);
 
   return {
-    baseSessionsNeededPerMonth,
-    baseWeeklyCaseload,
-    actualSessionsAttended,
-    weeklyCaseload,
-    estimatedHoursPerWeek, // Keep for backward compatibility
+    sessionsPerMonth,
+    sessionsPerWeek,
+    scheduledSessionsPerWeek,
+    attendedSessionsPerWeek,
     sessionHours,
     docHours,
+    adminHours,
     totalHours,
-    revenueProjection,
-    sustainabilityStatus,
+    revenueMonthly,
+    capacityTarget,
     caseloadRange,
-    hoursRange
+    financialOK,
+    timeOK,
+    qualityOK,
+    overallLabel,
+    overallSnippet,
+    hoursLeft,
+    hoursOver
   };
 }
 
-function getSustainabilityStatus(totalHours: number, targetHours: number): 'sustainable' | 'over-goal' | 'under-goal' {
-  // Updated status logic based on new requirements:
-  // Room to spare (under-goal): totalHours <= 0.7 * weeklyGoal
-  // Balanced (sustainable): 0.7 * weeklyGoal < totalHours <= weeklyGoal
-  // Over target (over-goal): totalHours > weeklyGoal
+function getCaseloadRange(clients: number): { low: number; high: number } {
+  const floor = Math.floor(clients);
+  const ceil = Math.ceil(clients);
 
-  if (totalHours <= 0.7 * targetHours) {
-    return 'under-goal';
-  } else if (totalHours <= targetHours) {
-    return 'sustainable';
-  } else {
-    return 'over-goal';
+  // If very close to a whole number (within 0.1), show single number
+  if (clients - floor < 0.1 || ceil - clients < 0.1) {
+    const rounded = Math.round(clients);
+    return { low: rounded, high: rounded };
   }
+
+  return { low: floor, high: ceil };
+}
+
+function getOverallAssessment(
+  financialOK: boolean,
+  timeOK: boolean,
+  totalHours: number,
+  capacityTarget: number
+): { overallLabel: 'sustainable' | 'challenging' | 'room-to-grow'; overallSnippet: string } {
+  // Sustainable: Both financial and time are OK
+  if (financialOK && timeOK) {
+    return {
+      overallLabel: 'sustainable',
+      overallSnippet: "This plan is balanced across income and time. You're well positioned to sustain quality care."
+    };
+  }
+
+  // Room to Grow: Time OK but not meeting financial, or using <80% of capacity
+  if ((timeOK && !financialOK) || (financialOK && totalHours <= capacityTarget * 0.8)) {
+    return {
+      overallLabel: 'room-to-grow',
+      overallSnippet: 'You have capacity to expand. You could take on more clients or explore higher fees if it feels right.'
+    };
+  }
+
+  // Challenging: Everything else (over capacity or not meeting goals)
+  return {
+    overallLabel: 'challenging',
+    overallSnippet: 'This plan may be difficult to sustain. Consider adjusting your fees or reducing cancellations.'
+  };
 }
 
 export function formatCurrency(amount: number): string {
@@ -114,42 +175,135 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatRange(low: number, high: number, suffix = ''): string {
-  return low === high ? `${low}${suffix}` : `${low} to ${high}${suffix}`;
+  return low === high ? `${low}${suffix}` : `${low}-${high}${suffix}`;
 }
 
-export interface CalculationBreakdown {
-  step: number;
-  label: string;
-  formula: string;
-  calculation: string;
-  result: string;
+export function formatPercentage(decimal: number): string {
+  return `${Math.round(decimal * 100)}%`;
 }
 
-export function getCalculationBreakdown(inputs: CalculationInputs, results: CalculationResults): CalculationBreakdown[] {
-  const { monthlyIncome, sessionFee, noShowRate } = inputs;
-  const { baseSessionsNeededPerMonth, baseWeeklyCaseload, weeklyCaseload, totalHours } = results;
+// Helper function to round fee to clean amounts
+export function roundToCleanFee(fee: number): number {
+  // Round to nearest $5 for fees under $200
+  if (fee < 200) {
+    return Math.round(fee / 5) * 5;
+  }
+  // Round to nearest $10 for fees $200+
+  return Math.round(fee / 10) * 10;
+}
 
-  return [
-    {
-      step: 1,
-      label: "Income to clients",
-      formula: "",
-      calculation: "",
-      result: `To reach your ${formatCurrency(monthlyIncome)} monthly goal at ${formatCurrency(sessionFee)}/session, you'd need about ${Math.round(baseSessionsNeededPerMonth)} sessions per month (≈\u00A0${Math.round(baseWeeklyCaseload)}\u00A0clients\u00A0per\u00A0week).`
+// Recommendation types
+export type RecommendationType =
+  | 'higher-fee'
+  | 'lighter-caseload'
+  | 'reduced-cancellations'
+  | 'streamlined-admin'
+  | 'optimized';
+
+export interface Recommendation {
+  type: RecommendationType;
+  title: string;
+  description: string;
+  inputs: CalculationInputs;
+  newSessionFee: number;
+}
+
+// Smart recommendation engine
+export function getRecommendation(
+  baselineResults: CalculationResults,
+  planState: {
+    monthlyIncome: number;
+    sessionFee: number;
+    adminHours: number;
+    documentationMinutesPerClient: number;
+    cancellationRate: number;
+  }
+): Recommendation {
+  const { financialOK, timeOK, totalHours, capacityTarget } = baselineResults;
+
+  // Priority 1: If financially insufficient, recommend higher fees
+  if (!financialOK) {
+    const newFee = roundToCleanFee(planState.sessionFee * 1.10);
+    return {
+      type: 'higher-fee',
+      title: 'Higher Fee Path',
+      description: 'Increase your session fee to meet your income goal',
+      inputs: {
+        ...planState,
+        sessionFee: newFee
+      },
+      newSessionFee: newFee
+    };
+  }
+
+  // Priority 2: If time-intensive (>40 hours), recommend lighter caseload with small fee bump
+  if (!timeOK && totalHours > 40) {
+    const newFee = roundToCleanFee(planState.sessionFee * 1.08);
+    return {
+      type: 'lighter-caseload',
+      title: 'Lighter Caseload Path',
+      description: 'Small fee increase to maintain income with fewer clients',
+      inputs: {
+        ...planState,
+        sessionFee: newFee
+      },
+      newSessionFee: newFee
+    };
+  }
+
+  // Priority 3: If high cancellation rate (>12%), recommend tightening policy
+  if (planState.cancellationRate > 0.12) {
+    return {
+      type: 'reduced-cancellations',
+      title: 'Reduced Cancellations Path',
+      description: 'Implement stricter cancellation policy to reduce no-shows',
+      inputs: {
+        ...planState,
+        cancellationRate: Math.max(0.05, planState.cancellationRate - 0.05)
+      },
+      newSessionFee: planState.sessionFee
+    };
+  }
+
+  // Priority 4: If high admin burden (>8 hours), recommend streamlining
+  if (planState.adminHours > 8) {
+    return {
+      type: 'streamlined-admin',
+      title: 'Streamlined Admin Path',
+      description: 'Reduce admin time with better systems and workflows',
+      inputs: {
+        ...planState,
+        adminHours: Math.max(3, planState.adminHours - 3)
+      },
+      newSessionFee: planState.sessionFee
+    };
+  }
+
+  // Priority 5: If sustainable with room to grow, recommend optimized path
+  if (financialOK && timeOK && totalHours < capacityTarget * 0.8) {
+    const newFee = roundToCleanFee(planState.sessionFee * 1.10);
+    return {
+      type: 'optimized',
+      title: 'Optimized Path',
+      description: 'You have room to grow - consider increasing your fee',
+      inputs: {
+        ...planState,
+        sessionFee: newFee
+      },
+      newSessionFee: newFee
+    };
+  }
+
+  // Default fallback: Higher fee path
+  const newFee = roundToCleanFee(planState.sessionFee * 1.10);
+  return {
+    type: 'higher-fee',
+    title: 'Higher Fee Path',
+    description: 'Increase your session fee for more sustainable income',
+    inputs: {
+      ...planState,
+      sessionFee: newFee
     },
-    {
-      step: 2,
-      label: "Cancellations",
-      formula: "",
-      calculation: "",
-      result: `Adding ${noShowRate} ${noShowRate === 1 ? 'cancellation' : 'cancellations'} per week means scheduling about ${Math.round(weeklyCaseload)}\u00A0clients\u00A0per\u00A0week.`
-    },
-    {
-      step: 3,
-      label: "Time commitment",
-      formula: "",
-      calculation: "",
-      result: `That equals about ${Math.round(totalHours)}h/week, including a 20 minute documentation buffer per client.`
-    }
-  ];
+    newSessionFee: newFee
+  };
 }

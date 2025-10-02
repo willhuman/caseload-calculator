@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/WillM/Desktop/Caseload-calculator-git/caseload-calculator/src/app/page.tsx"],"sourcesContent":["'use client';\n\nimport { useEffect } from 'react';\nimport { useRouter } from 'next/navigation';\n\nexport default function Home() {\n  const router = useRouter();\n\n  useEffect(() => {\n    // Redirect to /plan page\n    router.push('/plan');\n  }, [router]);\n\n  return (\n    <div className=\"min-h-screen bg-nesso-bg flex items-center justify-center\">\n      <div className=\"flex flex-col items-center space-y-4\">\n        <div className=\"w-12 h-12 border-4 border-nesso-peach/20 border-t-nesso-peach rounded-full animate-spin\"></div>\n        <p className=\"text-nesso-ink/60\">Redirecting...</p>\n      </div>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAEA;AACA;;;AAHA;;;AAKe,SAAS;;IACtB,MAAM,SAAS,IAAA,kJAAS;IAExB,IAAA,0KAAS;0BAAC;YACR,yBAAyB;YACzB,OAAO,IAAI,CAAC;QACd;yBAAG;QAAC;KAAO;IAEX,qBACE,6LAAC;QAAI,WAAU;kBACb,cAAA,6LAAC;YAAI,WAAU;;8BACb,6LAAC;oBAAI,WAAU;;;;;;8BACf,6LAAC;oBAAE,WAAU;8BAAoB;;;;;;;;;;;;;;;;;AAIzC;GAhBwB;;QACP,kJAAS;;;KADF","debugId":null}},
+    {"offset": {"line": 73, "column": 0}, "map": {"version":3,"sources":["file:///Users/WillM/Desktop/Caseload-calculator-git/caseload-calculator/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0],"debugId":null}}]
+}
