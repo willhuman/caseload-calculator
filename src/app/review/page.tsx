@@ -141,7 +141,7 @@ function ReviewPageContent() {
 
               <div className="pt-3 text-sm text-nesso-ink/70 leading-relaxed">
                 <p className="mb-2">
-                  We&apos;re using these industry-standard assumptions:
+                  We&apos;re also taking into account the following industry-standard assumptions to make this calculation:
                 </p>
 
                 {!isEditingAssumptions ? (
@@ -158,7 +158,7 @@ function ReviewPageContent() {
                   </>
                 ) : (
                   <div className="mt-3 p-3 bg-nesso-sand/20 rounded-lg space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div>
                         <Label htmlFor="sessionMinutes" className="text-xs mb-1">
                           Session length (minutes)

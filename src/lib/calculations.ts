@@ -390,10 +390,16 @@ export function calculateRealityPlan(inputs: RealityPlanInputs): RealityPlanResu
 
   if (meetsTime && meetsIncome) {
     sustainability = 'sustainable';
-    sustainabilityMessage = 'This feels manageable for most therapists.';
+    // If total hours is 40 or less, show the "manageable for most therapists" message
+    if (totalHours <= 40) {
+      sustainabilityMessage = `This feels manageable for most therapists and it falls within your ${weeklyHours}-hour per week goal.`;
+    } else {
+      // If over 40 hours but still within their goal, just mention it falls within their goal
+      sustainabilityMessage = `This falls within your ${weeklyHours}-hour per week goal.`;
+    }
   } else if (!meetsTime) {
     sustainability = 'not-sustainable';
-    sustainabilityMessage = `This would require ${Math.round(totalHours)} hours per week, which exceeds your ${weeklyHours}-hour goal.`;
+    sustainabilityMessage = `This would require ${totalHours.toFixed(1)} hours per week, which exceeds your ${weeklyHours}-hour per week goal.`;
   } else {
     sustainability = 'not-sustainable';
     sustainabilityMessage = 'This combination may not meet your income goal.';
