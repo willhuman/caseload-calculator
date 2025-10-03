@@ -50,6 +50,7 @@ const DEFAULT_DOC_AND_ADMIN_MINUTES_PER_CLIENT = 20; // Combined documentation +
 const DEFAULT_DOCUMENTATION_MINUTES = 20; // Documentation minutes per client
 const DEFAULT_ADMIN_HOURS = 6; // Weekly admin hours
 const DEFAULT_CANCELLATION_RATE = 0.10; // 10%
+const DEFAULT_CANCELLATIONS_PER_WEEK = 3; // 3 cancellations per week
 const DEFAULT_SESSION_MINUTES = 50; // 50-minute sessions
 const HEALTHY_HOURS_THRESHOLD = 34; // Default healthy weekly hours threshold
 
@@ -435,7 +436,7 @@ export interface GoalBasedInputs {
   weeklyHours: number;
   sessionMinutes?: number; // Default: 50
   docAndAdminMinutesPerClient?: number; // Default: 20
-  cancellationRate?: number; // Default: 0.10
+  cancellationsPerWeek?: number; // Default: 3
 }
 
 export interface GoalBasedResults {
@@ -443,6 +444,7 @@ export interface GoalBasedResults {
   sessionFee: number;
   clientsPerWeek: number;
   clientsPerWeekRange: { low: number; high: number };
+  attendedSessionsPerWeek: number;
 
   // Breakdown of their week
   breakdown: {
@@ -461,7 +463,7 @@ export function calculateGoalBasedPlan(inputs: GoalBasedInputs): GoalBasedResult
   // Apply defaults
   const sessionMinutes = inputs.sessionMinutes ?? DEFAULT_SESSION_MINUTES;
   const docAndAdminMinutesPerClient = inputs.docAndAdminMinutesPerClient ?? DEFAULT_DOC_AND_ADMIN_MINUTES_PER_CLIENT;
-  const cancellationRate = inputs.cancellationRate ?? DEFAULT_CANCELLATION_RATE;
+  const cancellationsPerWeek = inputs.cancellationsPerWeek ?? DEFAULT_CANCELLATIONS_PER_WEEK;
 
   const { monthlyIncome, weeklyHours } = inputs;
 
@@ -470,45 +472,36 @@ export function calculateGoalBasedPlan(inputs: GoalBasedInputs): GoalBasedResult
   const docAndAdminHours = docAndAdminMinutesPerClient / 60;
   const hoursPerClient = sessionHours + docAndAdminHours;
 
-  // Strategy: Recommend using AS CLOSE TO their maximum hours as possible
-  // Calculate the maximum number of scheduled clients they can handle
-  const maxScheduledClients = weeklyHours / hoursPerClient;
-  const maxAttendedSessions = maxScheduledClients * (1 - cancellationRate);
+  // NEW APPROACH: Work backwards from whole number of sessions
+  // 1. Calculate maximum sessions possible within their time limit
+  const maxAttendedSessionsRaw = weeklyHours / hoursPerClient;
+  const maxAttendedSessions = Math.floor(maxAttendedSessionsRaw); // Round DOWN to whole number
 
-  // Calculate the session fee needed if they work close to maximum hours
+  // 2. Calculate fee needed for this number of sessions
   const maxSessionsPerMonth = maxAttendedSessions * WEEKS_PER_MONTH;
-  let calculatedSessionFee = monthlyIncome / maxSessionsPerMonth;
+  const calculatedFee = monthlyIncome / maxSessionsPerMonth;
 
-  // Round DOWN to a clean fee (to ensure they need more clients, not fewer)
-  // This keeps them closer to their time goal
-  let sessionFee = Math.floor(calculatedSessionFee / 5) * 5;
+  // 3. Round fee UP to nearest $5 to ensure income goal is met/exceeded
+  let sessionFee = Math.ceil(calculatedFee / 5) * 5;
   if (sessionFee < 50) sessionFee = 50; // Minimum reasonable fee
 
-  // Calculate how many clients they need with this fee
-  let requiredSessionsPerMonth = monthlyIncome / sessionFee;
-  let requiredSessionsPerWeek = requiredSessionsPerMonth / WEEKS_PER_MONTH;
-  let requiredScheduledSessionsPerWeek = requiredSessionsPerWeek / (1 - cancellationRate);
+  // 4. With this fee, calculate exact sessions needed (will be less than max)
+  const exactSessionsNeededPerMonth = monthlyIncome / sessionFee;
+  const exactSessionsNeededPerWeek = exactSessionsNeededPerMonth / WEEKS_PER_MONTH;
 
-  // Calculate hours with this approach
-  let actualSessionHours = requiredSessionsPerWeek * sessionHours;
-  let actualDocAndAdminHours = requiredSessionsPerWeek * docAndAdminHours;
-  let totalHours = actualSessionHours + actualDocAndAdminHours;
+  // 5. Round UP to whole number of sessions to ensure income goal is met
+  const requiredSessionsPerWeek = Math.ceil(exactSessionsNeededPerWeek);
 
-  // If this puts us over the time limit, we need to increase the fee
-  if (totalHours > weeklyHours) {
-    // Recalculate with the minimum fee needed
-    calculatedSessionFee = monthlyIncome / maxSessionsPerMonth;
-    sessionFee = roundToCleanFee(calculatedSessionFee);
-    requiredSessionsPerMonth = monthlyIncome / sessionFee;
-    requiredSessionsPerWeek = requiredSessionsPerMonth / WEEKS_PER_MONTH;
-    requiredScheduledSessionsPerWeek = requiredSessionsPerWeek / (1 - cancellationRate);
-    actualSessionHours = requiredSessionsPerWeek * sessionHours;
-    actualDocAndAdminHours = requiredSessionsPerWeek * docAndAdminHours;
-    totalHours = actualSessionHours + actualDocAndAdminHours;
-  }
+  // 6. Add cancellations to get scheduled sessions (whole number)
+  const requiredScheduledSessionsPerWeek = requiredSessionsPerWeek + cancellationsPerWeek;
 
-  // Caseload range for display
-  const clientsPerWeekRange = getCaseloadRange(requiredScheduledSessionsPerWeek);
+  // 7. Calculate exact hours based on whole number of attended sessions
+  const actualSessionHours = requiredSessionsPerWeek * sessionHours;
+  const actualDocAndAdminHours = requiredSessionsPerWeek * docAndAdminHours;
+  const totalHours = actualSessionHours + actualDocAndAdminHours;
+
+  // Caseload range for display (should be same number since we're using whole numbers)
+  const clientsPerWeekRange = { low: requiredScheduledSessionsPerWeek, high: requiredScheduledSessionsPerWeek };
 
   // Sustainability assessment
   const meetsGoal = totalHours <= weeklyHours;
@@ -538,9 +531,10 @@ export function calculateGoalBasedPlan(inputs: GoalBasedInputs): GoalBasedResult
   return {
     sessionFee,
     clientsPerWeek: requiredScheduledSessionsPerWeek,
-    clientsPerWeekRange: { low: clientsPerWeekRange.low, high: clientsPerWeekRange.high },
+    clientsPerWeekRange,
+    attendedSessionsPerWeek: requiredSessionsPerWeek, // Now a whole number
     breakdown: {
-      sessionHours: Math.round(actualSessionHours * 10) / 10,
+      sessionHours: Math.round(actualSessionHours * 10) / 10, // Exact hours for whole sessions
       docAndAdminHours: Math.round(actualDocAndAdminHours * 10) / 10,
       totalHours: Math.round(totalHours * 10) / 10
     },
