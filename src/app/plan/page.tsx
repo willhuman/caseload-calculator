@@ -15,13 +15,12 @@ export default function PlanPage() {
 
   // Assumptions state
   const [sessionMinutes, setSessionMinutes] = useState(50);
-  const [cancellationRate, setCancellationRate] = useState(10);
+  const [cancellationsPerWeek, setCancellationsPerWeek] = useState(3);
   const [docAndAdminMinutes, setDocAndAdminMinutes] = useState(20);
 
   // UI state
   const [hasCalculated, setHasCalculated] = useState(false);
   const [results, setResults] = useState<GoalBasedResults | null>(null);
-  const [showAssumptions, setShowAssumptions] = useState(false);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
   useEffect(() => {
@@ -31,11 +30,11 @@ export default function PlanPage() {
         weeklyHours,
         sessionMinutes,
         docAndAdminMinutesPerClient: docAndAdminMinutes,
-        cancellationRate: cancellationRate / 100
+        cancellationsPerWeek
       });
       setResults(newResults);
     }
-  }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationRate, hasCalculated]);
+  }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationsPerWeek, hasCalculated]);
 
   const handleCalculate = () => {
     const calculatedResults = calculateGoalBasedPlan({
@@ -43,7 +42,7 @@ export default function PlanPage() {
       weeklyHours,
       sessionMinutes,
       docAndAdminMinutesPerClient: docAndAdminMinutes,
-      cancellationRate: cancellationRate / 100
+      cancellationsPerWeek
     });
     setResults(calculatedResults);
     setHasCalculated(true);
@@ -63,73 +62,121 @@ export default function PlanPage() {
 
   const monthlyIncomeDisplay = formatCurrency(monthlyIncome);
   const sessionFeeDisplay = results ? formatCurrency(results.sessionFee) : '$0';
-  const clientsDisplay = results ? formatRange(results.clientsPerWeekRange.low, results.clientsPerWeekRange.high) : '0';
+  const clientsDisplay = results ? results.clientsPerWeekRange.high.toString() : '0';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-nesso-sand/30 to-white">
       <Header />
 
       <main className="max-w-2xl mx-auto px-4 pt-8 pb-16">
-        {/* Hero Section */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-nesso-ink mb-2">
-            Time and Money Goals
-          </h1>
-          <p className="text-sm text-nesso-ink/70">
-            Tell us what you want, and we&apos;ll show you what it takes.
-          </p>
-        </div>
-
-        {/* Main Card */}
-        <Card className="border border-nesso-navy/10 shadow-sm">
+        {/* Goals Card */}
+        <Card className="border border-nesso-navy/10 shadow-sm mb-6">
           <CardContent className="p-5 md:p-6 space-y-6">
-            {/* Income Slider */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <span className="text-lg">💰</span>
-                  Monthly income goal
-                </label>
-                <div className="text-xl font-bold text-nesso-navy">
-                  {monthlyIncomeDisplay}
+            {/* Time and Money Goals Section */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
+
+              {/* Income Slider */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <span className="text-lg">💰</span>
+                    Monthly income goal
+                  </label>
+                  <div className="text-xl font-bold text-nesso-navy">
+                    {monthlyIncomeDisplay}
+                  </div>
+                </div>
+                <Slider
+                  value={[monthlyIncome]}
+                  onValueChange={(value) => setMonthlyIncome(value[0])}
+                  min={3000}
+                  max={15000}
+                  step={100}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-nesso-ink/50">
+                  <span>$3,000</span>
+                  <span>$15,000</span>
                 </div>
               </div>
-              <Slider
-                value={[monthlyIncome]}
-                onValueChange={(value) => setMonthlyIncome(value[0])}
-                min={3000}
-                max={15000}
-                step={100}
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-nesso-ink/50">
-                <span>$3,000</span>
-                <span>$15,000</span>
+
+              {/* Hours Slider */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <span className="text-lg">⏰</span>
+                    Weekly work hours (Clients + Notes + Admin)
+                  </label>
+                  <div className="text-xl font-bold text-nesso-navy">
+                    {weeklyHours} hrs
+                  </div>
+                </div>
+                <Slider
+                  value={[weeklyHours]}
+                  onValueChange={(value) => setWeeklyHours(value[0])}
+                  min={15}
+                  max={50}
+                  step={1}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-nesso-ink/50">
+                  <span>15 hours</span>
+                  <span>50 hours</span>
+                </div>
               </div>
             </div>
 
-            {/* Hours Slider */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <span className="text-lg">⏰</span>
-                  Weekly hours (Clients + Notes + Admin)
-                </label>
-                <div className="text-xl font-bold text-nesso-navy">
-                  {weeklyHours} hrs
+            {/* Additional Info Section */}
+            <div className="space-y-4 border-t border-nesso-navy/10 pt-6">
+              <h2 className="text-lg font-semibold text-nesso-ink">Additional Info</h2>
+
+              {/* Session Length */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-nesso-ink/70">Session length</label>
+                  <span className="text-xs font-semibold text-nesso-navy">{sessionMinutes} min</span>
                 </div>
+                <Slider
+                  value={[sessionMinutes]}
+                  onValueChange={(value) => setSessionMinutes(value[0])}
+                  min={30}
+                  max={90}
+                  step={5}
+                  className="w-full"
+                />
               </div>
-              <Slider
-                value={[weeklyHours]}
-                onValueChange={(value) => setWeeklyHours(value[0])}
-                min={15}
-                max={50}
-                step={1}
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-nesso-ink/50">
-                <span>15 hours</span>
-                <span>50 hours</span>
+
+              {/* Cancellations Per Week */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-nesso-ink/70">Number of cancellations or no-shows in a typical week</label>
+                  <span className="text-xs font-semibold text-nesso-navy">{cancellationsPerWeek}</span>
+                </div>
+                <Slider
+                  value={[cancellationsPerWeek]}
+                  onValueChange={(value) => setCancellationsPerWeek(value[0])}
+                  min={0}
+                  max={10}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Doc & Admin Time */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-medium text-nesso-ink/70">Documentation & admin time per client (minutes/week)</label>
+                  <span className="text-xs font-semibold text-nesso-navy">{docAndAdminMinutes} min</span>
+                </div>
+                <Slider
+                  value={[docAndAdminMinutes]}
+                  onValueChange={(value) => setDocAndAdminMinutes(value[0])}
+                  min={5}
+                  max={60}
+                  step={5}
+                  className="w-full"
+                />
               </div>
             </div>
 
@@ -142,140 +189,101 @@ export default function PlanPage() {
                 Calculate my plan →
               </Button>
             )}
-
-            {/* Results (shown after calculation) */}
-            {hasCalculated && results && (
-              <div className="space-y-6 pt-4 border-t border-nesso-navy/10">
-                {/* Big Numbers */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Session Fee */}
-                  <div className="text-center space-y-1">
-                    <div className="text-xs text-nesso-ink/60">Session Fee</div>
-                    <div className="text-3xl font-bold text-nesso-navy">{sessionFeeDisplay}</div>
-                  </div>
-
-                  {/* Clients Per Week */}
-                  <div className="text-center space-y-1">
-                    <div className="text-xs text-nesso-ink/60">Clients Per Week</div>
-                    <div className="text-3xl font-bold text-nesso-navy">{clientsDisplay}</div>
-                  </div>
-                </div>
-
-                {/* Explanation Text */}
-                <div className="bg-white/50 rounded-lg p-4 border border-nesso-navy/5 space-y-3">
-                  <p className="text-sm text-nesso-ink/90 leading-relaxed">
-                    To achieve your goal of <strong>{monthlyIncomeDisplay}</strong> per month working a maximum of <strong>{weeklyHours} hours per week</strong>, you need to charge <strong>{sessionFeeDisplay}</strong> per session and schedule <strong>{clientsDisplay} clients per week</strong> (assuming that {cancellationRate}% of those will likely cancel or reschedule).
-                  </p>
-
-                  {/* Industry Standards - Collapsible */}
-                  <div className="border-t border-nesso-navy/10 pt-3">
-                    <button
-                      onClick={() => setShowAssumptions(!showAssumptions)}
-                      className="flex items-center justify-between w-full text-left group"
-                    >
-                      <span className="text-xs font-medium text-nesso-ink/80 group-hover:text-nesso-navy transition-colors">
-                        Industry-standard assumptions
-                      </span>
-                      <span className="text-nesso-ink/40 text-xs">
-                        {showAssumptions ? '▼' : '▶'}
-                      </span>
-                    </button>
-
-                    {showAssumptions && (
-                      <div className="mt-3 space-y-3">
-                        <p className="text-xs text-nesso-ink/60 leading-relaxed">
-                          We&apos;re taking into account the following industry-standard assumptions to make this calculation:
-                        </p>
-
-                        {/* Session Length */}
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <label className="text-xs font-medium text-nesso-ink/70">Session length (minutes)</label>
-                            <span className="text-xs font-semibold text-nesso-navy">{sessionMinutes} min</span>
-                          </div>
-                          <Slider
-                            value={[sessionMinutes]}
-                            onValueChange={(value) => setSessionMinutes(value[0])}
-                            min={30}
-                            max={90}
-                            step={5}
-                            className="w-full"
-                          />
-                        </div>
-
-                        {/* Cancellation Rate */}
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate</label>
-                            <span className="text-xs font-semibold text-nesso-navy">{cancellationRate}%</span>
-                          </div>
-                          <Slider
-                            value={[cancellationRate]}
-                            onValueChange={(value) => setCancellationRate(value[0])}
-                            min={0}
-                            max={30}
-                            step={1}
-                            className="w-full"
-                          />
-                        </div>
-
-                        {/* Doc & Admin Time */}
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <label className="text-xs font-medium text-nesso-ink/70">Documentation & admin time per client (minutes/week)</label>
-                            <span className="text-xs font-semibold text-nesso-navy">{docAndAdminMinutes} min</span>
-                          </div>
-                          <Slider
-                            value={[docAndAdminMinutes]}
-                            onValueChange={(value) => setDocAndAdminMinutes(value[0])}
-                            min={5}
-                            max={60}
-                            step={5}
-                            className="w-full"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Week Breakdown */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-nesso-ink">Here&apos;s what your week would look like</h3>
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center py-1.5 border-b border-nesso-navy/10">
-                      <span className="text-xs text-nesso-ink/70">Client sessions</span>
-                      <span className="text-xs font-medium text-nesso-navy">{results.breakdown.sessionHours}h</span>
-                    </div>
-                    <div className="flex justify-between items-center py-1.5 border-b border-nesso-navy/10">
-                      <span className="text-xs text-nesso-ink/70">Documentation & admin</span>
-                      <span className="text-xs font-medium text-nesso-navy">{results.breakdown.docAndAdminHours}h</span>
-                    </div>
-                    <div className="flex justify-between items-center py-1.5 pt-2">
-                      <span className="text-sm font-semibold text-nesso-ink">Total hours</span>
-                      <span className="text-sm font-bold text-nesso-navy">{results.breakdown.totalHours}h</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Start Over Button */}
-                <div className="pt-3 border-t border-nesso-navy/10">
-                  <Button
-                    onClick={() => {
-                      setHasCalculated(false);
-                      setResults(null);
-                      setShowAssumptions(false);
-                    }}
-                    variant="outline"
-                    className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
-                  >
-                    ← Start over
-                  </Button>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
+
+        {/* Results Card (shown after calculation) */}
+        {hasCalculated && results && (
+          <Card className="border border-nesso-navy/10 shadow-sm">
+            <CardContent className="p-5 md:p-6 space-y-6">
+              {/* Header */}
+              <h2 className="text-xl font-bold text-nesso-ink">Caseload Plan</h2>
+
+              {/* Your Goals Section */}
+              <div className="bg-nesso-sand/20 rounded-lg p-4 border border-nesso-navy/10">
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Goals</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-base">💰</span>
+                    <span className="text-nesso-ink/90">Earn <strong className="text-nesso-navy">{monthlyIncomeDisplay}/month</strong></span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-base">⏰</span>
+                    <span className="text-nesso-ink/90">Work <strong className="text-nesso-navy">{weeklyHours} hours/week</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Your Plan Section */}
+              <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Plan</h3>
+                <p className="text-sm text-nesso-ink/80 mb-3">To meet your goals, here&apos;s what you need to do:</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-nesso-navy font-bold">•</span>
+                    <span className="text-nesso-ink/90">Charge <strong className="text-nesso-navy">{sessionFeeDisplay} per session</strong></span>
+                  </div>
+                  <div className="flex items-start gap-2 text-sm">
+                    <span className="text-nesso-navy font-bold">•</span>
+                    <span className="text-nesso-ink/90">Schedule <strong className="text-nesso-navy">{clientsDisplay} clients per week</strong>*</span>
+                  </div>
+                </div>
+                <p className="text-xs text-nesso-ink/60 mt-3 italic">
+                  *Accounting for {cancellationsPerWeek} expected cancellations/no-shows
+                </p>
+
+                {/* Summary Box */}
+                <div className="mt-4 bg-nesso-sand/20 rounded-lg p-3 border border-nesso-navy/10">
+                  <p className="text-xs font-medium text-nesso-ink/70 mb-2">Following this plan means:</p>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-base">📊</span>
+                      <span className="text-nesso-ink/90"><strong className="text-nesso-navy">{results.breakdown.totalHours} hours</strong> of work per week</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-base">💵</span>
+                      <span className="text-nesso-ink/90"><strong className="text-nesso-navy">{monthlyIncomeDisplay}</strong> in monthly revenue</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Your Week Breakdown Section */}
+              <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Week Breakdown</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-nesso-ink/70">Client Sessions ({Math.round(results.attendedSessionsPerWeek || 0)} sessions)</span>
+                    <span className="font-semibold text-nesso-navy">{results.breakdown.sessionHours}h</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-nesso-ink/70">Documentation & Admin</span>
+                    <span className="font-semibold text-nesso-navy">{results.breakdown.docAndAdminHours}h</span>
+                  </div>
+                  <div className="border-t border-nesso-navy/10 pt-2 mt-2"></div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-semibold text-nesso-ink">Total Work Hours</span>
+                    <span className="text-base font-bold text-nesso-navy">{results.breakdown.totalHours}h</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Start Over Button */}
+              <div className="pt-2">
+                <Button
+                  onClick={() => {
+                    setHasCalculated(false);
+                    setResults(null);
+                  }}
+                  variant="outline"
+                  className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
+                >
+                  ← Start over
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </main>
 
       <footer className="bg-nesso-card border-t border-black/5 py-8">
