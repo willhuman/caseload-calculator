@@ -10,12 +10,12 @@ import { trackEvent } from '@/lib/analytics';
 
 export default function PlanPage() {
   // Input state
-  const [monthlyIncome, setMonthlyIncome] = useState(9000);
-  const [weeklyHours, setWeeklyHours] = useState(32);
+  const [monthlyIncome, setMonthlyIncome] = useState(16000);
+  const [weeklyHours, setWeeklyHours] = useState(30);
 
   // Assumptions state
   const [sessionMinutes, setSessionMinutes] = useState(50);
-  const [cancellationsPerWeek, setCancellationsPerWeek] = useState(3);
+  const [cancellationRate, setCancellationRate] = useState(10); // Percentage (10%)
   const [docAndAdminMinutes, setDocAndAdminMinutes] = useState(20);
 
   // UI state
@@ -33,11 +33,11 @@ export default function PlanPage() {
         weeklyHours,
         sessionMinutes,
         docAndAdminMinutesPerClient: docAndAdminMinutes,
-        cancellationsPerWeek
+        cancellationRate: cancellationRate / 100
       });
       setResults(newResults);
     }
-  }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationsPerWeek, hasCalculated]);
+  }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationRate, hasCalculated]);
 
   const handleCalculate = () => {
     setIsCalculating(true);
@@ -49,7 +49,7 @@ export default function PlanPage() {
       weeklyHours,
       sessionMinutes,
       docAndAdminMinutesPerClient: docAndAdminMinutes,
-      cancellationsPerWeek
+      cancellationRate: cancellationRate / 100
     });
 
     // Track analytics
@@ -123,7 +123,7 @@ export default function PlanPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium flex items-center gap-2">
-                    <span className="text-lg">💰</span>
+                    <span className="text-lg">💵</span>
                     Monthly income goal
                   </label>
                   <div className="text-xl font-bold text-nesso-navy">
@@ -134,13 +134,13 @@ export default function PlanPage() {
                   value={[monthlyIncome]}
                   onValueChange={(value) => setMonthlyIncome(value[0])}
                   min={3000}
-                  max={15000}
-                  step={100}
+                  max={20000}
+                  step={500}
                   className="w-full"
                 />
                 <div className="flex justify-between text-xs text-nesso-ink/50">
                   <span>$3,000</span>
-                  <span>$15,000</span>
+                  <span>$20,000</span>
                 </div>
               </div>
 
@@ -158,13 +158,13 @@ export default function PlanPage() {
                 <Slider
                   value={[weeklyHours]}
                   onValueChange={(value) => setWeeklyHours(value[0])}
-                  min={15}
+                  min={5}
                   max={50}
-                  step={1}
+                  step={5}
                   className="w-full"
                 />
                 <div className="flex justify-between text-xs text-nesso-ink/50">
-                  <span>15 hours</span>
+                  <span>5 hours</span>
                   <span>50 hours</span>
                 </div>
               </div>
@@ -190,17 +190,17 @@ export default function PlanPage() {
                 />
               </div>
 
-              {/* Cancellations Per Week */}
+              {/* Cancellation Rate */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-nesso-ink/70">Number of cancellations or no-shows in a typical week</label>
-                  <span className="text-xs font-semibold text-nesso-navy">{cancellationsPerWeek}</span>
+                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate</label>
+                  <span className="text-xs font-semibold text-nesso-navy">{cancellationRate}%</span>
                 </div>
                 <Slider
-                  value={[cancellationsPerWeek]}
-                  onValueChange={(value) => setCancellationsPerWeek(value[0])}
+                  value={[cancellationRate]}
+                  onValueChange={(value) => setCancellationRate(value[0])}
                   min={0}
-                  max={10}
+                  max={30}
                   step={1}
                   className="w-full"
                 />
@@ -269,7 +269,7 @@ export default function PlanPage() {
                 <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Goals</h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-base">💰</span>
+                    <span className="text-base">💵</span>
                     <span className="text-nesso-ink/90">Earn <strong className="text-nesso-navy">{monthlyIncomeDisplay}/month</strong></span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
@@ -280,55 +280,43 @@ export default function PlanPage() {
               </div>
 
               {/* Your Plan Section */}
-              <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
+              <div className="space-y-3">
                 <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Plan</h3>
-                <p className="text-sm text-nesso-ink/80 mb-3">To meet your goals, here&apos;s what you need to do:</p>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2 text-sm">
-                    <span className="text-nesso-navy font-bold">•</span>
-                    <span className="text-nesso-ink/90">Charge <strong className="text-nesso-navy">{sessionFeeDisplay} per session</strong></span>
-                  </div>
-                  <div className="flex items-start gap-2 text-sm">
-                    <span className="text-nesso-navy font-bold">•</span>
-                    <span className="text-nesso-ink/90">Schedule <strong className="text-nesso-navy">{clientsDisplay} clients per week</strong>*</span>
-                  </div>
-                </div>
-                <p className="text-xs text-nesso-ink/60 mt-3 italic">
-                  *Accounting for {cancellationsPerWeek} expected cancellations/no-shows
-                </p>
 
-                {/* Summary Box */}
-                <div className="mt-4 bg-nesso-sand/20 rounded-lg p-3 border border-nesso-navy/10">
-                  <p className="text-xs font-medium text-nesso-ink/70 mb-2">Following this plan means:</p>
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-base">📊</span>
-                      <span className="text-nesso-ink/90"><strong className="text-nesso-navy">{results.breakdown.totalHours} hours</strong> of work per week</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-base">💵</span>
-                      <span className="text-nesso-ink/90"><strong className="text-nesso-navy">{monthlyIncomeDisplay}</strong> in monthly revenue</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Session Fee Widget */}
+                  <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
+                    <div className="text-xs text-nesso-ink/60 mb-1">Session Fee</div>
+                    <div className="text-2xl font-bold text-nesso-navy">{sessionFeeDisplay}</div>
+                  </div>
+
+                  {/* Scheduled Clients Widget */}
+                  <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
+                    <div className="text-xs text-nesso-ink/60 mb-1">Scheduled Clients Per Week</div>
+                    <div className="text-2xl font-bold text-nesso-navy">{clientsDisplay}</div>
+                    <p className="text-xs text-nesso-ink/60 mt-2 italic">
+                      *Assuming {cancellationRate}% of these will cancel
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Your Week Breakdown Section */}
               <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
-                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Week Breakdown</h3>
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here's What Your Week Would Look Like</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-nesso-ink/70">Client Sessions ({Math.round(results.attendedSessionsPerWeek || 0)} sessions)</span>
-                    <span className="font-semibold text-nesso-navy">{results.breakdown.sessionHours}h</span>
+                    <span className="text-nesso-ink/70">Time with clients ({Math.round(results.attendedSessionsPerWeek || 0)} sessions)</span>
+                    <span className="font-semibold text-nesso-navy">{Math.ceil(results.breakdown.sessionHours)}h</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-nesso-ink/70">Documentation & Admin</span>
-                    <span className="font-semibold text-nesso-navy">{results.breakdown.docAndAdminHours}h</span>
+                    <span className="text-nesso-ink/70">Time on documentation & admin tasks</span>
+                    <span className="font-semibold text-nesso-navy">~{Math.ceil(results.breakdown.docAndAdminHours)}h</span>
                   </div>
                   <div className="border-t border-nesso-navy/10 pt-2 mt-2"></div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-semibold text-nesso-ink">Total Work Hours</span>
-                    <span className="text-base font-bold text-nesso-navy">{results.breakdown.totalHours}h</span>
+                    <span className="text-base font-bold text-nesso-navy">~{Math.ceil(results.breakdown.sessionHours) + Math.ceil(results.breakdown.docAndAdminHours)}h</span>
                   </div>
                 </div>
               </div>

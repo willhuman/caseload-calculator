@@ -436,7 +436,7 @@ export interface GoalBasedInputs {
   weeklyHours: number;
   sessionMinutes?: number; // Default: 50
   docAndAdminMinutesPerClient?: number; // Default: 20
-  cancellationsPerWeek?: number; // Default: 3
+  cancellationRate?: number; // Default: 0.10 (10%)
 }
 
 export interface GoalBasedResults {
@@ -463,7 +463,7 @@ export function calculateGoalBasedPlan(inputs: GoalBasedInputs): GoalBasedResult
   // Apply defaults
   const sessionMinutes = inputs.sessionMinutes ?? DEFAULT_SESSION_MINUTES;
   const docAndAdminMinutesPerClient = inputs.docAndAdminMinutesPerClient ?? DEFAULT_DOC_AND_ADMIN_MINUTES_PER_CLIENT;
-  const cancellationsPerWeek = inputs.cancellationsPerWeek ?? DEFAULT_CANCELLATIONS_PER_WEEK;
+  const cancellationRate = inputs.cancellationRate ?? DEFAULT_CANCELLATION_RATE;
 
   const { monthlyIncome, weeklyHours } = inputs;
 
@@ -492,8 +492,8 @@ export function calculateGoalBasedPlan(inputs: GoalBasedInputs): GoalBasedResult
   // 5. Round UP to whole number of sessions to ensure income goal is met
   const requiredSessionsPerWeek = Math.ceil(exactSessionsNeededPerWeek);
 
-  // 6. Add cancellations to get scheduled sessions (whole number)
-  const requiredScheduledSessionsPerWeek = requiredSessionsPerWeek + cancellationsPerWeek;
+  // 6. Account for cancellations - need to schedule more to get required attended sessions
+  const requiredScheduledSessionsPerWeek = Math.ceil(requiredSessionsPerWeek / (1 - cancellationRate));
 
   // 7. Calculate exact hours based on whole number of attended sessions
   const actualSessionHours = requiredSessionsPerWeek * sessionHours;
