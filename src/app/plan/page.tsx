@@ -146,12 +146,16 @@ export default function PlanPage() {
 
               {/* Hours Slider */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <span className="text-lg">⏰</span>
-                    Weekly work hours (Clients + Notes + Admin)
+                    <span>
+                      Weekly work hours
+                      <br className="md:hidden" />
+                      <span className="hidden md:inline"> </span>(Clients + Notes + Admin)
+                    </span>
                   </label>
-                  <div className="text-xl font-bold text-nesso-navy">
+                  <div className="text-xl font-bold text-nesso-navy whitespace-nowrap">
                     {weeklyHours} hrs
                   </div>
                 </div>
