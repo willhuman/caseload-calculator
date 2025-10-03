@@ -286,14 +286,20 @@ export default function PlanPage() {
                 <div className="grid grid-cols-2 gap-3">
                   {/* Session Fee Widget */}
                   <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
-                    <div className="text-xs text-nesso-ink/60 mb-1">Session Fee</div>
-                    <div className="text-2xl font-bold text-nesso-navy">{sessionFeeDisplay}</div>
+                    <div className="text-xs text-nesso-ink/60 mb-2">Charge</div>
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-2xl font-bold text-nesso-navy">{sessionFeeDisplay}</div>
+                      <div className="text-xs text-nesso-ink/60">Per session</div>
+                    </div>
                   </div>
 
                   {/* Scheduled Clients Widget */}
                   <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
-                    <div className="text-xs text-nesso-ink/60 mb-1">Scheduled Clients Per Week</div>
-                    <div className="text-2xl font-bold text-nesso-navy">{clientsDisplay}</div>
+                    <div className="text-xs text-nesso-ink/60 mb-2">Schedule</div>
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-2xl font-bold text-nesso-navy">{clientsDisplay}</div>
+                      <div className="text-xs text-nesso-ink/60">Clients per week</div>
+                    </div>
                     <p className="text-xs text-nesso-ink/60 mt-2 italic">
                       *Assuming {cancellationRate}% of these will cancel
                     </p>
@@ -303,7 +309,7 @@ export default function PlanPage() {
 
               {/* Your Week Breakdown Section */}
               <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
-                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here&apos;s What Your Week Would Look Like</h3>
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here&apos;s What Your Week Will Look Like</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-nesso-ink/70">Time with clients ({Math.round(results.attendedSessionsPerWeek || 0)} sessions)</span>
@@ -332,7 +338,7 @@ export default function PlanPage() {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   variant="outline"
-                  className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
+                  className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/40 hover:border-nesso-navy/30 hover:text-nesso-ink transition-colors"
                 >
                   ← Start over
                 </Button>
