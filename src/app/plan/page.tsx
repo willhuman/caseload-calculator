@@ -23,6 +23,7 @@ export default function PlanPage() {
   const [results, setResults] = useState<GoalBasedResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
@@ -197,7 +198,7 @@ export default function PlanPage() {
               {/* Cancellation Rate */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate (10% is standard in most cases)</label>
+                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate (10% is common)</label>
                   <span className="text-xs font-semibold text-nesso-navy">{cancellationRate}%</span>
                 </div>
                 <Slider
@@ -331,24 +332,84 @@ export default function PlanPage() {
                 </div>
               </div>
 
-              {/* Start Over Button */}
-              <div className="pt-2">
-                <Button
-                  onClick={() => {
-                    setHasCalculated(false);
-                    setResults(null);
-                    setShowResults(false);
-                    // Scroll back to top smoothly
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  variant="outline"
-                  className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/40 hover:border-nesso-navy/30 hover:text-nesso-ink transition-colors"
-                >
-                  ← Start over
-                </Button>
+              {/* CTAs */}
+              <div className="space-y-3 pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => {
+                      // Scroll back to top smoothly
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    variant="outline"
+                    className="w-full py-2 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/40 hover:border-nesso-navy/30 hover:text-nesso-ink transition-colors"
+                  >
+                    Update my plan
+                  </Button>
+                  <Button
+                    onClick={() => setShowEmailModal(true)}
+                    className="w-full py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
+                  >
+                    Email me my plan
+                  </Button>
+                </div>
+              </div>
+
+              {/* Nesso Mission Footer */}
+              <div className="pt-4 border-t border-nesso-navy/10 mt-6">
+                <p className="text-xs text-center text-nesso-ink/60">
+                  This calculator is part of Nesso&apos;s mission to help therapists build sustainable practices.{' '}
+                  <a
+                    href="https://nessoapp.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-nesso-navy hover:underline font-medium"
+                  >
+                    Learn more.
+                  </a>
+                </p>
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Email Modal */}
+        {showEmailModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowEmailModal(false)}>
+            <div className="bg-white rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-lg font-semibold text-nesso-ink mb-4">Email Your Plan</h3>
+              <p className="text-sm text-nesso-ink/70 mb-4">
+                Enter your email to receive your personalized caseload plan and learn how Nesso can help you build a sustainable practice.
+              </p>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                // TODO: Implement email submission
+                setShowEmailModal(false);
+              }}>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                  className="w-full px-4 py-2 border border-nesso-navy/20 rounded-lg mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-nesso-coral"
+                />
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => setShowEmailModal(false)}
+                    variant="outline"
+                    className="flex-1 py-2 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1 py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
+                  >
+                    Send Plan
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </main>
 
