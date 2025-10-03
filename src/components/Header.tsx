@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export function Header() {
   return (
-    <header className="w-full bg-nesso-card border-b border-black/5">
+    <header className="w-full">
       <div className="container mx-auto max-w-4xl px-4 py-4 md:py-8">
         {/* Centered stack layout */}
         <div className="text-center space-y-2 md:space-y-3">

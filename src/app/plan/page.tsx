@@ -415,17 +415,19 @@ export default function PlanPage() {
         )}
       </main>
 
-      <footer className="bg-nesso-card border-t border-black/5 py-8">
+      <footer className="py-8">
         <div className="container mx-auto max-w-6xl px-4">
-          <div className="flex justify-center items-center space-x-8 text-sm">
-            <a href="/privacy" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
-              Privacy
-            </a>
-            <a href="/terms" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
-              Terms
-            </a>
-            <div className="text-nesso-ink/50">
-              © 2025 Nesso Labs, Inc
+          <div className="bg-white rounded-lg py-6 px-4">
+            <div className="flex justify-center items-center space-x-8 text-sm">
+              <a href="/privacy" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
+                Privacy
+              </a>
+              <a href="/terms" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
+                Terms
+              </a>
+              <div className="text-nesso-ink/50">
+                © 2025 Nesso Labs, Inc
+              </div>
             </div>
           </div>
         </div>
