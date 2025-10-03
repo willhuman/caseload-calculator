@@ -1,203 +1,282 @@
 'use client';
 
-import { Suspense, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { SustainabilityIndicator } from '@/components/SustainabilityIndicator';
+import { calculateGoalBasedPlan, formatCurrency, formatRange, type GoalBasedResults } from '@/lib/calculations';
+import { trackEvent } from '@/lib/analytics';
 
-interface FormData {
-  monthlyIncome: string;
-  weeklyHours: string;
-}
+export default function PlanPage() {
+  // Input state
+  const [monthlyIncome, setMonthlyIncome] = useState(9000);
+  const [weeklyHours, setWeeklyHours] = useState(32);
 
-interface ValidationErrors {
-  monthlyIncome?: string;
-  weeklyHours?: string;
-}
+  // Assumptions state
+  const [sessionMinutes, setSessionMinutes] = useState(50);
+  const [cancellationRate, setCancellationRate] = useState(10);
+  const [docAndAdminMinutes, setDocAndAdminMinutes] = useState(20);
 
-function PlanPageContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  // UI state
+  const [hasCalculated, setHasCalculated] = useState(false);
+  const [results, setResults] = useState<GoalBasedResults | null>(null);
+  const [showAssumptions, setShowAssumptions] = useState(false);
 
-  // Initialize from URL params if present
-  const [formData, setFormData] = useState<FormData>({
-    monthlyIncome: searchParams.get('income') ? `$${parseFloat(searchParams.get('income') || '0').toLocaleString()}` : '',
-    weeklyHours: searchParams.get('hours') || ''
-  });
-
-  const [errors, setErrors] = useState<ValidationErrors>({});
-
-  // Currency formatting
-  const formatCurrency = (value: string): string => {
-    const digits = value.replace(/\D/g, '');
-    if (!digits) return '';
-    const number = parseInt(digits, 10);
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(number);
-  };
-
-  const parseCurrency = (value: string): number => {
-    const digits = value.replace(/\D/g, '');
-    return parseInt(digits, 10) || 0;
-  };
-
-  const parseHours = (value: string): number => {
-    const digits = value.replace(/\D/g, '');
-    return parseInt(digits, 10) || 0;
-  };
-
-  const validateField = (name: keyof FormData, value: string): string | undefined => {
-    const trimmedValue = value.trim();
-
-    switch (name) {
-      case 'monthlyIncome':
-        if (!trimmedValue) return 'Monthly income is required';
-        const income = parseCurrency(trimmedValue);
-        if (income <= 0) return 'Monthly income must be greater than 0';
-        if (income < 1000) return 'Monthly income seems low - please check';
-        break;
-      case 'weeklyHours':
-        if (!trimmedValue) return 'Weekly hours is required';
-        const hours = parseHours(trimmedValue);
-        if (hours <= 0) return 'Weekly hours must be greater than 0';
-        if (hours > 80) return 'Weekly hours seems very high - please check';
-        break;
+  // Calculate results whenever inputs change (but only show after initial calculate)
+  useEffect(() => {
+    if (hasCalculated) {
+      const newResults = calculateGoalBasedPlan({
+        monthlyIncome,
+        weeklyHours,
+        sessionMinutes,
+        docAndAdminMinutesPerClient: docAndAdminMinutes,
+        cancellationRate: cancellationRate / 100
+      });
+      setResults(newResults);
     }
-    return undefined;
-  };
+  }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationRate, hasCalculated]);
 
-  const validateAllFields = (): boolean => {
-    const newErrors: ValidationErrors = {};
-    let isValid = true;
-
-    (Object.keys(formData) as Array<keyof FormData>).forEach(key => {
-      const error = validateField(key, formData[key]);
-      if (error) {
-        newErrors[key] = error;
-        isValid = false;
-      }
+  const handleCalculate = () => {
+    const calculatedResults = calculateGoalBasedPlan({
+      monthlyIncome,
+      weeklyHours,
+      sessionMinutes,
+      docAndAdminMinutesPerClient: docAndAdminMinutes,
+      cancellationRate: cancellationRate / 100
     });
+    setResults(calculatedResults);
+    setHasCalculated(true);
 
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    if (name === 'monthlyIncome') {
-      const formatted = formatCurrency(value);
-      setFormData(prev => ({ ...prev, [name]: formatted }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
-
-    // Clear error when user starts typing
-    if (errors[name as keyof FormData]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateAllFields()) {
-      return;
-    }
-
-    const income = parseCurrency(formData.monthlyIncome);
-    const hours = parseHours(formData.weeklyHours);
-
-    // Navigate to review page with goals
-    const params = new URLSearchParams({
-      income: income.toString(),
-      hours: hours.toString()
+    // Track analytics
+    trackEvent('calculator_calculated', {
+      monthlyIncome,
+      weeklyHours,
+      sessionFee: calculatedResults.sessionFee,
+      clientsPerWeek: calculatedResults.clientsPerWeek
     });
-
-    router.push(`/review?${params.toString()}`);
   };
+
+  const monthlyIncomeDisplay = formatCurrency(monthlyIncome);
+  const sessionFeeDisplay = results ? formatCurrency(results.sessionFee) : '$0';
+  const clientsDisplay = results ? formatRange(results.clientsPerWeekRange.low, results.clientsPerWeekRange.high) : '0';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-nesso-sand/30 to-white">
       <Header />
 
-      <main className="max-w-xl mx-auto px-4 pt-8 pb-16">
+      <main className="max-w-2xl mx-auto px-4 pt-8 pb-16">
         {/* Hero Section */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-nesso-ink mb-3">
-            What are your goals?
+        <div className="text-center mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-nesso-ink mb-2">
+            Time and Money Goals
           </h1>
-          <p className="text-base text-nesso-ink/70">
+          <p className="text-sm text-nesso-ink/70">
             Tell us what you want, and we&apos;ll show you what it takes.
           </p>
         </div>
 
-        {/* Form Card */}
+        {/* Main Card */}
         <Card className="border border-nesso-navy/10 shadow-sm">
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Monthly Income */}
-              <div className="space-y-2">
-                <Label htmlFor="monthlyIncome" className="text-sm font-medium flex items-center gap-2">
-                  <span className="text-xl">💰</span>
+          <CardContent className="p-5 md:p-6 space-y-6">
+            {/* Income Slider */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <span className="text-lg">💰</span>
                   Monthly income goal
-                </Label>
-                <Input
-                  id="monthlyIncome"
-                  name="monthlyIncome"
-                  type="text"
-                  placeholder="$8,000"
-                  value={formData.monthlyIncome}
-                  onChange={handleChange}
-                  className={`text-lg py-5 placeholder:text-gray-400 ${errors.monthlyIncome ? 'border-red-500' : ''}`}
-                />
-                {errors.monthlyIncome && (
-                  <p className="text-sm text-red-600">{errors.monthlyIncome}</p>
-                )}
-              </div>
-
-              {/* Weekly Hours */}
-              <div className="space-y-2">
-                <Label htmlFor="weeklyHours" className="text-sm font-medium flex items-center gap-2">
-                  <span className="text-xl">⏰</span>
-                  Weekly hours goal
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="weeklyHours"
-                    name="weeklyHours"
-                    type="number"
-                    placeholder="30"
-                    value={formData.weeklyHours}
-                    onChange={handleChange}
-                    className={`text-lg py-5 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${errors.weeklyHours ? 'border-red-500' : ''}`}
-                    min="1"
-                    max="80"
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-nesso-ink/50 text-sm">
-                    hours
-                  </span>
+                </label>
+                <div className="text-xl font-bold text-nesso-navy">
+                  {monthlyIncomeDisplay}
                 </div>
-                {errors.weeklyHours && (
-                  <p className="text-sm text-red-600">{errors.weeklyHours}</p>
-                )}
               </div>
+              <Slider
+                value={[monthlyIncome]}
+                onValueChange={(value) => setMonthlyIncome(value[0])}
+                min={3000}
+                max={15000}
+                step={100}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-nesso-ink/50">
+                <span>$3,000</span>
+                <span>$15,000</span>
+              </div>
+            </div>
 
-              {/* Submit Button */}
+            {/* Hours Slider */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <span className="text-lg">⏰</span>
+                  Weekly hours goal
+                </label>
+                <div className="text-xl font-bold text-nesso-navy">
+                  {weeklyHours} hrs
+                </div>
+              </div>
+              <Slider
+                value={[weeklyHours]}
+                onValueChange={(value) => setWeeklyHours(value[0])}
+                min={15}
+                max={50}
+                step={1}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-nesso-ink/50">
+                <span>15 hours</span>
+                <span>50 hours</span>
+              </div>
+            </div>
+
+            {/* Calculate Button (shown only before first calculation) */}
+            {!hasCalculated && (
               <Button
-                type="submit"
-                className="w-full py-5 text-base bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors"
+                onClick={handleCalculate}
+                className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors"
               >
                 Calculate my plan →
               </Button>
-            </form>
+            )}
+
+            {/* Results (shown after calculation) */}
+            {hasCalculated && results && (
+              <div className="space-y-6 pt-4 border-t border-nesso-navy/10">
+                {/* Big Numbers */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Session Fee */}
+                  <div className="text-center space-y-1">
+                    <div className="text-xs text-nesso-ink/60">Session Fee</div>
+                    <div className="text-3xl font-bold text-nesso-navy">{sessionFeeDisplay}</div>
+                  </div>
+
+                  {/* Clients Per Week */}
+                  <div className="text-center space-y-1">
+                    <div className="text-xs text-nesso-ink/60">Clients Per Week</div>
+                    <div className="text-3xl font-bold text-nesso-navy">{clientsDisplay}</div>
+                  </div>
+                </div>
+
+                {/* Explanation Text */}
+                <div className="bg-white/50 rounded-lg p-4 border border-nesso-navy/5 space-y-3">
+                  <p className="text-sm text-nesso-ink/90 leading-relaxed">
+                    To achieve your goal of <strong>{monthlyIncomeDisplay}</strong> per month working a maximum of <strong>{weeklyHours} hours per week</strong>, you need to charge <strong>{sessionFeeDisplay}</strong> per session and schedule <strong>{clientsDisplay} clients per week</strong>.
+                  </p>
+
+                  {/* Industry Standards - Collapsible */}
+                  <div className="border-t border-nesso-navy/10 pt-3">
+                    <button
+                      onClick={() => setShowAssumptions(!showAssumptions)}
+                      className="flex items-center justify-between w-full text-left group"
+                    >
+                      <span className="text-xs font-medium text-nesso-ink/80 group-hover:text-nesso-navy transition-colors">
+                        Industry-standard assumptions
+                      </span>
+                      <span className="text-nesso-ink/40 text-xs">
+                        {showAssumptions ? '▼' : '▶'}
+                      </span>
+                    </button>
+
+                    {showAssumptions && (
+                      <div className="mt-3 space-y-3">
+                        <p className="text-xs text-nesso-ink/60 leading-relaxed">
+                          We&apos;re taking into account the following industry-standard assumptions to make this calculation:
+                        </p>
+
+                        {/* Session Length */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-medium text-nesso-ink/70">Session length (minutes)</label>
+                            <span className="text-xs font-semibold text-nesso-navy">{sessionMinutes} min</span>
+                          </div>
+                          <Slider
+                            value={[sessionMinutes]}
+                            onValueChange={(value) => setSessionMinutes(value[0])}
+                            min={30}
+                            max={90}
+                            step={5}
+                            className="w-full"
+                          />
+                        </div>
+
+                        {/* Cancellation Rate */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate</label>
+                            <span className="text-xs font-semibold text-nesso-navy">{cancellationRate}%</span>
+                          </div>
+                          <Slider
+                            value={[cancellationRate]}
+                            onValueChange={(value) => setCancellationRate(value[0])}
+                            min={0}
+                            max={30}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+
+                        {/* Doc & Admin Time */}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-medium text-nesso-ink/70">Documentation & admin time per client (minutes/week)</label>
+                            <span className="text-xs font-semibold text-nesso-navy">{docAndAdminMinutes} min</span>
+                          </div>
+                          <Slider
+                            value={[docAndAdminMinutes]}
+                            onValueChange={(value) => setDocAndAdminMinutes(value[0])}
+                            min={5}
+                            max={60}
+                            step={5}
+                            className="w-full"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Week Breakdown */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-nesso-ink">Here&apos;s what it takes</h3>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center py-1.5 border-b border-nesso-navy/10">
+                      <span className="text-xs text-nesso-ink/70">Client sessions</span>
+                      <span className="text-xs font-medium text-nesso-navy">{results.breakdown.sessionHours}h</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-nesso-navy/10">
+                      <span className="text-xs text-nesso-ink/70">Documentation & admin</span>
+                      <span className="text-xs font-medium text-nesso-navy">{results.breakdown.docAndAdminHours}h</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 pt-2">
+                      <span className="text-sm font-semibold text-nesso-ink">Total hours</span>
+                      <span className="text-sm font-bold text-nesso-navy">{results.breakdown.totalHours}h</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sustainability Indicator */}
+                <SustainabilityIndicator
+                  status={results.sustainability}
+                  message={results.sustainabilityMessage}
+                />
+
+                {/* Start Over Button */}
+                <div className="pt-3 border-t border-nesso-navy/10">
+                  <Button
+                    onClick={() => {
+                      setHasCalculated(false);
+                      setResults(null);
+                      setShowAssumptions(false);
+                    }}
+                    variant="outline"
+                    className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
+                  >
+                    ← Start over
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>
@@ -220,13 +299,5 @@ function PlanPageContent() {
         </div>
       </footer>
     </div>
-  );
-}
-
-export default function PlanPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-      <PlanPageContent />
-    </Suspense>
   );
 }
