@@ -283,7 +283,7 @@ export default function PlanPage() {
               <div className="space-y-3">
                 <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Plan</h3>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {/* Session Fee Widget */}
                   <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
                     <div className="text-xs text-nesso-ink/60 mb-2">Charge</div>
