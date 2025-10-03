@@ -24,6 +24,9 @@ export default function PlanPage() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [showToast, setShowToast] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
@@ -104,6 +107,43 @@ export default function PlanPage() {
     }, 1400);
   };
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+
+    if (email.toLowerCase().endsWith('@icloud.com')) {
+      setEmailError('iCloud email addresses are not accepted');
+      return false;
+    }
+
+    setEmailError('');
+    return true;
+  };
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateEmail(email)) {
+      return;
+    }
+
+    // TODO: Implement actual email submission
+
+    // Show success toast
+    setShowEmailModal(false);
+    setShowToast(true);
+    setEmail('');
+
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
   const monthlyIncomeDisplay = formatCurrency(monthlyIncome);
   const sessionFeeDisplay = results ? formatCurrency(results.sessionFee) : '$0';
   const clientsDisplay = results ? results.clientsPerWeekRange.high.toString() : '0';
@@ -153,7 +193,7 @@ export default function PlanPage() {
                     <span>
                       Weekly work hours
                       <br className="md:hidden" />
-                      <span className="hidden md:inline"> </span>(Clients + Notes + Admin)
+                      <span className="hidden md:inline"> </span>(sessions + notes + admin)
                     </span>
                   </label>
                   <div className="text-xl font-bold text-nesso-navy whitespace-nowrap">
@@ -235,7 +275,7 @@ export default function PlanPage() {
                 disabled={isCalculating}
                 className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Calculate my plan →
+                Calculate my plan
               </Button>
             )}
           </CardContent>
@@ -357,12 +397,14 @@ export default function PlanPage() {
               {/* Nesso Mission Footer */}
               <div className="pt-3 border-t border-nesso-navy/10 mt-3">
                 <p className="text-xs text-center text-nesso-ink/60">
-                  At Nesso, we stand for small private practices.{' '}
+                  At Nesso, we stand for small private practices.
+                  <br className="md:hidden" />
+                  <span className="hidden md:inline"> </span>
                   <a
                     href="https://www.nessoapp.com/about"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-nesso-navy hover:underline font-medium"
+                    className="text-nesso-navy underline hover:no-underline font-medium"
                   >
                     Learn why
                   </a>
@@ -382,17 +424,23 @@ export default function PlanPage() {
                 <br /><br />
                 We&apos;ll also send occasional updates with tools and insights made for therapists like you.
               </p>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                // TODO: Implement email submission
-                setShowEmailModal(false);
-              }}>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  required
-                  className="w-full px-4 py-2 border border-nesso-navy/20 rounded-lg mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-nesso-coral"
-                />
+              <form onSubmit={handleEmailSubmit}>
+                <div className="mb-4">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError('');
+                    }}
+                    required
+                    className="w-full px-4 py-2 border border-nesso-navy/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-nesso-coral"
+                  />
+                  {emailError && (
+                    <p className="text-xs text-red-600 mt-1">{emailError}</p>
+                  )}
+                </div>
                 <div className="flex gap-3">
                   <Button
                     type="button"
@@ -411,6 +459,13 @@ export default function PlanPage() {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+
+        {/* Success Toast */}
+        {showToast && (
+          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-nesso-navy text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
+            <p className="text-sm font-medium">✓ Your plan has been sent to your email!</p>
           </div>
         )}
       </main>
