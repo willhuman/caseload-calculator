@@ -254,7 +254,7 @@ export default function PlanPage() {
               {/* Doc & Admin Time */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-nesso-ink/70">Documentation & admin time per client (minutes/week)</label>
+                  <label className="text-xs font-medium text-nesso-ink/70">Documentation & admin time per session</label>
                   <span className="text-xs font-semibold text-nesso-navy">{docAndAdminMinutes} min</span>
                 </div>
                 <Slider
@@ -346,7 +346,7 @@ export default function PlanPage() {
                       <div className="text-xs text-nesso-ink/60">Clients per week</div>
                     </div>
                     <p className="text-xs text-nesso-ink/60 mt-2 italic">
-                      *Assuming {cancellationRate}% of these will cancel
+                      *Assuming {Math.round(results.clientsPerWeekRange.high * (cancellationRate / 100))} ({cancellationRate}%) of these will cancel
                     </p>
                   </div>
                 </div>
@@ -354,7 +354,7 @@ export default function PlanPage() {
 
               {/* Your Week Breakdown Section */}
               <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
-                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here&apos;s What Your Week Will Look Like</h3>
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here&apos;s what your weekly caseload will look like</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-nesso-ink/70">Time with clients ({Math.round(results.attendedSessionsPerWeek || 0)} sessions)</span>
