@@ -357,14 +357,14 @@ export default function PlanPage() {
               {/* Nesso Mission Footer */}
               <div className="pt-4 border-t border-nesso-navy/10 mt-6">
                 <p className="text-xs text-center text-nesso-ink/60">
-                  This calculator is part of Nesso&apos;s mission to help therapists build sustainable practices.{' '}
+                  At Nesso, we stand for small private practices.{' '}
                   <a
-                    href="https://nessoapp.com"
+                    href="https://www.nessoapp.com/about"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-nesso-navy hover:underline font-medium"
                   >
-                    Learn more.
+                    Learn why
                   </a>
                 </p>
               </div>
@@ -376,9 +376,10 @@ export default function PlanPage() {
         {showEmailModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowEmailModal(false)}>
             <div className="bg-white rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-lg font-semibold text-nesso-ink mb-4">Email Your Plan</h3>
               <p className="text-sm text-nesso-ink/70 mb-4">
-                Enter your email to receive your personalized caseload plan and learn how Nesso can help you build a sustainable practice.
+                Get your personalized caseload plan delivered to your inbox.
+                <br /><br />
+                We&apos;ll also send occasional updates with tools and insights made for therapists like you.
               </p>
               <form onSubmit={(e) => {
                 e.preventDefault();
@@ -404,7 +405,7 @@ export default function PlanPage() {
                     type="submit"
                     className="flex-1 py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
                   >
-                    Send Plan
+                    Send My Plan
                   </Button>
                 </div>
               </form>
