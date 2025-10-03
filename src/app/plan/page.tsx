@@ -174,9 +174,9 @@ export default function PlanPage() {
               </div>
             </div>
 
-            {/* Additional Info Section */}
+            {/* Assumptions Section */}
             <div className="space-y-4 border-t border-nesso-navy/10 pt-6">
-              <h2 className="text-lg font-semibold text-nesso-ink">Additional Info</h2>
+              <h2 className="text-lg font-semibold text-nesso-ink">Assumptions</h2>
 
               {/* Session Length */}
               <div className="space-y-1.5">
@@ -197,7 +197,7 @@ export default function PlanPage() {
               {/* Cancellation Rate */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate</label>
+                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate (10% is fairly typical)</label>
                   <span className="text-xs font-semibold text-nesso-navy">{cancellationRate}%</span>
                 </div>
                 <Slider
@@ -321,12 +321,12 @@ export default function PlanPage() {
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-nesso-ink/70">Time on documentation & admin tasks</span>
-                    <span className="font-semibold text-nesso-navy">{Math.ceil(results.breakdown.docAndAdminHours) === 0 ? '0' : `~${Math.ceil(results.breakdown.docAndAdminHours)}`}h</span>
+                    <span className="font-semibold text-nesso-navy">{Math.ceil(results.breakdown.docAndAdminHours)}h</span>
                   </div>
                   <div className="border-t border-nesso-navy/10 pt-2 mt-2"></div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-semibold text-nesso-ink">Total Work Hours</span>
-                    <span className="text-base font-bold text-nesso-navy">{Math.ceil(results.breakdown.docAndAdminHours) === 0 ? Math.ceil(results.breakdown.sessionHours) : `~${Math.ceil(results.breakdown.sessionHours) + Math.ceil(results.breakdown.docAndAdminHours)}`}h</span>
+                    <span className="text-base font-bold text-nesso-navy">{Math.ceil(results.breakdown.sessionHours) + Math.ceil(results.breakdown.docAndAdminHours)}h</span>
                   </div>
                 </div>
               </div>
