@@ -50,11 +50,15 @@ export default function PlanPage() {
     setHasCalculated(true);
 
     // Track analytics
-    trackEvent('calculator_calculated', {
-      monthlyIncome,
-      weeklyHours,
-      sessionFee: calculatedResults.sessionFee,
-      clientsPerWeek: calculatedResults.clientsPerWeek
+    trackEvent({
+      action: 'calculator_calculated',
+      category: 'goal_based_calculator',
+      data: {
+        monthlyIncome,
+        weeklyHours,
+        sessionFee: calculatedResults.sessionFee,
+        clientsPerWeek: calculatedResults.clientsPerWeek
+      }
     });
   };
 

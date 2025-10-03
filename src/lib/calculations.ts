@@ -46,8 +46,9 @@ export interface CalculationResults {
 // Constants
 const WEEKS_PER_MONTH = 4.33;
 const AVERAGE_SESSION_LENGTH_HOURS = 50 / 60; // 50 minutes = 0.833 hours
-const DEFAULT_ADMIN_HOURS = 6;
-const DEFAULT_DOCUMENTATION_MINUTES = 20;
+const DEFAULT_DOC_AND_ADMIN_MINUTES_PER_CLIENT = 20; // Combined documentation + admin time per client
+const DEFAULT_DOCUMENTATION_MINUTES = 20; // Documentation minutes per client
+const DEFAULT_ADMIN_HOURS = 6; // Weekly admin hours
 const DEFAULT_CANCELLATION_RATE = 0.10; // 10%
 const DEFAULT_SESSION_MINUTES = 50; // 50-minute sessions
 const HEALTHY_HOURS_THRESHOLD = 34; // Default healthy weekly hours threshold
@@ -426,40 +427,125 @@ export function calculateRealityPlan(inputs: RealityPlanInputs): RealityPlanResu
 }
 
 /**
- * Calculate optimal starting session fee given time and money goals
- * This gives them a reasonable starting point for the slider
+ * NEW APPROACH: Calculate what's needed to meet income and hours goals
+ * This is the main function for the new single-page calculator
  */
-export function calculateOptimalSessionFee(
-  monthlyIncome: number,
-  weeklyHours: number,
-  adminHours: number = DEFAULT_ADMIN_HOURS,
-  documentationMinutesPerClient: number = DEFAULT_DOCUMENTATION_MINUTES,
-  cancellationRate: number = DEFAULT_CANCELLATION_RATE
-): number {
-  // Available hours for client work (excluding admin)
-  const availableHours = weeklyHours - adminHours;
+export interface GoalBasedInputs {
+  monthlyIncome: number;
+  weeklyHours: number;
+  sessionMinutes?: number; // Default: 50
+  docAndAdminMinutesPerClient?: number; // Default: 20
+  cancellationRate?: number; // Default: 0.10
+}
 
-  // We need to solve: totalHours = sessionHours + docHours + adminHours <= weeklyHours
-  // Where: sessionHours = sessions * 1 hour
-  //        docHours = sessions * (docMinutes / 60)
-  //        sessions = (monthlyIncome / sessionFee) / 4.33 / (1 - cancellationRate)
+export interface GoalBasedResults {
+  // What they need to do
+  sessionFee: number;
+  clientsPerWeek: number;
+  clientsPerWeekRange: { low: number; high: number };
 
-  // Start with a reasonable estimate and iterate
-  // Assume sessions take: 1 hour + (docMinutes/60) per client
-  const hoursPerClient = 1 + (documentationMinutesPerClient / 60);
+  // Breakdown of their week
+  breakdown: {
+    sessionHours: number;
+    docAndAdminHours: number;
+    totalHours: number;
+  };
 
-  // Max sessions we can fit in available hours
-  const maxSessionsPerWeek = availableHours / hoursPerClient;
+  // Sustainability check
+  meetsGoal: boolean;
+  sustainability: 'sustainable' | 'challenging' | 'room-to-grow';
+  sustainabilityMessage: string;
+}
 
-  // Account for cancellations
-  const attendedSessionsPerWeek = maxSessionsPerWeek * (1 - cancellationRate);
+export function calculateGoalBasedPlan(inputs: GoalBasedInputs): GoalBasedResults {
+  // Apply defaults
+  const sessionMinutes = inputs.sessionMinutes ?? DEFAULT_SESSION_MINUTES;
+  const docAndAdminMinutesPerClient = inputs.docAndAdminMinutesPerClient ?? DEFAULT_DOC_AND_ADMIN_MINUTES_PER_CLIENT;
+  const cancellationRate = inputs.cancellationRate ?? DEFAULT_CANCELLATION_RATE;
 
-  // Sessions needed per month
-  const sessionsPerMonth = attendedSessionsPerWeek * WEEKS_PER_MONTH;
+  const { monthlyIncome, weeklyHours } = inputs;
 
-  // Session fee needed
-  const optimalFee = monthlyIncome / sessionsPerMonth;
+  // Calculate hours per client (session + doc/admin)
+  const sessionHours = sessionMinutes / 60;
+  const docAndAdminHours = docAndAdminMinutesPerClient / 60;
+  const hoursPerClient = sessionHours + docAndAdminHours;
 
-  // Round to clean amount
-  return roundToCleanFee(optimalFee);
+  // Strategy: Recommend using AS CLOSE TO their maximum hours as possible
+  // Calculate the maximum number of scheduled clients they can handle
+  const maxScheduledClients = weeklyHours / hoursPerClient;
+  const maxAttendedSessions = maxScheduledClients * (1 - cancellationRate);
+
+  // Calculate the session fee needed if they work close to maximum hours
+  const maxSessionsPerMonth = maxAttendedSessions * WEEKS_PER_MONTH;
+  let calculatedSessionFee = monthlyIncome / maxSessionsPerMonth;
+
+  // Round DOWN to a clean fee (to ensure they need more clients, not fewer)
+  // This keeps them closer to their time goal
+  let sessionFee = Math.floor(calculatedSessionFee / 5) * 5;
+  if (sessionFee < 50) sessionFee = 50; // Minimum reasonable fee
+
+  // Calculate how many clients they need with this fee
+  let requiredSessionsPerMonth = monthlyIncome / sessionFee;
+  let requiredSessionsPerWeek = requiredSessionsPerMonth / WEEKS_PER_MONTH;
+  let requiredScheduledSessionsPerWeek = requiredSessionsPerWeek / (1 - cancellationRate);
+
+  // Calculate hours with this approach
+  let actualSessionHours = requiredSessionsPerWeek * sessionHours;
+  let actualDocAndAdminHours = requiredSessionsPerWeek * docAndAdminHours;
+  let totalHours = actualSessionHours + actualDocAndAdminHours;
+
+  // If this puts us over the time limit, we need to increase the fee
+  if (totalHours > weeklyHours) {
+    // Recalculate with the minimum fee needed
+    calculatedSessionFee = monthlyIncome / maxSessionsPerMonth;
+    sessionFee = roundToCleanFee(calculatedSessionFee);
+    requiredSessionsPerMonth = monthlyIncome / sessionFee;
+    requiredSessionsPerWeek = requiredSessionsPerMonth / WEEKS_PER_MONTH;
+    requiredScheduledSessionsPerWeek = requiredSessionsPerWeek / (1 - cancellationRate);
+    actualSessionHours = requiredSessionsPerWeek * sessionHours;
+    actualDocAndAdminHours = requiredSessionsPerWeek * docAndAdminHours;
+    totalHours = actualSessionHours + actualDocAndAdminHours;
+  }
+
+  // Caseload range for display
+  const clientsPerWeekRange = getCaseloadRange(requiredScheduledSessionsPerWeek);
+
+  // Sustainability assessment
+  const meetsGoal = totalHours <= weeklyHours;
+  let sustainability: 'sustainable' | 'challenging' | 'room-to-grow';
+  let sustainabilityMessage: string;
+
+  if (meetsGoal) {
+    const hoursUtilization = totalHours / weeklyHours;
+    if (totalHours <= 40 && hoursUtilization >= 0.85) {
+      sustainability = 'sustainable';
+      sustainabilityMessage = `This feels manageable for most therapists and uses your available time efficiently.`;
+    } else if (totalHours <= 40) {
+      sustainability = 'sustainable';
+      sustainabilityMessage = `This feels manageable for most therapists and falls within your ${weeklyHours}-hour per week goal.`;
+    } else if (hoursUtilization >= 0.85) {
+      sustainability = 'sustainable';
+      sustainabilityMessage = `This uses your ${weeklyHours} hours efficiently to maximize your income goal.`;
+    } else {
+      sustainability = 'sustainable';
+      sustainabilityMessage = `This falls within your ${weeklyHours}-hour per week goal.`;
+    }
+  } else {
+    sustainability = 'challenging';
+    sustainabilityMessage = `This would require ${totalHours.toFixed(1)} hours per week, which exceeds your ${weeklyHours}-hour goal. Consider adjusting your goals.`;
+  }
+
+  return {
+    sessionFee,
+    clientsPerWeek: requiredScheduledSessionsPerWeek,
+    clientsPerWeekRange: { low: clientsPerWeekRange.low, high: clientsPerWeekRange.high },
+    breakdown: {
+      sessionHours: Math.round(actualSessionHours * 10) / 10,
+      docAndAdminHours: Math.round(actualDocAndAdminHours * 10) / 10,
+      totalHours: Math.round(totalHours * 10) / 10
+    },
+    meetsGoal,
+    sustainability,
+    sustainabilityMessage
+  };
 }
