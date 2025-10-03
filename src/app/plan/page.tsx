@@ -197,7 +197,7 @@ export default function PlanPage() {
               {/* Cancellation Rate */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate (10% is fairly typical)</label>
+                  <label className="text-xs font-medium text-nesso-ink/70">Cancellation rate (10% is standard in most cases)</label>
                   <span className="text-xs font-semibold text-nesso-navy">{cancellationRate}%</span>
                 </div>
                 <Slider
