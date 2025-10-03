@@ -398,7 +398,7 @@ export default function PlanPage() {
                     type="button"
                     onClick={() => setShowEmailModal(false)}
                     variant="outline"
-                    className="flex-1 py-2 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
+                    className="flex-1 py-2 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/40 hover:border-nesso-navy/30 hover:text-nesso-ink transition-colors"
                   >
                     Cancel
                   </Button>
