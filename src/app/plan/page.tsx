@@ -238,7 +238,7 @@ export default function PlanPage() {
 
                 {/* Week Breakdown */}
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-nesso-ink">Here&apos;s what it takes</h3>
+                  <h3 className="text-sm font-semibold text-nesso-ink">Here&apos;s what your week would look like</h3>
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-center py-1.5 border-b border-nesso-navy/10">
                       <span className="text-xs text-nesso-ink/70">Client sessions</span>
