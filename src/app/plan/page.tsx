@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,9 @@ export default function PlanPage() {
   // UI state
   const [hasCalculated, setHasCalculated] = useState(false);
   const [results, setResults] = useState<GoalBasedResults | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
   useEffect(() => {
@@ -37,6 +40,10 @@ export default function PlanPage() {
   }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationsPerWeek, hasCalculated]);
 
   const handleCalculate = () => {
+    setIsCalculating(true);
+    setShowResults(false);
+
+    // Calculate results
     const calculatedResults = calculateGoalBasedPlan({
       monthlyIncome,
       weeklyHours,
@@ -44,8 +51,6 @@ export default function PlanPage() {
       docAndAdminMinutesPerClient: docAndAdminMinutes,
       cancellationsPerWeek
     });
-    setResults(calculatedResults);
-    setHasCalculated(true);
 
     // Track analytics
     trackEvent({
@@ -58,6 +63,44 @@ export default function PlanPage() {
         clientsPerWeek: calculatedResults.clientsPerWeek
       }
     });
+
+    // Delayed reveal (1400ms for more anticipation)
+    setTimeout(() => {
+      setResults(calculatedResults);
+      setHasCalculated(true);
+      setIsCalculating(false);
+      setShowResults(true);
+
+      // Gradual smooth scroll to results after a brief moment for render
+      setTimeout(() => {
+        if (resultsRef.current) {
+          const targetPosition = resultsRef.current.getBoundingClientRect().top + window.pageYOffset - 100;
+          const startPosition = window.pageYOffset;
+          const distance = targetPosition - startPosition;
+          const duration = 1200; // Longer duration for slower scroll
+          let start: number | null = null;
+
+          const easeInOutCubic = (t: number): number => {
+            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+          };
+
+          const animation = (currentTime: number) => {
+            if (start === null) start = currentTime;
+            const timeElapsed = currentTime - start;
+            const progress = Math.min(timeElapsed / duration, 1);
+            const ease = easeInOutCubic(progress);
+
+            window.scrollTo(0, startPosition + distance * ease);
+
+            if (timeElapsed < duration) {
+              requestAnimationFrame(animation);
+            }
+          };
+
+          requestAnimationFrame(animation);
+        }
+      }, 150);
+    }, 1400);
   };
 
   const monthlyIncomeDisplay = formatCurrency(monthlyIncome);
@@ -184,7 +227,8 @@ export default function PlanPage() {
             {!hasCalculated && (
               <Button
                 onClick={handleCalculate}
-                className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors"
+                disabled={isCalculating}
+                className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Calculate my plan →
               </Button>
@@ -192,9 +236,30 @@ export default function PlanPage() {
           </CardContent>
         </Card>
 
+        {/* Loading State */}
+        {isCalculating && (
+          <Card className="border border-nesso-navy/10 shadow-sm animate-pulse">
+            <CardContent className="p-8 md:p-12">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="relative w-12 h-12">
+                  <div className="absolute inset-0 border-4 border-nesso-navy/20 rounded-full"></div>
+                  <div className="absolute inset-0 border-4 border-nesso-coral border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p className="text-sm font-medium text-nesso-ink/70">Calculating your plan...</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Results Card (shown after calculation) */}
-        {hasCalculated && results && (
-          <Card className="border border-nesso-navy/10 shadow-sm">
+        {hasCalculated && results && showResults && (
+          <Card
+            ref={resultsRef}
+            className="border border-nesso-navy/10 shadow-sm animate-fade-in"
+            style={{
+              animation: 'fadeIn 0.6s ease-out forwards'
+            }}
+          >
             <CardContent className="p-5 md:p-6 space-y-6">
               {/* Header */}
               <h2 className="text-xl font-bold text-nesso-ink">Caseload Plan</h2>
@@ -274,6 +339,9 @@ export default function PlanPage() {
                   onClick={() => {
                     setHasCalculated(false);
                     setResults(null);
+                    setShowResults(false);
+                    // Scroll back to top smoothly
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   variant="outline"
                   className="w-full py-2 text-xs border-nesso-navy/20 text-nesso-navy hover:bg-nesso-sand/30 transition-colors"
