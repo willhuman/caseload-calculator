@@ -5,7 +5,6 @@ import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { SustainabilityIndicator } from '@/components/SustainabilityIndicator';
 import { calculateGoalBasedPlan, formatCurrency, formatRange, type GoalBasedResults } from '@/lib/calculations';
 import { trackEvent } from '@/lib/analytics';
 
@@ -114,7 +113,7 @@ export default function PlanPage() {
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <span className="text-lg">⏰</span>
-                  Weekly hours goal
+                  Weekly hours (Clients + Notes + Admin)
                 </label>
                 <div className="text-xl font-bold text-nesso-navy">
                   {weeklyHours} hrs
@@ -165,7 +164,7 @@ export default function PlanPage() {
                 {/* Explanation Text */}
                 <div className="bg-white/50 rounded-lg p-4 border border-nesso-navy/5 space-y-3">
                   <p className="text-sm text-nesso-ink/90 leading-relaxed">
-                    To achieve your goal of <strong>{monthlyIncomeDisplay}</strong> per month working a maximum of <strong>{weeklyHours} hours per week</strong>, you need to charge <strong>{sessionFeeDisplay}</strong> per session and schedule <strong>{clientsDisplay} clients per week</strong>.
+                    To achieve your goal of <strong>{monthlyIncomeDisplay}</strong> per month working a maximum of <strong>{weeklyHours} hours per week</strong>, you need to charge <strong>{sessionFeeDisplay}</strong> per session and schedule <strong>{clientsDisplay} clients per week</strong> (assuming that {cancellationRate}% of those will likely cancel or reschedule).
                   </p>
 
                   {/* Industry Standards - Collapsible */}
@@ -258,12 +257,6 @@ export default function PlanPage() {
                     </div>
                   </div>
                 </div>
-
-                {/* Sustainability Indicator */}
-                <SustainabilityIndicator
-                  status={results.sustainability}
-                  message={results.sustainabilityMessage}
-                />
 
                 {/* Start Over Button */}
                 <div className="pt-3 border-t border-nesso-navy/10">
