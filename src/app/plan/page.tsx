@@ -215,7 +215,7 @@ export default function PlanPage() {
                 <Slider
                   value={[docAndAdminMinutes]}
                   onValueChange={(value) => setDocAndAdminMinutes(value[0])}
-                  min={5}
+                  min={0}
                   max={60}
                   step={5}
                   className="w-full"
@@ -311,12 +311,12 @@ export default function PlanPage() {
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-nesso-ink/70">Time on documentation & admin tasks</span>
-                    <span className="font-semibold text-nesso-navy">~{Math.ceil(results.breakdown.docAndAdminHours)}h</span>
+                    <span className="font-semibold text-nesso-navy">{Math.ceil(results.breakdown.docAndAdminHours) === 0 ? '0' : `~${Math.ceil(results.breakdown.docAndAdminHours)}`}h</span>
                   </div>
                   <div className="border-t border-nesso-navy/10 pt-2 mt-2"></div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-semibold text-nesso-ink">Total Work Hours</span>
-                    <span className="text-base font-bold text-nesso-navy">~{Math.ceil(results.breakdown.sessionHours) + Math.ceil(results.breakdown.docAndAdminHours)}h</span>
+                    <span className="text-base font-bold text-nesso-navy">{Math.ceil(results.breakdown.docAndAdminHours) === 0 ? Math.ceil(results.breakdown.sessionHours) : `~${Math.ceil(results.breakdown.sessionHours) + Math.ceil(results.breakdown.docAndAdminHours)}`}h</span>
                   </div>
                 </div>
               </div>
