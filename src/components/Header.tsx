@@ -3,9 +3,9 @@ import Image from 'next/image';
 export function Header() {
   return (
     <header className="w-full bg-nesso-card border-b border-black/5">
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div className="container mx-auto max-w-4xl px-4 py-4 md:py-8">
         {/* Centered stack layout */}
-        <div className="text-center space-y-3">
+        <div className="text-center space-y-2 md:space-y-3">
           {/* Main title */}
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-nesso-navy">
             Therapist Caseload Calculator
