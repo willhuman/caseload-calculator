@@ -5,7 +5,7 @@ import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { calculateGoalBasedPlan, formatCurrency, formatRange, type GoalBasedResults } from '@/lib/calculations';
+import { calculateGoalBasedPlan, formatCurrency, type GoalBasedResults } from '@/lib/calculations';
 import { trackEvent } from '@/lib/analytics';
 
 export default function PlanPage() {
@@ -303,7 +303,7 @@ export default function PlanPage() {
 
               {/* Your Week Breakdown Section */}
               <div className="bg-white rounded-lg p-4 border border-nesso-navy/10">
-                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here's What Your Week Would Look Like</h3>
+                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Here&apos;s What Your Week Would Look Like</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-nesso-ink/70">Time with clients ({Math.round(results.attendedSessionsPerWeek || 0)} sessions)</span>

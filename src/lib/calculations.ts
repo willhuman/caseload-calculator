@@ -50,7 +50,6 @@ const DEFAULT_DOC_AND_ADMIN_MINUTES_PER_CLIENT = 20; // Combined documentation +
 const DEFAULT_DOCUMENTATION_MINUTES = 20; // Documentation minutes per client
 const DEFAULT_ADMIN_HOURS = 6; // Weekly admin hours
 const DEFAULT_CANCELLATION_RATE = 0.10; // 10%
-const DEFAULT_CANCELLATIONS_PER_WEEK = 3; // 3 cancellations per week
 const DEFAULT_SESSION_MINUTES = 50; // 50-minute sessions
 const HEALTHY_HOURS_THRESHOLD = 34; // Default healthy weekly hours threshold
 
