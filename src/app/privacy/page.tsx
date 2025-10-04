@@ -44,7 +44,6 @@ export default function PrivacyPage() {
             <ul className="list-disc list-inside text-nesso-ink space-y-2 mb-6">
               <li>Income goals and weekly hour targets you enter into the calculator</li>
               <li>Session parameters and documentation preferences</li>
-              <li>Any feedback or communications you send to us</li>
             </ul>
             <p className="text-nesso-ink leading-relaxed mb-6 text-sm italic">
               Note: All calculation data is processed locally in your browser and is not transmitted to or stored on our servers.
@@ -65,7 +64,6 @@ export default function PrivacyPage() {
             <ul className="list-disc list-inside text-nesso-ink space-y-2">
               <li>To provide and maintain the caseload calculation service</li>
               <li>To improve our Service and develop new features</li>
-              <li>To communicate with you about updates or support</li>
               <li>To analyze usage patterns and optimize performance</li>
               <li>To ensure the security and integrity of our Service</li>
             </ul>
