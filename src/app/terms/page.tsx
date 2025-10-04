@@ -61,7 +61,6 @@ export default function TermsPage() {
               <li>Distribute malware or engage in any disruptive activities</li>
               <li>Violate any applicable local, state, national, or international law</li>
               <li>Use the Service to make decisions without proper professional oversight</li>
-              <li>Share login credentials or account access with unauthorized parties</li>
             </ul>
           </section>
 
