@@ -23,10 +23,6 @@ export default function PlanPage() {
   const [results, setResults] = useState<GoalBasedResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [showToast, setShowToast] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
@@ -107,43 +103,6 @@ export default function PlanPage() {
     }, 1400);
   };
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address');
-      return false;
-    }
-
-    if (email.toLowerCase().endsWith('@icloud.com')) {
-      setEmailError('iCloud email addresses are not accepted');
-      return false;
-    }
-
-    setEmailError('');
-    return true;
-  };
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateEmail(email)) {
-      return;
-    }
-
-    // TODO: Implement actual email submission
-
-    // Show success toast
-    setShowEmailModal(false);
-    setShowToast(true);
-    setEmail('');
-
-    // Hide toast after 3 seconds
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
-  };
-
   const monthlyIncomeDisplay = formatCurrency(monthlyIncome);
   const sessionFeeDisplay = results ? formatCurrency(results.sessionFee) : '$0';
   const clientsDisplay = results ? results.clientsPerWeekRange.high.toString() : '0';
@@ -154,7 +113,7 @@ export default function PlanPage() {
 
       <main className="max-w-2xl mx-auto px-4 pt-8 pb-16">
         {/* Goals Card */}
-        <Card className="border border-nesso-navy/10 shadow-sm mb-6">
+        <Card className="border border-nesso-navy/10 mb-6">
           <CardContent className="p-5 md:p-6 space-y-6">
             {/* Time and Money Goals Section */}
             <div className="space-y-4">
@@ -283,7 +242,7 @@ export default function PlanPage() {
 
         {/* Loading State */}
         {isCalculating && (
-          <Card className="border border-nesso-navy/10 shadow-sm animate-pulse">
+          <Card className="border border-nesso-navy/10 animate-pulse">
             <CardContent className="p-8 md:p-12">
               <div className="flex flex-col items-center justify-center space-y-4">
                 <div className="relative w-12 h-12">
@@ -300,7 +259,7 @@ export default function PlanPage() {
         {hasCalculated && results && showResults && (
           <Card
             ref={resultsRef}
-            className="border border-nesso-navy/10 shadow-sm animate-fade-in"
+            className="border border-nesso-navy/10 animate-fade-in"
             style={{
               animation: 'fadeIn 0.6s ease-out forwards'
             }}
@@ -374,24 +333,15 @@ export default function PlanPage() {
 
               {/* CTAs */}
               <div className="space-y-3 pt-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <Button
-                    onClick={() => {
-                      // Scroll back to top smoothly
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    variant="outline"
-                    className="w-full py-2 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/40 hover:border-nesso-navy/30 hover:text-nesso-ink transition-colors"
-                  >
-                    Update my plan
-                  </Button>
-                  <Button
-                    onClick={() => setShowEmailModal(true)}
-                    className="w-full py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
-                  >
-                    Email me my plan
-                  </Button>
-                </div>
+                <Button
+                  onClick={() => {
+                    // Scroll back to top smoothly
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
+                >
+                  Update my plan
+                </Button>
               </div>
 
               {/* Nesso Mission Footer */}
@@ -412,61 +362,6 @@ export default function PlanPage() {
               </div>
             </CardContent>
           </Card>
-        )}
-
-        {/* Email Modal */}
-        {showEmailModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowEmailModal(false)}>
-            <div className="bg-white rounded-lg p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-lg font-semibold text-nesso-ink mb-4">Email Your Plan</h3>
-              <p className="text-sm text-nesso-ink/70 mb-4">
-                Get your personalized caseload plan delivered to your inbox.
-                <br /><br />
-                We&apos;ll also send occasional updates with tools and insights made for therapists like you.
-              </p>
-              <form onSubmit={handleEmailSubmit}>
-                <div className="mb-4">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setEmailError('');
-                    }}
-                    required
-                    className="w-full px-4 py-2 border border-nesso-navy/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-nesso-coral"
-                  />
-                  {emailError && (
-                    <p className="text-xs text-red-600 mt-1">{emailError}</p>
-                  )}
-                </div>
-                <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    onClick={() => setShowEmailModal(false)}
-                    variant="outline"
-                    className="flex-1 py-2 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/40 hover:border-nesso-navy/30 hover:text-nesso-ink transition-colors"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="flex-1 py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
-                  >
-                    Send My Plan
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Success Toast */}
-        {showToast && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-nesso-navy text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-            <p className="text-sm font-medium">✓ Your plan has been sent to your email!</p>
-          </div>
         )}
       </main>
 

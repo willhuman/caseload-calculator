@@ -99,12 +99,11 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold text-nesso-navy mb-4">User Data and Content</h2>
             <p className="text-nesso-ink leading-relaxed mb-4">
-              You retain ownership of any data you input into our Service. By using our Service, you grant us permission to:
+              You retain ownership of any data you input into our Service. All calculations are processed locally in your browser. By using our Service, you grant us permission to:
             </p>
             <ul className="list-disc list-inside text-nesso-ink space-y-2 mb-4">
-              <li>Process your data to provide the calculation services</li>
+              <li>Collect anonymized usage analytics to improve the Service</li>
               <li>Use aggregated, anonymous data for service improvement</li>
-              <li>Send you calculation reports when requested</li>
             </ul>
             <p className="text-nesso-ink leading-relaxed">
               You are responsible for the accuracy and legality of any information you provide.

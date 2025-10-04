@@ -42,11 +42,13 @@ export default function PrivacyPage() {
 
             <h3 className="text-lg font-medium text-nesso-navy mb-3">Information You Provide</h3>
             <ul className="list-disc list-inside text-nesso-ink space-y-2 mb-6">
-              <li>Session fee and income goals you enter into the calculator</li>
-              <li>Weekly hour targets and documentation preferences</li>
-              <li>Email address when you request calculation reports</li>
+              <li>Income goals and weekly hour targets you enter into the calculator</li>
+              <li>Session parameters and documentation preferences</li>
               <li>Any feedback or communications you send to us</li>
             </ul>
+            <p className="text-nesso-ink leading-relaxed mb-6 text-sm italic">
+              Note: All calculation data is processed locally in your browser and is not transmitted to or stored on our servers.
+            </p>
 
             <h3 className="text-lg font-medium text-nesso-navy mb-3">Automatically Collected Information</h3>
             <ul className="list-disc list-inside text-nesso-ink space-y-2">
@@ -62,7 +64,6 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-semibold text-nesso-navy mb-4">How We Use Your Information</h2>
             <ul className="list-disc list-inside text-nesso-ink space-y-2">
               <li>To provide and maintain the caseload calculation service</li>
-              <li>To send you calculation reports when requested</li>
               <li>To improve our Service and develop new features</li>
               <li>To communicate with you about updates or support</li>
               <li>To analyze usage patterns and optimize performance</li>
@@ -77,10 +78,10 @@ export default function PrivacyPage() {
               We implement appropriate technical and organizational security measures to protect your information against unauthorized access, alteration, disclosure, or destruction.
             </p>
             <ul className="list-disc list-inside text-nesso-ink space-y-2">
-              <li>Calculation data is processed locally in your browser when possible</li>
-              <li>Email reports are transmitted securely and not stored permanently</li>
+              <li>All calculation data is processed locally in your browser and not transmitted to our servers</li>
+              <li>Analytics data is collected through Vercel Web Analytics with privacy-focused practices</li>
               <li>We use industry-standard encryption for data transmission</li>
-              <li>Access to your information is limited to authorized personnel only</li>
+              <li>Access to analytics data is limited to authorized personnel only</li>
             </ul>
           </section>
 
