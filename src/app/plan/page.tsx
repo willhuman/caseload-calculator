@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,8 +26,6 @@ export default function PlanPage() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [inputsExpanded, setInputsExpanded] = useState(true);
-  const [inputsModified, setInputsModified] = useState(false);
-  const resultsRef = useRef<HTMLDivElement>(null);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
   useEffect(() => {
@@ -40,7 +38,6 @@ export default function PlanPage() {
         cancellationRate: cancellationRate / 100
       });
       setResults(newResults);
-      setInputsModified(true); // Mark inputs as modified when they change after calculation
     }
   }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationRate, hasCalculated]);
 
@@ -76,28 +73,6 @@ export default function PlanPage() {
       setIsCalculating(false);
       setShowResults(true);
       setInputsExpanded(false); // Collapse inputs after calculation
-      setInputsModified(false); // Reset modified state
-
-      // Wait for collapse animation to complete (500ms) before scrolling
-      setTimeout(() => {
-        if (resultsRef.current) {
-          // Calculate scroll position to place card top at very top of viewport
-          const rect = resultsRef.current.getBoundingClientRect();
-          const currentScroll = window.pageYOffset;
-          const elementTop = rect.top + currentScroll;
-
-          // Position card at top of screen with minimal padding
-          const topPadding = 16; // Small padding for both mobile and desktop
-
-          const targetScroll = elementTop - topPadding;
-
-          // Smooth scroll animation
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-          });
-        }
-      }, 600); // Wait for 500ms collapse animation + 100ms buffer
     }, 1400);
   };
 
@@ -111,37 +86,14 @@ export default function PlanPage() {
       <FAQStructuredData />
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 pt-8 pb-16">
-        {/* Goals Card */}
-        <Card className="border border-nesso-navy/10 mb-6 transition-all duration-500 ease-in-out">
-          <CardContent className="p-5 md:p-6 space-y-6 transition-all duration-500 ease-in-out">
+      <main className="max-w-2xl mx-auto px-4 pt-4 pb-8">
+        {/* Goals Card - Only show when not showing results */}
+        {!showResults && (
+          <Card className="border border-nesso-navy/10 mb-6 transition-all duration-500 ease-in-out">
+            <CardContent className="px-5 md:px-6 py-4 md:py-5 space-y-6 transition-all duration-500 ease-in-out">
 
             {/* Title - Always visible */}
             <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
-
-            {/* Collapsed Summary (shown after calculation) */}
-            <div
-              className={`space-y-4 overflow-hidden transition-all duration-500 ease-in-out ${
-                hasCalculated && !inputsExpanded
-                  ? 'opacity-100 max-h-[500px]'
-                  : 'opacity-0 max-h-0'
-              }`}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
-                  <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
-                  <span className="text-nesso-ink/40">•</span>
-                  <span className="font-semibold">{weeklyHours} hours/week</span>
-                </div>
-                <Button
-                  onClick={() => setInputsExpanded(true)}
-                  variant="outline"
-                  className="w-full sm:w-auto py-2 px-4 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/20 transition-colors"
-                >
-                  Edit goals
-                </Button>
-              </div>
-            </div>
 
             {/* Expanded Inputs (shown initially and when user clicks "Edit inputs") */}
             <div
@@ -262,23 +214,18 @@ export default function PlanPage() {
               </div>
             </div>
 
-              {/* Calculate / Re-calculate Button */}
-              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                !hasCalculated || inputsModified
-                  ? 'opacity-100 max-h-[100px]'
-                  : 'opacity-0 max-h-0'
-              }`}>
-                <Button
-                  onClick={handleCalculate}
-                  disabled={isCalculating}
-                  className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {!hasCalculated ? 'Calculate my plan' : 'Re-calculate my plan'}
-                </Button>
-              </div>
+              {/* Calculate Button - Always visible */}
+              <Button
+                onClick={handleCalculate}
+                disabled={isCalculating}
+                className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Calculate my plan
+              </Button>
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Loading State */}
         {isCalculating && (
@@ -298,19 +245,29 @@ export default function PlanPage() {
         {/* Results Card (shown after calculation) */}
         {hasCalculated && results && showResults && (
           <Card
-            ref={resultsRef}
             className="border border-nesso-navy/10 animate-fade-in"
             style={{
               animation: 'fadeIn 0.6s ease-out forwards'
             }}
           >
-            <CardContent className="p-5 md:p-6 space-y-6">
+            <CardContent className="px-5 md:px-6 py-4 md:py-5 space-y-6">
               {/* Header */}
               <h2 className="text-xl font-bold text-nesso-ink">Caseload Plan</h2>
 
               {/* Your Goals Section */}
               <div className="bg-nesso-sand/20 rounded-lg p-4 border border-nesso-navy/10">
-                <h3 className="text-sm font-semibold text-nesso-ink mb-3">Your Goals</h3>
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <h3 className="text-sm font-semibold text-nesso-ink">Your Goals</h3>
+                  <Button
+                    onClick={() => {
+                      setShowResults(false);
+                      setInputsExpanded(true);
+                    }}
+                    className="py-2 px-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    Update Goals
+                  </Button>
+                </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
                     <span className="text-base">💵</span>
@@ -371,27 +328,9 @@ export default function PlanPage() {
                 </div>
               </div>
 
-              {/* CTAs */}
-              <div className="space-y-3 pt-2">
-                <Button
-                  onClick={() => {
-                    // First scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                    // Wait for scroll to complete (~900ms), then expand the goals section
-                    setTimeout(() => {
-                      setInputsExpanded(true);
-                    }, 900);
-                  }}
-                  className="w-full py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
-                >
-                  Update my goals
-                </Button>
-              </div>
-
               {/* Nesso Mission Footer */}
-              <div className="pt-3 border-t border-nesso-navy/10 mt-3">
-                <p className="text-xs text-center text-nesso-navy">
+              <div className="mt-6">
+                <p className="text-sm text-center text-nesso-navy">
                   At Nesso, we stand for small private practices.
                   <br className="md:hidden" />
                   <span className="hidden md:inline"> </span>
@@ -410,9 +349,9 @@ export default function PlanPage() {
         )}
       </main>
 
-      <footer className="py-8">
+      <footer className="py-4">
         <div className="container mx-auto max-w-6xl px-4">
-          <div className="bg-white rounded-lg py-6 px-4">
+          <div className="bg-white rounded-lg py-4 px-4">
             <div className="flex justify-center items-center space-x-8 text-sm">
               <a href="/privacy" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
                 Privacy
