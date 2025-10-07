@@ -1,0 +1,11 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Specific paths
+Allow: /plan
+Allow: /privacy
+Allow: /terms
+
+# Sitemap location
+Sitemap: https://caseload.nessoapp.com/sitemap.xml

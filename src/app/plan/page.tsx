@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { calculateGoalBasedPlan, formatCurrency, type GoalBasedResults } from '@/lib/calculations';
 import { trackEvent } from '@/lib/analytics';
+import { CalculatorStructuredData } from '@/components/StructuredData';
+import { FAQStructuredData } from '@/components/FAQStructuredData';
 
 export default function PlanPage() {
   // Input state
@@ -105,6 +107,8 @@ export default function PlanPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-nesso-sand/30 to-white">
+      <CalculatorStructuredData />
+      <FAQStructuredData />
       <Header />
 
       <main className="max-w-2xl mx-auto px-4 pt-8 pb-16">
