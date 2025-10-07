@@ -118,12 +118,15 @@ export default function PlanPage() {
 
       <main className="max-w-2xl mx-auto px-4 pt-8 pb-16">
         {/* Goals Card */}
-        <Card className="border border-nesso-navy/10 mb-6">
-          <CardContent className="p-5 md:p-6 space-y-6">
+        <Card className="border border-nesso-navy/10 mb-6 transition-all duration-500 ease-in-out">
+          <CardContent className="p-5 md:p-6 space-y-6 transition-all duration-500 ease-in-out">
 
             {/* Collapsed Summary (shown after calculation) */}
             {hasCalculated && !inputsExpanded && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in"
+                style={{ animation: 'fadeIn 0.4s ease-out' }}
+              >
                 <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
                   <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
                   <span className="text-nesso-ink/40">•</span>
@@ -141,7 +144,10 @@ export default function PlanPage() {
 
             {/* Expanded Inputs (shown initially and when user clicks "Edit inputs") */}
             {inputsExpanded && (
-              <>
+              <div
+                className="space-y-6 animate-fade-in"
+                style={{ animation: 'fadeIn 0.4s ease-out' }}
+              >
                 {/* Time and Money Goals Section */}
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
@@ -272,7 +278,7 @@ export default function PlanPage() {
                     Re-calculate my plan
                   </Button>
                 ) : null}
-              </>
+              </div>
             )}
           </CardContent>
         </Card>
