@@ -79,33 +79,44 @@ export default function PlanPage() {
       // Gradual smooth scroll to results after a brief moment for render
       setTimeout(() => {
         if (resultsRef.current) {
-          // Use larger offset on mobile to ensure the entire card header is visible
+          // On mobile, use scrollIntoView with 'start' to show the top of the card
+          // On desktop, use custom scroll with offset
           const isMobile = window.innerWidth < 768;
-          const offset = isMobile ? 20 : 100;
-          const targetPosition = resultsRef.current.getBoundingClientRect().top + window.pageYOffset - offset;
-          const startPosition = window.pageYOffset;
-          const distance = targetPosition - startPosition;
-          const duration = 1200; // Longer duration for slower scroll
-          let start: number | null = null;
 
-          const easeInOutCubic = (t: number): number => {
-            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-          };
+          if (isMobile) {
+            // Simple scrollIntoView for mobile - shows card at top of viewport
+            resultsRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          } else {
+            // Custom animated scroll with offset for desktop
+            const offset = 100;
+            const targetPosition = resultsRef.current.getBoundingClientRect().top + window.pageYOffset - offset;
+            const startPosition = window.pageYOffset;
+            const distance = targetPosition - startPosition;
+            const duration = 1200;
+            let start: number | null = null;
 
-          const animation = (currentTime: number) => {
-            if (start === null) start = currentTime;
-            const timeElapsed = currentTime - start;
-            const progress = Math.min(timeElapsed / duration, 1);
-            const ease = easeInOutCubic(progress);
+            const easeInOutCubic = (t: number): number => {
+              return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+            };
 
-            window.scrollTo(0, startPosition + distance * ease);
+            const animation = (currentTime: number) => {
+              if (start === null) start = currentTime;
+              const timeElapsed = currentTime - start;
+              const progress = Math.min(timeElapsed / duration, 1);
+              const ease = easeInOutCubic(progress);
 
-            if (timeElapsed < duration) {
-              requestAnimationFrame(animation);
-            }
-          };
+              window.scrollTo(0, startPosition + distance * ease);
 
-          requestAnimationFrame(animation);
+              if (timeElapsed < duration) {
+                requestAnimationFrame(animation);
+              }
+            };
+
+            requestAnimationFrame(animation);
+          }
         }
       }, 150);
     }, 1400);
