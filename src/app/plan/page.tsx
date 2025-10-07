@@ -112,6 +112,9 @@ export default function PlanPage() {
         <Card className="border border-nesso-navy/10 mb-6 transition-all duration-500 ease-in-out">
           <CardContent className="p-5 md:p-6 space-y-6 transition-all duration-500 ease-in-out">
 
+            {/* Title - Always visible */}
+            <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
+
             {/* Collapsed Summary (shown after calculation) */}
             <div
               className={`space-y-4 overflow-hidden transition-all duration-500 ease-in-out ${
@@ -120,7 +123,6 @@ export default function PlanPage() {
                   : 'opacity-0 max-h-0'
               }`}
             >
-              <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
                   <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
@@ -147,7 +149,6 @@ export default function PlanPage() {
             >
                 {/* Time and Money Goals Section */}
                 <div className="space-y-4">
-                  <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
 
               {/* Income Slider */}
               <div className="space-y-3">
