@@ -76,18 +76,16 @@ export default function PlanPage() {
       setInputsExpanded(false); // Collapse inputs after calculation
       setInputsModified(false); // Reset modified state
 
-      // Gradual smooth scroll to results after a brief moment for render
+      // Wait for collapse animation to complete (500ms) before scrolling
       setTimeout(() => {
         if (resultsRef.current) {
-          // Calculate scroll position to show results card properly
+          // Calculate scroll position to place card top at very top of viewport
           const rect = resultsRef.current.getBoundingClientRect();
           const currentScroll = window.pageYOffset;
           const elementTop = rect.top + currentScroll;
 
-          // On mobile, position card near top with small padding (80px from top)
-          // On desktop, use larger offset (100px from top)
-          const isMobile = window.innerWidth < 768;
-          const topPadding = isMobile ? 80 : 100;
+          // Position card at top of screen with minimal padding
+          const topPadding = 16; // Small padding for both mobile and desktop
 
           const targetScroll = elementTop - topPadding;
 
@@ -97,7 +95,7 @@ export default function PlanPage() {
             behavior: 'smooth'
           });
         }
-      }, 150);
+      }, 600); // Wait for 500ms collapse animation + 100ms buffer
     }, 1400);
   };
 
