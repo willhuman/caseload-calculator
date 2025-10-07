@@ -124,21 +124,24 @@ export default function PlanPage() {
             {/* Collapsed Summary (shown after calculation) */}
             {hasCalculated && !inputsExpanded && (
               <div
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fade-in"
+                className="space-y-4 animate-fade-in"
                 style={{ animation: 'fadeIn 0.4s ease-out' }}
               >
-                <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
-                  <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
-                  <span className="text-nesso-ink/40">•</span>
-                  <span className="font-semibold">{weeklyHours} hours/week</span>
+                <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
+                    <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
+                    <span className="text-nesso-ink/40">•</span>
+                    <span className="font-semibold">{weeklyHours} hours/week</span>
+                  </div>
+                  <Button
+                    onClick={() => setInputsExpanded(true)}
+                    variant="outline"
+                    className="w-full sm:w-auto py-2 px-4 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/20 transition-colors"
+                  >
+                    Edit goals
+                  </Button>
                 </div>
-                <Button
-                  onClick={() => setInputsExpanded(true)}
-                  variant="outline"
-                  className="w-full sm:w-auto py-2 px-4 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/20 transition-colors"
-                >
-                  Edit inputs
-                </Button>
               </div>
             )}
 
@@ -384,7 +387,7 @@ export default function PlanPage() {
                   }}
                   className="w-full py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
                 >
-                  Update my plan
+                  Update my goals
                 </Button>
               </div>
 
