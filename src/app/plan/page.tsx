@@ -23,6 +23,8 @@ export default function PlanPage() {
   const [results, setResults] = useState<GoalBasedResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [inputsExpanded, setInputsExpanded] = useState(true);
+  const [inputsModified, setInputsModified] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Calculate results whenever inputs change (but only show after initial calculate)
@@ -36,6 +38,7 @@ export default function PlanPage() {
         cancellationRate: cancellationRate / 100
       });
       setResults(newResults);
+      setInputsModified(true); // Mark inputs as modified when they change after calculation
     }
   }, [monthlyIncome, weeklyHours, sessionMinutes, docAndAdminMinutes, cancellationRate, hasCalculated]);
 
@@ -70,6 +73,8 @@ export default function PlanPage() {
       setHasCalculated(true);
       setIsCalculating(false);
       setShowResults(true);
+      setInputsExpanded(false); // Collapse inputs after calculation
+      setInputsModified(false); // Reset modified state
 
       // Gradual smooth scroll to results after a brief moment for render
       setTimeout(() => {
@@ -115,9 +120,31 @@ export default function PlanPage() {
         {/* Goals Card */}
         <Card className="border border-nesso-navy/10 mb-6">
           <CardContent className="p-5 md:p-6 space-y-6">
-            {/* Time and Money Goals Section */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
+
+            {/* Collapsed Summary (shown after calculation) */}
+            {hasCalculated && !inputsExpanded && (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
+                  <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
+                  <span className="text-nesso-ink/40">•</span>
+                  <span className="font-semibold">{weeklyHours} hours/week</span>
+                </div>
+                <Button
+                  onClick={() => setInputsExpanded(true)}
+                  variant="outline"
+                  className="w-full sm:w-auto py-2 px-4 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/20 transition-colors"
+                >
+                  Edit inputs
+                </Button>
+              </div>
+            )}
+
+            {/* Expanded Inputs (shown initially and when user clicks "Edit inputs") */}
+            {inputsExpanded && (
+              <>
+                {/* Time and Money Goals Section */}
+                <div className="space-y-4">
+                  <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
 
               {/* Income Slider */}
               <div className="space-y-3">
@@ -227,15 +254,25 @@ export default function PlanPage() {
               </div>
             </div>
 
-            {/* Calculate Button (shown only before first calculation) */}
-            {!hasCalculated && (
-              <Button
-                onClick={handleCalculate}
-                disabled={isCalculating}
-                className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Calculate my plan
-              </Button>
+                {/* Calculate / Re-calculate Button */}
+                {!hasCalculated ? (
+                  <Button
+                    onClick={handleCalculate}
+                    disabled={isCalculating}
+                    className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Calculate my plan
+                  </Button>
+                ) : inputsModified ? (
+                  <Button
+                    onClick={handleCalculate}
+                    disabled={isCalculating}
+                    className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Re-calculate my plan
+                  </Button>
+                ) : null}
+              </>
             )}
           </CardContent>
         </Card>
@@ -335,6 +372,7 @@ export default function PlanPage() {
               <div className="space-y-3 pt-2">
                 <Button
                   onClick={() => {
+                    setInputsExpanded(true);
                     // Scroll back to top smoothly
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
