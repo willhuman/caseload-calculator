@@ -124,8 +124,8 @@ export default function PlanPage() {
             {/* Collapsed Summary (shown after calculation) */}
             {hasCalculated && !inputsExpanded && (
               <div
-                className="space-y-4 animate-fade-in"
-                style={{ animation: 'fadeIn 0.4s ease-out' }}
+                className="space-y-4"
+                style={{ animation: 'collapseIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
               >
                 <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -148,8 +148,12 @@ export default function PlanPage() {
             {/* Expanded Inputs (shown initially and when user clicks "Edit inputs") */}
             {inputsExpanded && (
               <div
-                className="space-y-6 animate-fade-in"
-                style={{ animation: 'fadeIn 0.4s ease-out' }}
+                className="space-y-6"
+                style={{
+                  animation: hasCalculated
+                    ? 'expandIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                    : 'none'
+                }}
               >
                 {/* Time and Money Goals Section */}
                 <div className="space-y-4">
