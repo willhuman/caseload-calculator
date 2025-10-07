@@ -267,23 +267,19 @@ export default function PlanPage() {
             </div>
 
               {/* Calculate / Re-calculate Button */}
-              {!hasCalculated ? (
+              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                !hasCalculated || inputsModified
+                  ? 'opacity-100 max-h-[100px]'
+                  : 'opacity-0 max-h-0'
+              }`}>
                 <Button
                   onClick={handleCalculate}
                   disabled={isCalculating}
                   className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Calculate my plan
+                  {!hasCalculated ? 'Calculate my plan' : 'Re-calculate my plan'}
                 </Button>
-              ) : inputsModified ? (
-                <Button
-                  onClick={handleCalculate}
-                  disabled={isCalculating}
-                  className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Re-calculate my plan
-                </Button>
-              ) : null}
+              </div>
             </div>
           </CardContent>
         </Card>
