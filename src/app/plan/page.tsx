@@ -139,7 +139,7 @@ export default function PlanPage() {
 
             {/* Expanded Inputs (shown initially and when user clicks "Edit inputs") */}
             <div
-              className={`space-y-6 overflow-hidden transition-all duration-500 ease-in-out ${
+              className={`space-y-6 overflow-hidden transition-all duration-[650ms] ease-in-out ${
                 inputsExpanded
                   ? 'opacity-100 max-h-[2000px]'
                   : 'opacity-0 max-h-0'
@@ -370,9 +370,13 @@ export default function PlanPage() {
               <div className="space-y-3 pt-2">
                 <Button
                   onClick={() => {
-                    setInputsExpanded(true);
-                    // Scroll back to top smoothly
+                    // First scroll to top
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    // Wait for scroll to complete (~900ms), then expand the goals section
+                    setTimeout(() => {
+                      setInputsExpanded(true);
+                    }, 900);
                   }}
                   className="w-full py-2 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold transition-colors"
                 >
