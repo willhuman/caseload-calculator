@@ -79,7 +79,10 @@ export default function PlanPage() {
       // Gradual smooth scroll to results after a brief moment for render
       setTimeout(() => {
         if (resultsRef.current) {
-          const targetPosition = resultsRef.current.getBoundingClientRect().top + window.pageYOffset - 100;
+          // Use larger offset on mobile to ensure the entire card header is visible
+          const isMobile = window.innerWidth < 768;
+          const offset = isMobile ? 20 : 100;
+          const targetPosition = resultsRef.current.getBoundingClientRect().top + window.pageYOffset - offset;
           const startPosition = window.pageYOffset;
           const distance = targetPosition - startPosition;
           const duration = 1200; // Longer duration for slower scroll
