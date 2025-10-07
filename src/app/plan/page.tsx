@@ -122,39 +122,38 @@ export default function PlanPage() {
           <CardContent className="p-5 md:p-6 space-y-6 transition-all duration-500 ease-in-out">
 
             {/* Collapsed Summary (shown after calculation) */}
-            {hasCalculated && !inputsExpanded && (
-              <div
-                className="space-y-4"
-                style={{ animation: 'collapseIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)' }}
-              >
-                <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
-                    <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
-                    <span className="text-nesso-ink/40">•</span>
-                    <span className="font-semibold">{weeklyHours} hours/week</span>
-                  </div>
-                  <Button
-                    onClick={() => setInputsExpanded(true)}
-                    variant="outline"
-                    className="w-full sm:w-auto py-2 px-4 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/20 transition-colors"
-                  >
-                    Edit goals
-                  </Button>
+            <div
+              className={`space-y-4 overflow-hidden transition-all duration-500 ease-in-out ${
+                hasCalculated && !inputsExpanded
+                  ? 'opacity-100 max-h-[500px]'
+                  : 'opacity-0 max-h-0'
+              }`}
+            >
+              <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2 text-sm text-nesso-navy">
+                  <span className="font-semibold">{monthlyIncomeDisplay}/month</span>
+                  <span className="text-nesso-ink/40">•</span>
+                  <span className="font-semibold">{weeklyHours} hours/week</span>
                 </div>
+                <Button
+                  onClick={() => setInputsExpanded(true)}
+                  variant="outline"
+                  className="w-full sm:w-auto py-2 px-4 text-sm border-nesso-navy/20 text-nesso-navy hover:bg-nesso-coral/20 transition-colors"
+                >
+                  Edit goals
+                </Button>
               </div>
-            )}
+            </div>
 
             {/* Expanded Inputs (shown initially and when user clicks "Edit inputs") */}
-            {inputsExpanded && (
-              <div
-                className="space-y-6"
-                style={{
-                  animation: hasCalculated
-                    ? 'expandIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                    : 'none'
-                }}
-              >
+            <div
+              className={`space-y-6 overflow-hidden transition-all duration-500 ease-in-out ${
+                inputsExpanded
+                  ? 'opacity-100 max-h-[2000px]'
+                  : 'opacity-0 max-h-0'
+              }`}
+            >
                 {/* Time and Money Goals Section */}
                 <div className="space-y-4">
                   <h2 className="text-lg font-semibold text-nesso-ink">Time and Money Goals</h2>
@@ -267,26 +266,25 @@ export default function PlanPage() {
               </div>
             </div>
 
-                {/* Calculate / Re-calculate Button */}
-                {!hasCalculated ? (
-                  <Button
-                    onClick={handleCalculate}
-                    disabled={isCalculating}
-                    className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Calculate my plan
-                  </Button>
-                ) : inputsModified ? (
-                  <Button
-                    onClick={handleCalculate}
-                    disabled={isCalculating}
-                    className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Re-calculate my plan
-                  </Button>
-                ) : null}
-              </div>
-            )}
+              {/* Calculate / Re-calculate Button */}
+              {!hasCalculated ? (
+                <Button
+                  onClick={handleCalculate}
+                  disabled={isCalculating}
+                  className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Calculate my plan
+                </Button>
+              ) : inputsModified ? (
+                <Button
+                  onClick={handleCalculate}
+                  disabled={isCalculating}
+                  className="w-full py-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Re-calculate my plan
+                </Button>
+              ) : null}
+            </div>
           </CardContent>
         </Card>
 
