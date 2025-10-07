@@ -87,8 +87,8 @@ export default function PlanPage() {
       <Header />
 
       <main className="max-w-2xl mx-auto px-4 pt-4 pb-8">
-        {/* Goals Card - Only show when not showing results */}
-        {!showResults && (
+        {/* Goals Card - Only show when not showing results and not calculating */}
+        {!showResults && !isCalculating && (
           <Card className="border border-nesso-navy/10 mb-6 transition-all duration-500 ease-in-out">
             <CardContent className="px-5 md:px-6 py-4 md:py-5 space-y-6 transition-all duration-500 ease-in-out">
 
@@ -263,9 +263,9 @@ export default function PlanPage() {
                       setShowResults(false);
                       setInputsExpanded(true);
                     }}
-                    className="py-2 px-4 text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors whitespace-nowrap"
+                    className="py-1.5 px-3 md:py-2 md:px-4 text-xs md:text-sm bg-nesso-coral hover:bg-nesso-coral/90 text-black font-semibold rounded-lg transition-colors whitespace-nowrap"
                   >
-                    Update Goals
+                    Update goals
                   </Button>
                 </div>
                 <div className="space-y-2">
