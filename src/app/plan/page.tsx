@@ -346,7 +346,7 @@ export default function PlanPage() {
 
               {/* Nesso Mission Footer */}
               <div className="pt-3 border-t border-nesso-navy/10 mt-3">
-                <p className="text-xs text-center text-nesso-ink/60">
+                <p className="text-xs text-center text-nesso-navy">
                   At Nesso, we stand for small private practices.
                   <br className="md:hidden" />
                   <span className="hidden md:inline"> </span>

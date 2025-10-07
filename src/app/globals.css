@@ -26,7 +26,7 @@
   --color-card-foreground: var(--nesso-navy);
   --color-popover: var(--nesso-card);
   --color-popover-foreground: var(--nesso-navy);
-  --color-primary: var(--nesso-peach);
+  --color-primary: #518279;
   --color-primary-foreground: white;
   --color-secondary: var(--nesso-bg);
   --color-secondary-foreground: var(--nesso-navy);
@@ -68,7 +68,7 @@
   --card-foreground: var(--nesso-navy);
   --popover: var(--nesso-card);
   --popover-foreground: var(--nesso-navy);
-  --primary: var(--nesso-peach);
+  --primary: #518279;
   --primary-foreground: white;
   --secondary: var(--nesso-bg);
   --secondary-foreground: var(--nesso-navy);
