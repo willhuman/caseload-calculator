@@ -79,44 +79,23 @@ export default function PlanPage() {
       // Gradual smooth scroll to results after a brief moment for render
       setTimeout(() => {
         if (resultsRef.current) {
-          // On mobile, use scrollIntoView with 'start' to show the top of the card
-          // On desktop, use custom scroll with offset
+          // Calculate scroll position to show results card properly
+          const rect = resultsRef.current.getBoundingClientRect();
+          const currentScroll = window.pageYOffset;
+          const elementTop = rect.top + currentScroll;
+
+          // On mobile, position card near top with small padding (80px from top)
+          // On desktop, use larger offset (100px from top)
           const isMobile = window.innerWidth < 768;
+          const topPadding = isMobile ? 80 : 100;
 
-          if (isMobile) {
-            // Simple scrollIntoView for mobile - shows card at top of viewport
-            resultsRef.current.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          } else {
-            // Custom animated scroll with offset for desktop
-            const offset = 100;
-            const targetPosition = resultsRef.current.getBoundingClientRect().top + window.pageYOffset - offset;
-            const startPosition = window.pageYOffset;
-            const distance = targetPosition - startPosition;
-            const duration = 1200;
-            let start: number | null = null;
+          const targetScroll = elementTop - topPadding;
 
-            const easeInOutCubic = (t: number): number => {
-              return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-            };
-
-            const animation = (currentTime: number) => {
-              if (start === null) start = currentTime;
-              const timeElapsed = currentTime - start;
-              const progress = Math.min(timeElapsed / duration, 1);
-              const ease = easeInOutCubic(progress);
-
-              window.scrollTo(0, startPosition + distance * ease);
-
-              if (timeElapsed < duration) {
-                requestAnimationFrame(animation);
-              }
-            };
-
-            requestAnimationFrame(animation);
-          }
+          // Smooth scroll animation
+          window.scrollTo({
+            top: targetScroll,
+            behavior: 'smooth'
+          });
         }
       }, 150);
     }, 1400);
