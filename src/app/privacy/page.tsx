@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Nesso Caseload Calculator',
-  description: 'Privacy policy for the Nesso Therapist Caseload Calculator - how we protect and handle your data.',
+  title: 'Privacy Policy | Therapist Caseload Calculator',
+  description: 'Privacy policy for the Therapist Caseload Calculator - how we protect and handle your data.',
 };
 
 export default function PrivacyPage() {

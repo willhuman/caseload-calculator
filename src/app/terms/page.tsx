@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Nesso Caseload Calculator',
-  description: 'Terms of service for the Nesso Therapist Caseload Calculator - usage guidelines and legal terms.',
+  title: 'Terms of Service | Therapist Caseload Calculator',
+  description: 'Terms of service for the Therapist Caseload Calculator - usage guidelines and legal terms.',
 };
 
 export default function TermsPage() {
