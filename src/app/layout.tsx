@@ -6,8 +6,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://therapycaseloadcalculator.com'),
-  title: "Calculate Your Ideal Caseload | Therapist Caseload Calculator",
-  description: "Interactive calculator to find your ideal therapy caseload. Set income and time goals, get recommended session fees and client load. Perfect for therapists, counselors, and mental health professionals building a sustainable private practice.",
+  title: "Therapist Caseload Calculator - Find Your Ideal Session Fee & Client Load",
+  description: "Free calculator for therapists to determine ideal session fees and caseload based on your income goals and weekly hours. Build a sustainable private practice with the right balance.",
   keywords: [
     "therapist caseload calculator",
     "therapy session fee calculator",
@@ -39,17 +39,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Calculate Your Ideal Caseload | Nesso",
-    description: "Interactive calculator to find your ideal therapy caseload. Set income and time goals, get recommended session fees and client load.",
+    title: "Therapist Caseload Calculator - Find Your Ideal Session Fee & Client Load",
+    description: "Free calculator for therapists to determine ideal session fees and caseload based on your income goals and weekly hours.",
     type: "website",
     url: "https://therapycaseloadcalculator.com",
-    siteName: "Nesso Caseload Calculator",
+    siteName: "Therapist Caseload Calculator",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Calculate Your Ideal Caseload | Nesso",
-    description: "Interactive calculator to find your ideal therapy caseload. Set income and time goals.",
+    title: "Therapist Caseload Calculator - Find Your Ideal Session Fee & Client Load",
+    description: "Free calculator for therapists to determine ideal session fees and caseload based on your income goals and weekly hours.",
     creator: "@nessoapp",
   },
   alternates: {
