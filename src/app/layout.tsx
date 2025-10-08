@@ -5,12 +5,17 @@ import { inter } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://caseload.nessoapp.com'),
-  title: "Therapist Caseload Calculator | Nesso",
-  description: "Free calculator for therapists and mental health professionals. Find your ideal caseload based on income goals and weekly hours. Calculate session fees, client load, and manage your private practice sustainability.",
+  metadataBase: new URL('https://therapycaseloadcalculator.com'),
+  title: "Calculate Your Ideal Caseload | Therapist Caseload Calculator",
+  description: "Interactive calculator to find your ideal therapy caseload. Set income and time goals, get recommended session fees and client load. Perfect for therapists, counselors, and mental health professionals building a sustainable private practice.",
   keywords: [
     "therapist caseload calculator",
     "therapy session fee calculator",
+    "private practice planning",
+    "therapist income planning",
+    "mental health private practice",
+    "counselor business planning",
+    "therapy practice sustainability",
     "private practice calculator",
     "mental health",
     "therapist income calculator",
@@ -34,21 +39,21 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Therapist Caseload Calculator | Nesso",
-    description: "Free calculator for therapists. Find your ideal caseload based on income goals and weekly hours. Calculate session fees and manage your private practice sustainability.",
+    title: "Calculate Your Ideal Caseload | Nesso",
+    description: "Interactive calculator to find your ideal therapy caseload. Set income and time goals, get recommended session fees and client load.",
     type: "website",
-    url: "https://caseload.nessoapp.com",
+    url: "https://therapycaseloadcalculator.com",
     siteName: "Nesso Caseload Calculator",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Therapist Caseload Calculator | Nesso",
-    description: "Free calculator for therapists. Find your ideal caseload based on income goals and weekly hours.",
+    title: "Calculate Your Ideal Caseload | Nesso",
+    description: "Interactive calculator to find your ideal therapy caseload. Set income and time goals.",
     creator: "@nessoapp",
   },
   alternates: {
-    canonical: "https://caseload.nessoapp.com",
+    canonical: "https://therapycaseloadcalculator.com",
   },
 };
 
