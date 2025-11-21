@@ -138,7 +138,7 @@ export function Home() {
                       {/* Session Fee Slider */}
                       <div className="space-y-3 lg:space-y-1.5">
                         <div className="flex items-center justify-between">
-                          <label className="text-sm font-medium">
+                          <label htmlFor="sessionFee" className="text-sm font-medium">
                             Session fee
                           </label>
                           <div className="text-xl lg:text-base font-bold text-nesso-navy">
@@ -146,6 +146,8 @@ export function Home() {
                           </div>
                         </div>
                         <Slider
+                          id="sessionFee"
+                          aria-label="Session fee"
                           value={[session.sessionFee]}
                           onValueChange={(value) =>
                             setSession({ ...session, sessionFee: value[0] })
@@ -164,7 +166,7 @@ export function Home() {
                       {/* Clients Scheduled Slider */}
                       <div className="space-y-3 lg:space-y-1.5">
                         <div className="flex items-center justify-between gap-3">
-                          <label className="text-sm font-medium">
+                          <label htmlFor="clientsScheduled" className="text-sm font-medium">
                             Clients scheduled per week
                           </label>
                           <div className="text-xl lg:text-base font-bold text-nesso-navy whitespace-nowrap">
@@ -172,6 +174,8 @@ export function Home() {
                           </div>
                         </div>
                         <Slider
+                          id="clientsScheduled"
+                          aria-label="Clients scheduled per week"
                           value={[session.clientsScheduledPerWeek]}
                           onValueChange={(value) =>
                             setSession({ ...session, clientsScheduledPerWeek: value[0] })
@@ -195,7 +199,7 @@ export function Home() {
                       {/* Session Length */}
                       <div className="space-y-1.5 lg:space-y-1">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-medium text-nesso-ink/70">
+                          <label htmlFor="sessionLength" className="text-xs font-medium text-nesso-ink/70">
                             Session length
                           </label>
                           <span className="text-xs font-semibold text-nesso-navy">
@@ -203,6 +207,8 @@ export function Home() {
                           </span>
                         </div>
                         <Slider
+                          id="sessionLength"
+                          aria-label="Session length in minutes"
                           value={[session.sessionLengthMinutes]}
                           onValueChange={(value) =>
                             setSession({ ...session, sessionLengthMinutes: value[0] })
@@ -217,7 +223,7 @@ export function Home() {
                       {/* Cancellation Rate */}
                       <div className="space-y-1.5 lg:space-y-1">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-medium text-nesso-ink/70">
+                          <label htmlFor="cancellationRate" className="text-xs font-medium text-nesso-ink/70">
                             Cancellation rate (10% is common)
                           </label>
                           <span className="text-xs font-semibold text-nesso-navy">
@@ -225,6 +231,8 @@ export function Home() {
                           </span>
                         </div>
                         <Slider
+                          id="cancellationRate"
+                          aria-label="Cancellation rate percentage"
                           value={[session.cancellationRate]}
                           onValueChange={(value) =>
                             setSession({ ...session, cancellationRate: value[0] })
@@ -239,7 +247,7 @@ export function Home() {
                       {/* Doc & Admin Time */}
                       <div className="space-y-1.5 lg:space-y-1">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-medium text-nesso-ink/70">
+                          <label htmlFor="docAdminTime" className="text-xs font-medium text-nesso-ink/70">
                             Documentation & admin time per session
                           </label>
                           <span className="text-xs font-semibold text-nesso-navy">
@@ -247,6 +255,8 @@ export function Home() {
                           </span>
                         </div>
                         <Slider
+                          id="docAdminTime"
+                          aria-label="Documentation and admin time per session in minutes"
                           value={[session.docAdminTimeMinutes]}
                           onValueChange={(value) =>
                             setSession({ ...session, docAdminTimeMinutes: value[0] })
@@ -333,6 +343,7 @@ export function Home() {
             <button
               onClick={scrollToResults}
               className="w-full px-4 py-3 text-left"
+              aria-label="View detailed financial results"
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex-1 min-w-0">

@@ -8,8 +8,18 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-nesso-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7F3' }}>
       <div className="max-w-4xl mx-auto px-4 py-12">
+        {/* Back Button */}
+        <div className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-nesso-purple hover:text-nesso-purple/80 transition-colors font-medium"
+          >
+            ← Back to Calculator
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-nesso-navy mb-4">Terms of Service</h1>
@@ -222,16 +232,6 @@ export default function TermsPage() {
               <p className="text-nesso-ink"><strong>Website:</strong> www.nessoapp.com</p>
             </div>
           </section>
-        </div>
-
-        {/* Back to Calculator Link */}
-        <div className="text-center mt-12">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-nesso-purple hover:text-nesso-purple/80 transition-colors font-medium"
-          >
-            ← Back to Caseload Calculator
-          </Link>
         </div>
       </div>
     </div>

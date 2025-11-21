@@ -22,7 +22,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
   }
 
   return (
-    <Card id="financial-projections-card" style={{ backgroundColor: '#E0EAE0' }}>
+    <Card id="financial-projections-card" style={{ backgroundColor: '#E0EAE0' }} aria-live="polite" aria-atomic="true">
       <CardHeader>
         <CardTitle>Your Results</CardTitle>
       </CardHeader>
