@@ -100,23 +100,6 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="other">Professional Services (Accountant, Lawyer, Coaches, etc.)</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                <Input
-                  id="other"
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={expenses.other || ""}
-                  onChange={(e) => handleExpenseChange("other", e.target.value)}
-                  className="pl-7"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="otherMonthly">Other Expenses</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
@@ -239,8 +222,7 @@ function calculateTotalMonthly(expenses: ExpenseInputsType): number {
     expenses.rentUtilities +
     expenses.marketing +
     expenses.software +
-    expenses.insurance +
-    expenses.other;
+    expenses.insurance;
 
   const annualProrated = (expenses.continuingEd + expenses.conferences) / 12;
 

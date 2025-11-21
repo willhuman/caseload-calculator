@@ -57,8 +57,7 @@ export function calculateProjection(
     expenses.rentUtilities +
     expenses.marketing +
     expenses.software +
-    expenses.insurance +
-    expenses.other;
+    expenses.insurance;
 
   // Add annual expenses (prorated monthly)
   const annualExpensesMonthly = (expenses.continuingEd + expenses.conferences) / 12;

@@ -12,8 +12,8 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
   if (!results) {
     return (
       <Card className="bg-sand/50 border-2 border-dashed border-gray-300">
-        <CardContent className="py-12 text-center">
-          <p className="text-gray-500">
+        <CardContent className="py-6 lg:py-12 text-center">
+          <p className="text-sm lg:text-base text-gray-500">
             Adjust your inputs to see your income projections
           </p>
         </CardContent>
@@ -22,13 +22,13 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Main Financial Snapshot */}
+    <div className="space-y-3 lg:space-y-4">
+      {/* Main Financial Projections */}
       <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-navy/20">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-navy text-lg">Financial Snapshot</CardTitle>
+        <CardHeader className="pb-2 lg:pb-3">
+          <CardTitle className="text-navy text-base lg:text-lg">Financial Projections</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 lg:space-y-4">
           {/* Monthly Breakdown */}
           <div>
             <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">

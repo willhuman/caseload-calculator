@@ -73,10 +73,10 @@ export function Home() {
       <FAQStructuredData />
       <Header />
 
-      <main className="max-w-6xl mx-auto px-4 pt-4 pb-8">
+      <main className="max-w-6xl mx-auto px-4 pt-4 pb-8 lg:pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column: Inputs (2/3 width on desktop) */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 pb-[50vh] lg:pb-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="session">Session Details</TabsTrigger>
@@ -236,9 +236,20 @@ export function Home() {
 
           {/* Right Column: Live Results (1/3 width on desktop, full width on mobile) */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-4 space-y-4">
-              <h2 className="text-xl font-bold text-nesso-ink">Projections</h2>
+            {/* Desktop: Sticky to top */}
+            <div className="hidden lg:block lg:sticky lg:top-4 space-y-4">
+              <h2 className="text-xl font-bold text-nesso-ink">Results</h2>
               <LiveResultsDashboard results={results} />
+            </div>
+
+            {/* Mobile: Sticky to bottom */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-navy/20 shadow-2xl max-h-[50vh] overflow-y-auto">
+              <div className="px-4 py-3">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-lg font-bold text-nesso-ink">Results</h2>
+                </div>
+                <LiveResultsDashboard results={results} />
+              </div>
             </div>
           </div>
         </div>
