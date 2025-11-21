@@ -50,10 +50,10 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
         <CardTitle className="text-base text-nesso-ink">Business Expenses</CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-6 lg:space-y-5">
+      <CardContent className="space-y-6 lg:space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-3">
           {/* Monthly Expenses */}
-          <div className="space-y-4 lg:space-y-3">
+          <div className="space-y-4 lg:space-y-2.5">
             <h3 className="text-sm font-semibold text-navy">Monthly Expenses</h3>
 
             <div className="space-y-2 lg:space-y-1.5">
@@ -187,7 +187,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
           </div>
 
           {/* Annual Expenses */}
-          <div className="space-y-4 lg:space-y-3">
+          <div className="space-y-4 lg:space-y-2.5">
             <h3 className="text-sm font-semibold text-navy">Annual Expenses</h3>
 
             <div className="space-y-2 lg:space-y-1.5">
