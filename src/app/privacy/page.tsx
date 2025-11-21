@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-nesso-purple hover:text-nesso-purple/80 transition-colors font-medium"
+            className="inline-flex items-center gap-2 text-nesso-navy hover:text-nesso-navy/80 transition-colors font-medium"
           >
             ← Back to Calculator
           </Link>
