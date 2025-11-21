@@ -47,6 +47,49 @@ export function Home() {
   // Active tab state
   const [activeTab, setActiveTab] = useState('session');
 
+  // Mobile results visibility state (hide when near Results section)
+  const [showMobileResultsBar, setShowMobileResultsBar] = useState(true);
+
+  // Track scroll position to hide bar when Financial Projections card is visible
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleScroll = () => {
+      const financialProjectionsCard = document.getElementById('financial-projections-card');
+      if (!financialProjectionsCard) return;
+
+      // Get the position of the Financial Projections card
+      const rect = financialProjectionsCard.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Hide bar when the Financial Projections card header is visible in viewport
+      // (when top of card is above the bottom of the viewport)
+      const isCardVisible = rect.top < windowHeight;
+
+      setShowMobileResultsBar(!isCardVisible);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Also check on initial load
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Function to scroll to Results section
+  const scrollToResults = () => {
+    if (typeof window === 'undefined') return;
+
+    // Find the mobile Results section and scroll to it
+    const resultsSection = document.getElementById('mobile-results-section');
+    if (resultsSection) {
+      resultsSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   // Calculate results whenever inputs change
   useEffect(() => {
     const calculatedResults = calculateProjection(session, timeOff, expenses);
@@ -76,7 +119,7 @@ export function Home() {
       <main className="max-w-6xl mx-auto px-4 pt-4 pb-8 lg:pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column: Inputs (2/3 width on desktop) */}
-          <div className="lg:col-span-2 space-y-6 pb-[50vh] lg:pb-0">
+          <div className="lg:col-span-2 space-y-6 pb-20 lg:pb-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="session">Session Details</TabsTrigger>
@@ -232,6 +275,12 @@ export function Home() {
                 <TimeOffInputs timeOff={timeOff} onChange={setTimeOff} />
               </TabsContent>
             </Tabs>
+
+            {/* Mobile: Full Results Section */}
+            <div id="mobile-results-section" className="lg:hidden">
+              <h2 className="text-xl font-bold text-nesso-ink mb-4">Results</h2>
+              <LiveResultsDashboard results={results} />
+            </div>
           </div>
 
           {/* Right Column: Live Results (1/3 width on desktop, full width on mobile) */}
@@ -241,21 +290,44 @@ export function Home() {
               <h2 className="text-xl font-bold text-nesso-ink">Results</h2>
               <LiveResultsDashboard results={results} />
             </div>
-
-            {/* Mobile: Sticky to bottom */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-navy/20 shadow-2xl max-h-[50vh] overflow-y-auto">
-              <div className="px-4 py-3">
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-lg font-bold text-nesso-ink">Results</h2>
-                </div>
-                <LiveResultsDashboard results={results} />
-              </div>
-            </div>
           </div>
         </div>
 
+        {/* Mobile: Results Navigation Bar - Shows at top, hides when scrolled to bottom */}
+        {showMobileResultsBar && (
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-br from-blue-50 to-indigo-50 border-t-2 border-navy/20 shadow-2xl transition-all duration-500 ease-in-out">
+            <button
+              onClick={scrollToResults}
+              className="w-full px-4 py-3 text-left"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-semibold text-navy mb-1">Results</div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-navy/70">Monthly:</span>
+                    <span className="font-bold text-navy">
+                      {results ? formatCurrency(results.hasExpenses ? results.monthlyAverageNetIncome : results.monthlyAverageGrossIncome) : '$0'}
+                    </span>
+                    <span className="text-navy/30">•</span>
+                    <span className="text-navy/70">Yearly:</span>
+                    <span className="font-bold text-navy">
+                      {results ? formatCurrency(results.hasExpenses ? results.yearlyTotalNetIncome : results.yearlyTotalGrossIncome) : '$0'}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap text-black" style={{ backgroundColor: '#FAB5A7' }}>
+                  View Details
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </button>
+          </div>
+        )}
+
         {/* Nesso Mission Footer */}
-        <div className="mt-12">
+        <div className="mt-6 mb-6 lg:mb-0">
           <p className="text-sm text-center text-nesso-navy">
             At Nesso, we stand for small private practices.
             <br className="md:hidden" />
@@ -272,7 +344,7 @@ export function Home() {
         </div>
       </main>
 
-      <footer className="py-4">
+      <footer className="mb-20 lg:mb-0">
         <div className="container mx-auto max-w-6xl px-4">
           <div className="bg-white rounded-lg py-4 px-4">
             <div className="flex justify-center items-center space-x-8 text-sm">

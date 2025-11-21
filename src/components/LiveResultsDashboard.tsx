@@ -24,7 +24,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
   return (
     <div className="space-y-3 lg:space-y-4">
       {/* Main Financial Projections */}
-      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-navy/20">
+      <Card id="financial-projections-card" className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-navy/20">
         <CardHeader className="pb-2 lg:pb-3">
           <CardTitle className="text-navy text-base lg:text-lg">Financial Projections</CardTitle>
         </CardHeader>
