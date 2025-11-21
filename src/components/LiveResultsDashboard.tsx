@@ -26,9 +26,9 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
       <CardHeader>
         <CardTitle>Your Results</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 lg:space-y-5">
         {/* Financial Summary */}
-        <div className="space-y-4">
+        <div className="space-y-4 lg:space-y-3">
           <h3 className="text-base font-semibold text-nesso-ink">Financial Summary</h3>
           <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
             Monthly Average
@@ -49,7 +49,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
             <div className="h-px bg-navy/20" />
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-navy">Net Income</span>
-              <span className="text-2xl font-bold text-navy">
+              <span className="text-2xl lg:text-xl font-bold text-navy">
                 {formatCurrency(results.monthlyAverageNetIncome)}
               </span>
             </div>
@@ -77,7 +77,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
             <div className="h-px bg-navy/20" />
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-navy">Net Income</span>
-              <span className="text-2xl font-bold text-navy">
+              <span className="text-2xl lg:text-xl font-bold text-navy">
                 {formatCurrency(results.yearlyTotalNetIncome)}
               </span>
             </div>
@@ -94,9 +94,9 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
         )}
 
         {/* Your Weekly Workload */}
-        <div className="pt-3 border-t border-navy/20 space-y-4">
+        <div className="pt-3 border-t border-navy/20 space-y-4 lg:space-y-3">
           <h3 className="text-base font-semibold text-nesso-ink">Your Weekly Workload</h3>
-          <div className="space-y-3">
+          <div className="space-y-3 lg:space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">
                 Time with clients ({results.attendedSessionsPerWeek} sessions)
@@ -114,7 +114,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
             <div className="h-px bg-gray-200" />
             <div className="flex justify-between items-center">
               <span className="text-sm font-semibold text-navy">Total work hours</span>
-              <span className="text-lg font-bold text-navy">
+              <span className="text-lg lg:text-base font-bold text-navy">
                 {results.totalHoursPerWeek}h/week
               </span>
             </div>
@@ -122,7 +122,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
         </div>
 
         {/* Working Weeks */}
-        <div className="pt-3 border-t border-navy/20 space-y-4">
+        <div className="pt-3 border-t border-navy/20 space-y-4 lg:space-y-3">
           <h3 className="text-base font-semibold text-nesso-ink">Working Weeks</h3>
           <div className="flex items-start gap-3">
             <div className="text-2xl">📅</div>

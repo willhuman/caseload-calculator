@@ -116,30 +116,30 @@ export function Home() {
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 pt-4 pb-8 lg:pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-5">
           {/* Left Column: Inputs (60% width on desktop) */}
-          <div className="lg:col-span-3 space-y-6 pb-20 lg:pb-0">
+          <div className="lg:col-span-3 space-y-6 lg:space-y-4 pb-20 lg:pb-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="session">Your Practice Setup</TabsTrigger>
+                <TabsTrigger value="session">Your Practice</TabsTrigger>
                 <TabsTrigger value="expenses">Expenses</TabsTrigger>
               </TabsList>
 
               {/* Session Details Tab */}
               <TabsContent value="session" className="space-y-6">
                 <Card className="border border-nesso-navy/10">
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-6 lg:space-y-5">
                     {/* Workload and Fee Setup Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-4 lg:space-y-3">
                       <h3 className="text-base font-semibold text-nesso-ink">Workload and Fee Setup</h3>
 
                       {/* Session Fee Slider */}
-                      <div className="space-y-3">
+                      <div className="space-y-3 lg:space-y-2">
                         <div className="flex items-center justify-between">
                           <label className="text-sm font-medium">
                             Session fee
                           </label>
-                          <div className="text-xl font-bold text-nesso-navy">
+                          <div className="text-xl lg:text-lg font-bold text-nesso-navy">
                             {sessionFeeDisplay}
                           </div>
                         </div>
@@ -160,12 +160,12 @@ export function Home() {
                       </div>
 
                       {/* Clients Scheduled Slider */}
-                      <div className="space-y-3">
+                      <div className="space-y-3 lg:space-y-2">
                         <div className="flex items-center justify-between gap-3">
                           <label className="text-sm font-medium">
                             Clients scheduled per week
                           </label>
-                          <div className="text-xl font-bold text-nesso-navy whitespace-nowrap">
+                          <div className="text-xl lg:text-lg font-bold text-nesso-navy whitespace-nowrap">
                             {session.clientsScheduledPerWeek}
                           </div>
                         </div>
@@ -187,7 +187,7 @@ export function Home() {
                     </div>
 
                     {/* Assumptions Section */}
-                    <div className="pt-4 border-t border-sand space-y-4">
+                    <div className="pt-4 border-t border-sand space-y-4 lg:space-y-3">
                       <h3 className="text-base font-semibold text-nesso-ink">Assumptions</h3>
 
                       {/* Session Length */}
@@ -258,14 +258,14 @@ export function Home() {
                     </div>
 
                     {/* Time Off Planning Section */}
-                    <div className="pt-4 border-t border-sand space-y-4">
-                      <h3 className="text-base font-semibold text-nesso-ink">Time Off Planning</h3>
+                    <div className="pt-4 border-t border-sand space-y-4 lg:space-y-3">
+                      <h3 className="text-base font-semibold text-nesso-ink">Time Off</h3>
 
-                      <div className="space-y-4">
+                      <div className="space-y-4 lg:space-y-3">
                         <div>
                           <div className="flex items-center justify-between mb-1">
                             <label htmlFor="vacationWeeks" className="text-sm font-medium">Total weeks off per year</label>
-                            <span className="text-xl font-bold text-navy">
+                            <span className="text-xl lg:text-lg font-bold text-navy">
                               {timeOff.vacationWeeks}
                             </span>
                           </div>

@@ -50,13 +50,13 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
         <CardTitle className="text-base text-nesso-ink">Business Expenses</CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="space-y-6 lg:space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-3">
           {/* Monthly Expenses */}
-          <div className="space-y-4">
+          <div className="space-y-4 lg:space-y-3">
             <h3 className="text-sm font-semibold text-navy">Monthly Expenses</h3>
 
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1.5">
               <Label htmlFor="rentUtilities">Office or workspace</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.rentUtilities === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
@@ -187,10 +187,10 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
           </div>
 
           {/* Annual Expenses */}
-          <div className="space-y-4">
+          <div className="space-y-4 lg:space-y-3">
             <h3 className="text-sm font-semibold text-navy">Annual Expenses</h3>
 
-            <div className="space-y-2">
+            <div className="space-y-2 lg:space-y-1.5">
               <Label htmlFor="continuingEd">Continuing Education</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.continuingEd === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
@@ -285,7 +285,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
           <div className="flex justify-between items-center text-sm">
             <span className="font-medium text-navy">Total Monthly Expenses</span>
             <div className="text-right">
-              <div className="text-lg font-semibold text-navy">
+              <div className="text-lg lg:text-base font-semibold text-navy">
                 ${calculateTotalMonthly(expenses).toLocaleString()}
               </div>
               <div className="text-xs text-gray-500 mt-0.5">
