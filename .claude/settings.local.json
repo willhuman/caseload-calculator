@@ -15,7 +15,9 @@
       "Bash(git merge:*)",
       "Bash(kill:*)",
       "Bash(npm install:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(pkill:*)",
+      "Bash(xargs kill:*)"
     ],
     "deny": [],
     "ask": []

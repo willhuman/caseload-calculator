@@ -22,6 +22,8 @@ export interface ExpenseInputs {
   insurance: number;
   continuingEd: number;
   conferences: number;
+  taxPrep: number;
+  professionalDues: number;
   other: number;
   customExpenses: OtherExpense[];
 }

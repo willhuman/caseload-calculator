@@ -65,12 +65,11 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.rentUtilities || ''}
+                  value={expenses.rentUtilities === 0 ? '' : expenses.rentUtilities}
                   onChange={(e) => handleExpenseChange("rentUtilities", e.target.value)}
                   onFocus={(e) => handleFocus(e, "rentUtilities")}
                   onBlur={(e) => handleBlur(e, "rentUtilities")}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: expenses.rentUtilities === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -85,12 +84,11 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.marketing || ''}
+                  value={expenses.marketing === 0 ? '' : expenses.marketing}
                   onChange={(e) => handleExpenseChange("marketing", e.target.value)}
                   onFocus={(e) => handleFocus(e, "marketing")}
                   onBlur={(e) => handleBlur(e, "marketing")}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: expenses.marketing === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -105,12 +103,11 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.software || ''}
+                  value={expenses.software === 0 ? '' : expenses.software}
                   onChange={(e) => handleExpenseChange("software", e.target.value)}
                   onFocus={(e) => handleFocus(e, "software")}
                   onBlur={(e) => handleBlur(e, "software")}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: expenses.software === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -125,12 +122,11 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.insurance || ''}
+                  value={expenses.insurance === 0 ? '' : expenses.insurance}
                   onChange={(e) => handleExpenseChange("insurance", e.target.value)}
                   onFocus={(e) => handleFocus(e, "insurance")}
                   onBlur={(e) => handleBlur(e, "insurance")}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: expenses.insurance === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -145,7 +141,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.customExpenses.find(e => e.id === 'other-monthly')?.amount || ''}
+                  value={(expenses.customExpenses.find(e => e.id === 'other-monthly')?.amount || 0) === 0 ? '' : expenses.customExpenses.find(e => e.id === 'other-monthly')?.amount}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value) || 0;
                     const otherExpenses = expenses.customExpenses.filter(e => e.id !== 'other-monthly');
@@ -179,7 +175,6 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                     });
                   })}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: (expenses.customExpenses.find(e => e.id === 'other-monthly')?.amount || 0) === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -199,12 +194,11 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.continuingEd || ''}
+                  value={expenses.continuingEd === 0 ? '' : expenses.continuingEd}
                   onChange={(e) => handleExpenseChange("continuingEd", e.target.value)}
                   onFocus={(e) => handleFocus(e, "continuingEd")}
                   onBlur={(e) => handleBlur(e, "continuingEd")}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: expenses.continuingEd === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -219,12 +213,49 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.conferences || ''}
+                  value={expenses.conferences === 0 ? '' : expenses.conferences}
                   onChange={(e) => handleExpenseChange("conferences", e.target.value)}
                   onFocus={(e) => handleFocus(e, "conferences")}
                   onBlur={(e) => handleBlur(e, "conferences")}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: expenses.conferences === 0 ? 'rgb(156 163 175)' : 'inherit' }}
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="taxPrep">Tax preparation costs</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.taxPrep === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
+                <Input
+                  id="taxPrep"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={expenses.taxPrep === 0 ? '' : expenses.taxPrep}
+                  onChange={(e) => handleExpenseChange("taxPrep", e.target.value)}
+                  onFocus={(e) => handleFocus(e, "taxPrep")}
+                  onBlur={(e) => handleBlur(e, "taxPrep")}
+                  className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="professionalDues">Professional organizations dues</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.professionalDues === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
+                <Input
+                  id="professionalDues"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={expenses.professionalDues === 0 ? '' : expenses.professionalDues}
+                  onChange={(e) => handleExpenseChange("professionalDues", e.target.value)}
+                  onFocus={(e) => handleFocus(e, "professionalDues")}
+                  onBlur={(e) => handleBlur(e, "professionalDues")}
+                  className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   placeholder="0"
                 />
               </div>
@@ -239,7 +270,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={expenses.customExpenses.find(e => e.id === 'other-annual')?.amount || ''}
+                  value={(expenses.customExpenses.find(e => e.id === 'other-annual')?.amount || 0) === 0 ? '' : expenses.customExpenses.find(e => e.id === 'other-annual')?.amount}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value) || 0;
                     const otherExpenses = expenses.customExpenses.filter(e => e.id !== 'other-annual');
@@ -273,7 +304,6 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
                     });
                   })}
                   className="pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  style={{ color: (expenses.customExpenses.find(e => e.id === 'other-annual')?.amount || 0) === 0 ? 'rgb(156 163 175)' : 'inherit' }}
                   placeholder="0"
                 />
               </div>
@@ -306,7 +336,7 @@ function calculateTotalMonthly(expenses: ExpenseInputsType): number {
     expenses.software +
     expenses.insurance;
 
-  const annualProrated = (expenses.continuingEd + expenses.conferences) / 12;
+  const annualProrated = (expenses.continuingEd + expenses.conferences + expenses.taxPrep + expenses.professionalDues) / 12;
 
   // Add custom expenses
   let customTotal = 0;

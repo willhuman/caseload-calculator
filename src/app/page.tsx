@@ -31,6 +31,8 @@ export function Home() {
     insurance: 0,
     continuingEd: 0,
     conferences: 0,
+    taxPrep: 0,
+    professionalDues: 0,
     other: 0,
     customExpenses: [],
   });
