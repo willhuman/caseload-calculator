@@ -22,14 +22,14 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
   }
 
   return (
-    <Card id="financial-projections-card" className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-navy/20">
+    <Card id="financial-projections-card" style={{ backgroundColor: '#E0EAE0' }}>
       <CardHeader>
         <CardTitle>Your Results</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 lg:space-y-4">
         {/* Financial Summary */}
         <div className="space-y-4 lg:space-y-2.5">
-          <h3 className="text-base lg:text-sm font-semibold text-nesso-ink">Financial Summary</h3>
+          <h3 className="text-base font-semibold text-nesso-ink">Financial Summary</h3>
           <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
             Monthly Average
           </h4>
@@ -95,7 +95,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
 
         {/* Your Weekly Workload */}
         <div className="pt-3 lg:pt-2.5 border-t border-navy/20 space-y-4 lg:space-y-2.5">
-          <h3 className="text-base lg:text-sm font-semibold text-nesso-ink">Your Weekly Workload</h3>
+          <h3 className="text-base font-semibold text-nesso-ink">Your Weekly Workload</h3>
           <div className="space-y-3 lg:space-y-1.5">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">
@@ -123,7 +123,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
 
         {/* Working Weeks */}
         <div className="pt-3 lg:pt-2.5 border-t border-navy/20 space-y-4 lg:space-y-2.5">
-          <h3 className="text-base lg:text-sm font-semibold text-nesso-ink">Working Weeks</h3>
+          <h3 className="text-base font-semibold text-nesso-ink">Working Weeks</h3>
           <div className="flex items-start gap-3">
             <span className="text-xl flex-shrink-0">🗓️</span>
             <div className="flex-1">

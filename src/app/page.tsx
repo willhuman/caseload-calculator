@@ -110,7 +110,7 @@ export function Home() {
   const sessionFeeDisplay = formatCurrency(session.sessionFee);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-nesso-sand/30 to-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#F4F7F3' }}>
       <CalculatorStructuredData />
       <FAQStructuredData />
       <Header />
@@ -120,18 +120,18 @@ export function Home() {
           {/* Left Column: Inputs (60% width on desktop) */}
           <div className="lg:col-span-3 space-y-6 lg:space-y-3 pb-20 lg:pb-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-2 lg:hidden">
                 <TabsTrigger value="session">Your Practice</TabsTrigger>
                 <TabsTrigger value="expenses">Expenses</TabsTrigger>
               </TabsList>
 
               {/* Session Details Tab */}
-              <TabsContent value="session" className="space-y-6">
-                <Card className="border border-nesso-navy/10">
+              <TabsContent value="session" className="space-y-6 lg:space-y-3 lg:mt-0">
+                <Card>
                   <CardContent className="space-y-6 lg:space-y-4">
                     {/* Workload and Fee Setup Section */}
                     <div className="space-y-4 lg:space-y-2.5">
-                      <h3 className="text-base lg:text-sm font-semibold text-nesso-ink">Workload and Fee Setup</h3>
+                      <h3 className="text-base font-semibold text-nesso-ink">Workload and Fee Setup</h3>
 
                       {/* Session Fee Slider */}
                       <div className="space-y-3 lg:space-y-1.5">
@@ -188,7 +188,7 @@ export function Home() {
 
                     {/* Assumptions Section */}
                     <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-2">
-                      <h3 className="text-base lg:text-sm font-semibold text-nesso-ink">Assumptions</h3>
+                      <h3 className="text-base font-semibold text-nesso-ink">Assumptions</h3>
 
                       {/* Session Length */}
                       <div className="space-y-1.5 lg:space-y-1">
@@ -259,7 +259,7 @@ export function Home() {
 
                     {/* Time Off Planning Section */}
                     <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-2">
-                      <h3 className="text-base lg:text-sm font-semibold text-nesso-ink">Time Off</h3>
+                      <h3 className="text-base font-semibold text-nesso-ink">Time Off</h3>
 
                       <div className="space-y-4 lg:space-y-2">
                         <div>
@@ -297,10 +297,15 @@ export function Home() {
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Desktop: Show Expenses below in same view */}
+                <div className="hidden lg:block">
+                  <ExpenseInputs expenses={expenses} onChange={setExpenses} />
+                </div>
               </TabsContent>
 
-              {/* Expenses Tab */}
-              <TabsContent value="expenses">
+              {/* Expenses Tab - Mobile only */}
+              <TabsContent value="expenses" className="lg:hidden">
                 <ExpenseInputs expenses={expenses} onChange={setExpenses} />
               </TabsContent>
             </Tabs>
@@ -312,9 +317,9 @@ export function Home() {
           </div>
 
           {/* Right Column: Live Results (40% width on desktop, full width on mobile) */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 lg:self-start lg:sticky lg:top-4">
             {/* Desktop: Sticky to top */}
-            <div className="hidden lg:block lg:sticky lg:top-4">
+            <div className="hidden lg:block">
               <LiveResultsDashboard results={results} />
             </div>
           </div>
@@ -322,7 +327,7 @@ export function Home() {
 
         {/* Mobile: Results Navigation Bar - Shows at top, hides when scrolled to bottom */}
         {showMobileResultsBar && (
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-br from-blue-50 to-indigo-50 border-t-2 border-navy/20 shadow-2xl transition-all duration-500 ease-in-out">
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-navy/20 shadow-2xl transition-all duration-500 ease-in-out" style={{ backgroundColor: '#E0EAE0' }}>
             <button
               onClick={scrollToResults}
               className="w-full px-4 py-3 text-left"
@@ -370,9 +375,9 @@ export function Home() {
         </div>
       </main>
 
-      <footer className="mb-20 lg:mb-0">
+      <footer className="mb-20 lg:mb-0" style={{ backgroundColor: '#F4F7F3' }}>
         <div className="container mx-auto max-w-6xl px-4">
-          <div className="bg-white rounded-lg py-4 px-4">
+          <div className="rounded-lg py-4 px-4" style={{ backgroundColor: '#F4F7F3' }}>
             <div className="flex justify-center items-center space-x-8 text-sm">
               <a href="/privacy" className="text-nesso-ink/60 hover:text-nesso-navy transition-colors">
                 Privacy
