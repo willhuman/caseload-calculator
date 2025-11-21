@@ -47,7 +47,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Business Expenses</CardTitle>
+        <CardTitle className="text-base text-nesso-ink">Business Expenses</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -57,7 +57,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             <h3 className="text-sm font-semibold text-navy">Monthly Expenses</h3>
 
             <div className="space-y-2">
-              <Label htmlFor="rentUtilities">Office Rent and Utilities</Label>
+              <Label htmlFor="rentUtilities">Office or workspace</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.rentUtilities === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -77,7 +77,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="marketing">Marketing (Google Ads, Website, etc.)</Label>
+              <Label htmlFor="marketing">Marketing</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.marketing === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -97,7 +97,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="software">Software Tools (EHR, CRM, etc.)</Label>
+              <Label htmlFor="software">Software and tools</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.software === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -117,7 +117,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="insurance">Liability Insurance</Label>
+              <Label htmlFor="insurance">Liability insurance</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.insurance === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -137,7 +137,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="otherMonthly">Other Expenses</Label>
+              <Label htmlFor="otherMonthly">Other monthly costs</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: (expenses.customExpenses.find(e => e.id === 'other-monthly')?.amount || 0) === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -211,7 +211,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="conferences">Conferences & Training</Label>
+              <Label htmlFor="conferences">Conferences and training</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: expenses.conferences === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -231,7 +231,7 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="otherAnnual">Other Expenses</Label>
+              <Label htmlFor="otherAnnual">Other yearly costs</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: (expenses.customExpenses.find(e => e.id === 'other-annual')?.amount || 0) === 0 ? 'rgb(156 163 175)' : 'rgb(107 114 128)' }}>$</span>
                 <Input
@@ -284,9 +284,14 @@ export function ExpenseInputs({ expenses, onChange }: ExpenseInputsProps) {
         <div className="pt-4 border-t border-sand">
           <div className="flex justify-between items-center text-sm">
             <span className="font-medium text-navy">Total Monthly Expenses</span>
-            <span className="text-lg font-semibold text-navy">
-              ${calculateTotalMonthly(expenses).toLocaleString()}
-            </span>
+            <div className="text-right">
+              <div className="text-lg font-semibold text-navy">
+                ${calculateTotalMonthly(expenses).toLocaleString()}
+              </div>
+              <div className="text-xs text-gray-500 mt-0.5">
+                Calculated total
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

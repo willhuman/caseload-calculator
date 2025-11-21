@@ -22,108 +22,80 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
   }
 
   return (
-    <div className="space-y-3 lg:space-y-4">
-      {/* Main Financial Projections */}
-      <Card id="financial-projections-card" className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-navy/20">
-        <CardHeader className="pb-2 lg:pb-3">
-          <CardTitle className="text-navy text-base lg:text-lg">Financial Projections</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 lg:space-y-4">
-          {/* Monthly Breakdown */}
-          <div>
-            <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-              Monthly Average
-            </h4>
-            <div className="space-y-2">
-              {!results.hasExpenses ? (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Revenue</span>
-                  <span className="text-2xl font-bold text-navy">
-                    {formatCurrency(results.monthlyAverageGrossIncome)}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Revenue</span>
-                    <span className="font-semibold text-navy">
-                      {formatCurrency(results.monthlyAverageGrossIncome)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Expenses</span>
-                    <span className="font-semibold text-red-600">
-                      -{formatCurrency(results.monthlyAverageExpenses)}
-                    </span>
-                  </div>
-                  <div className="h-px bg-navy/20" />
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-semibold text-navy">Net Income</span>
-                    <span className="text-2xl font-bold text-navy">
-                      {formatCurrency(results.monthlyAverageNetIncome)}
-                    </span>
-                  </div>
-                </>
-              )}
+    <Card id="financial-projections-card" className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-navy/20">
+      <CardHeader>
+        <CardTitle>Your Results</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Financial Summary */}
+        <div className="space-y-4">
+          <h3 className="text-base font-semibold text-nesso-ink">Financial Summary</h3>
+          <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
+            Monthly Average
+          </h4>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Revenue</span>
+              <span className="font-semibold text-navy">
+                {formatCurrency(results.monthlyAverageGrossIncome)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Expenses</span>
+              <span className="font-semibold text-red-600">
+                -{formatCurrency(results.monthlyAverageExpenses)}
+              </span>
+            </div>
+            <div className="h-px bg-navy/20" />
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-semibold text-navy">Net Income</span>
+              <span className="text-2xl font-bold text-navy">
+                {formatCurrency(results.monthlyAverageNetIncome)}
+              </span>
             </div>
           </div>
+        </div>
 
-          {/* Yearly Breakdown */}
-          <div className="pt-3 border-t border-navy/20">
-            <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-              Yearly Total
-            </h4>
-            <div className="space-y-2">
-              {!results.hasExpenses ? (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Revenue</span>
-                  <span className="text-2xl font-bold text-navy">
-                    {formatCurrency(results.yearlyTotalGrossIncome)}
-                  </span>
-                </div>
-              ) : (
-                <>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Revenue</span>
-                    <span className="font-semibold text-navy">
-                      {formatCurrency(results.yearlyTotalGrossIncome)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Expenses</span>
-                    <span className="font-semibold text-red-600">
-                      -{formatCurrency(results.yearlyTotalExpenses)}
-                    </span>
-                  </div>
-                  <div className="h-px bg-navy/20" />
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-semibold text-navy">Net Income</span>
-                    <span className="text-2xl font-bold text-navy">
-                      {formatCurrency(results.yearlyTotalNetIncome)}
-                    </span>
-                  </div>
-                </>
-              )}
+        {/* Yearly Breakdown */}
+        <div className="pt-3 border-t border-navy/20">
+          <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
+            Yearly Total
+          </h4>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Revenue</span>
+              <span className="font-semibold text-navy">
+                {formatCurrency(results.yearlyTotalGrossIncome)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Expenses</span>
+              <span className="font-semibold text-red-600">
+                -{formatCurrency(results.yearlyTotalExpenses)}
+              </span>
+            </div>
+            <div className="h-px bg-navy/20" />
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-semibold text-navy">Net Income</span>
+              <span className="text-2xl font-bold text-navy">
+                {formatCurrency(results.yearlyTotalNetIncome)}
+              </span>
             </div>
           </div>
+        </div>
 
-          {/* Tip for adding expenses */}
-          {!results.hasExpenses && (
-            <div className="pt-3 border-t border-navy/20">
-              <p className="text-xs text-navy">
-                💡 Add your business expenses in the <strong>Expenses</strong> tab to see your net income calculations.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        {/* Tip for adding expenses */}
+        {!results.hasExpenses && (
+          <div className="mt-2">
+            <p className="text-xs text-navy/70">
+              💡 Add your business expenses in the <strong>Expenses</strong> tab to get a more accurate view of your net income.
+            </p>
+          </div>
+        )}
 
-      {/* Weekly Hours Breakdown */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Weekly Time Breakdown</CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Your Weekly Workload */}
+        <div className="pt-3 border-t border-navy/20 space-y-4">
+          <h3 className="text-base font-semibold text-nesso-ink">Your Weekly Workload</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">
@@ -147,27 +119,26 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
               </span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Working Weeks Info */}
-      {results.workingWeeksPerYear < 52 && (
-        <Card className="bg-blue/5 border-blue/20">
-          <CardContent className="py-4">
-            <div className="flex items-start gap-3">
-              <div className="text-2xl">📅</div>
-              <div className="flex-1">
-                <p className="text-sm text-navy font-medium">
-                  Vacation time: {52 - results.workingWeeksPerYear} weeks per year
+        {/* Working Weeks */}
+        <div className="pt-3 border-t border-navy/20 space-y-4">
+          <h3 className="text-base font-semibold text-nesso-ink">Working Weeks</h3>
+          <div className="flex items-start gap-3">
+            <div className="text-2xl">📅</div>
+            <div className="flex-1">
+              <p className="text-sm text-navy font-medium">
+                Your plan includes <strong>{results.workingWeeksPerYear} working weeks</strong> this year.
+              </p>
+              {results.workingWeeksPerYear === 52 && (
+                <p className="text-xs text-navy/70 mt-2">
+                  Right now your plan includes working all year. If you want a more realistic estimate, try adding some weeks off to account for holidays, vacation, etc.
                 </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  Working {results.workingWeeksPerYear} weeks per year
-                </p>
-              </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

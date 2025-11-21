@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExpenseInputs } from '@/components/ExpenseInputs';
-import { TimeOffInputs } from '@/components/TimeOffInputs';
 import { LiveResultsDashboard } from '@/components/LiveResultsDashboard';
 import { calculateProjection, formatCurrency } from '@/lib/calculations';
 import { trackEvent } from '@/lib/analytics';
@@ -38,7 +37,7 @@ export function Home() {
 
   // Time off inputs state
   const [timeOff, setTimeOff] = useState<TimeOffInputsType>({
-    vacationWeeks: 0,
+    vacationWeeks: 4,
   });
 
   // Results state
@@ -117,149 +116,184 @@ export function Home() {
       <Header />
 
       <main className="max-w-6xl mx-auto px-4 pt-4 pb-8 lg:pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column: Inputs (2/3 width on desktop) */}
-          <div className="lg:col-span-2 space-y-6 pb-20 lg:pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Left Column: Inputs (60% width on desktop) */}
+          <div className="lg:col-span-3 space-y-6 pb-20 lg:pb-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="session">Session Details</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="session">Your Practice Setup</TabsTrigger>
                 <TabsTrigger value="expenses">Expenses</TabsTrigger>
-                <TabsTrigger value="timeoff">Time Off</TabsTrigger>
               </TabsList>
 
               {/* Session Details Tab */}
               <TabsContent value="session" className="space-y-6">
                 <Card className="border border-nesso-navy/10">
-                  <CardContent className="px-5 md:px-6 py-4 md:py-5 space-y-6">
-                    <h2 className="text-lg font-semibold text-nesso-ink">Session Details</h2>
+                  <CardContent className="space-y-6">
+                    {/* Workload and Fee Setup Section */}
+                    <div className="space-y-4">
+                      <h3 className="text-base font-semibold text-nesso-ink">Workload and Fee Setup</h3>
 
-                    {/* Session Fee Slider */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium flex items-center gap-2">
-                          <span className="text-lg">💵</span>
-                          Session fee
-                        </label>
-                        <div className="text-xl font-bold text-nesso-navy">
-                          {sessionFeeDisplay}
+                      {/* Session Fee Slider */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm font-medium">
+                            Session fee
+                          </label>
+                          <div className="text-xl font-bold text-nesso-navy">
+                            {sessionFeeDisplay}
+                          </div>
+                        </div>
+                        <Slider
+                          value={[session.sessionFee]}
+                          onValueChange={(value) =>
+                            setSession({ ...session, sessionFee: value[0] })
+                          }
+                          min={50}
+                          max={500}
+                          step={5}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-xs text-nesso-ink/50">
+                          <span>$50</span>
+                          <span>$500</span>
                         </div>
                       </div>
-                      <Slider
-                        value={[session.sessionFee]}
-                        onValueChange={(value) =>
-                          setSession({ ...session, sessionFee: value[0] })
-                        }
-                        min={50}
-                        max={500}
-                        step={5}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-xs text-nesso-ink/50">
-                        <span>$50</span>
-                        <span>$500</span>
-                      </div>
-                    </div>
 
-                    {/* Clients Scheduled Slider */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <label className="text-sm font-medium flex items-center gap-2">
-                          <span className="text-lg">👥</span>
-                          <span>
+                      {/* Clients Scheduled Slider */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <label className="text-sm font-medium">
                             Clients scheduled per week
-                          </span>
-                        </label>
-                        <div className="text-xl font-bold text-nesso-navy whitespace-nowrap">
-                          {session.clientsScheduledPerWeek}
+                          </label>
+                          <div className="text-xl font-bold text-nesso-navy whitespace-nowrap">
+                            {session.clientsScheduledPerWeek}
+                          </div>
+                        </div>
+                        <Slider
+                          value={[session.clientsScheduledPerWeek]}
+                          onValueChange={(value) =>
+                            setSession({ ...session, clientsScheduledPerWeek: value[0] })
+                          }
+                          min={5}
+                          max={40}
+                          step={1}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-xs text-nesso-ink/50">
+                          <span>5 clients</span>
+                          <span>40 clients</span>
                         </div>
                       </div>
-                      <Slider
-                        value={[session.clientsScheduledPerWeek]}
-                        onValueChange={(value) =>
-                          setSession({ ...session, clientsScheduledPerWeek: value[0] })
-                        }
-                        min={5}
-                        max={40}
-                        step={1}
-                        className="w-full"
-                      />
-                      <div className="flex justify-between text-xs text-nesso-ink/50">
-                        <span>5 clients</span>
-                        <span>40 clients</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Assumptions Card */}
-                <Card className="border border-nesso-navy/10">
-                  <CardContent className="px-5 md:px-6 py-4 md:py-5 space-y-4">
-                    <h2 className="text-lg font-semibold text-nesso-ink">Assumptions</h2>
-
-                    {/* Session Length */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-nesso-ink/70">
-                          Session length
-                        </label>
-                        <span className="text-xs font-semibold text-nesso-navy">
-                          {session.sessionLengthMinutes} min
-                        </span>
-                      </div>
-                      <Slider
-                        value={[session.sessionLengthMinutes]}
-                        onValueChange={(value) =>
-                          setSession({ ...session, sessionLengthMinutes: value[0] })
-                        }
-                        min={30}
-                        max={90}
-                        step={5}
-                        className="w-full"
-                      />
                     </div>
 
-                    {/* Cancellation Rate */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-nesso-ink/70">
-                          Cancellation rate (10% is common)
-                        </label>
-                        <span className="text-xs font-semibold text-nesso-navy">
-                          {session.cancellationRate}%
-                        </span>
+                    {/* Assumptions Section */}
+                    <div className="pt-4 border-t border-sand space-y-4">
+                      <h3 className="text-base font-semibold text-nesso-ink">Assumptions</h3>
+
+                      {/* Session Length */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-medium text-nesso-ink/70">
+                            Session length
+                          </label>
+                          <span className="text-xs font-semibold text-nesso-navy">
+                            {session.sessionLengthMinutes} min
+                          </span>
+                        </div>
+                        <Slider
+                          value={[session.sessionLengthMinutes]}
+                          onValueChange={(value) =>
+                            setSession({ ...session, sessionLengthMinutes: value[0] })
+                          }
+                          min={30}
+                          max={90}
+                          step={5}
+                          className="w-full"
+                        />
                       </div>
-                      <Slider
-                        value={[session.cancellationRate]}
-                        onValueChange={(value) =>
-                          setSession({ ...session, cancellationRate: value[0] })
-                        }
-                        min={0}
-                        max={30}
-                        step={1}
-                        className="w-full"
-                      />
+
+                      {/* Cancellation Rate */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-medium text-nesso-ink/70">
+                            Cancellation rate (10% is common)
+                          </label>
+                          <span className="text-xs font-semibold text-nesso-navy">
+                            {session.cancellationRate}%
+                          </span>
+                        </div>
+                        <Slider
+                          value={[session.cancellationRate]}
+                          onValueChange={(value) =>
+                            setSession({ ...session, cancellationRate: value[0] })
+                          }
+                          min={0}
+                          max={30}
+                          step={1}
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Doc & Admin Time */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-medium text-nesso-ink/70">
+                            Documentation & admin time per session
+                          </label>
+                          <span className="text-xs font-semibold text-nesso-navy">
+                            {session.docAdminTimeMinutes} min
+                          </span>
+                        </div>
+                        <Slider
+                          value={[session.docAdminTimeMinutes]}
+                          onValueChange={(value) =>
+                            setSession({ ...session, docAdminTimeMinutes: value[0] })
+                          }
+                          min={0}
+                          max={60}
+                          step={5}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
 
-                    {/* Doc & Admin Time */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-medium text-nesso-ink/70">
-                          Documentation & admin time per session
-                        </label>
-                        <span className="text-xs font-semibold text-nesso-navy">
-                          {session.docAdminTimeMinutes} min
-                        </span>
+                    {/* Time Off Planning Section */}
+                    <div className="pt-4 border-t border-sand space-y-4">
+                      <h3 className="text-base font-semibold text-nesso-ink">Time Off Planning</h3>
+
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label htmlFor="vacationWeeks" className="text-sm font-medium">Total weeks off per year</label>
+                            <span className="text-xl font-bold text-navy">
+                              {timeOff.vacationWeeks}
+                            </span>
+                          </div>
+                          <p className="text-xs text-nesso-ink/60 mb-3">
+                            (Includes holidays, vacation, sick time, and personal days)
+                          </p>
+                        </div>
+
+                        <Slider
+                          id="vacationWeeks"
+                          min={0}
+                          max={12}
+                          step={1}
+                          value={[timeOff.vacationWeeks]}
+                          onValueChange={(value) =>
+                            setTimeOff({
+                              ...timeOff,
+                              vacationWeeks: value[0],
+                            })
+                          }
+                          className="w-full"
+                        />
+
+                        <div className="flex justify-between text-xs text-nesso-ink/50">
+                          <span>0 weeks</span>
+                          <span>12 weeks</span>
+                        </div>
                       </div>
-                      <Slider
-                        value={[session.docAdminTimeMinutes]}
-                        onValueChange={(value) =>
-                          setSession({ ...session, docAdminTimeMinutes: value[0] })
-                        }
-                        min={0}
-                        max={60}
-                        step={5}
-                        className="w-full"
-                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -269,25 +303,18 @@ export function Home() {
               <TabsContent value="expenses">
                 <ExpenseInputs expenses={expenses} onChange={setExpenses} />
               </TabsContent>
-
-              {/* Time Off Tab */}
-              <TabsContent value="timeoff">
-                <TimeOffInputs timeOff={timeOff} onChange={setTimeOff} />
-              </TabsContent>
             </Tabs>
 
             {/* Mobile: Full Results Section */}
             <div id="mobile-results-section" className="lg:hidden">
-              <h2 className="text-xl font-bold text-nesso-ink mb-4">Results</h2>
               <LiveResultsDashboard results={results} />
             </div>
           </div>
 
-          {/* Right Column: Live Results (1/3 width on desktop, full width on mobile) */}
-          <div className="lg:col-span-1">
+          {/* Right Column: Live Results (40% width on desktop, full width on mobile) */}
+          <div className="lg:col-span-2">
             {/* Desktop: Sticky to top */}
-            <div className="hidden lg:block lg:sticky lg:top-4 space-y-4">
-              <h2 className="text-xl font-bold text-nesso-ink">Results</h2>
+            <div className="hidden lg:block lg:sticky lg:top-4">
               <LiveResultsDashboard results={results} />
             </div>
           </div>
@@ -315,9 +342,8 @@ export function Home() {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap text-black" style={{ backgroundColor: '#FAB5A7' }}>
-                  View Details
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center justify-center px-3 py-2 rounded-lg text-black" style={{ backgroundColor: '#FAB5A7' }}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -328,7 +354,7 @@ export function Home() {
 
         {/* Nesso Mission Footer */}
         <div className="mt-6 mb-6 lg:mb-0">
-          <p className="text-sm text-center text-nesso-navy">
+          <p className="text-base text-center text-nesso-navy">
             At Nesso, we stand for small private practices.
             <br className="md:hidden" />
             <span className="hidden md:inline"> </span>
