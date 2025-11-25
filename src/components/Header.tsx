@@ -10,9 +10,9 @@ export function Header({ rightContent }: HeaderProps) {
     <header className="w-full">
       <div className="container mx-auto max-w-6xl px-4 py-4 md:py-8">
         <div className="relative">
-          {/* Share button in top right */}
+          {/* Share button in top right on desktop */}
           {rightContent && (
-            <div className="absolute top-0 right-0">
+            <div className="hidden md:block absolute top-0 right-0">
               {rightContent}
             </div>
           )}
@@ -24,7 +24,7 @@ export function Header({ rightContent }: HeaderProps) {
               Therapist Caseload Calculator
             </h1>
 
-            {/* Powered by Nesso row - centered */}
+            {/* Powered by Nesso row - centered on desktop, with share button on mobile */}
             <div className="flex justify-center items-center gap-2 text-sm text-nesso-ink/80">
               <span>Powered by</span>
               <a
@@ -42,6 +42,12 @@ export function Header({ rightContent }: HeaderProps) {
                   className="h-5"
                 />
               </a>
+              {/* Share button next to logo on mobile */}
+              {rightContent && (
+                <div className="md:hidden">
+                  {rightContent}
+                </div>
+              )}
             </div>
           </div>
         </div>

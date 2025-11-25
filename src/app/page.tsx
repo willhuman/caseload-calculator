@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ExpenseInputs } from '@/components/ExpenseInputs';
 import { LiveResultsDashboard } from '@/components/LiveResultsDashboard';
-import { ShareModal } from '@/components/ShareModal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,8 +61,6 @@ export function Home() {
 
   // Share feature state
   const [shareEnabled, setShareEnabled] = useState(false);
-  const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState<'facebook' | 'reddit' | null>(null);
 
   // Check if share feature is enabled
   useEffect(() => {
@@ -90,13 +87,6 @@ export function Home() {
         // Open email client with pre-filled content
         const emailSubject = "Check out this Caseload Calculator";
         window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(shareText)}`;
-        break;
-
-      case "facebook":
-      case "reddit":
-        // Show preview modal for Facebook/Reddit
-        setSelectedPlatform(platform as 'facebook' | 'reddit');
-        setShareModalOpen(true);
         break;
     }
   };
@@ -172,10 +162,25 @@ export function Home() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none"
+                  size="icon"
+                  className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none md:w-auto md:h-auto md:px-4"
+                  aria-label="Share"
                 >
-                  <span className="hidden md:inline">Share with others</span>
-                  <span className="md:hidden">Share</span>
+                  <span className="hidden md:inline md:mr-0">Share with others</span>
+                  <svg
+                    className="md:hidden size-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                    />
+                  </svg>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -187,12 +192,6 @@ export function Home() {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleShareSelect('email')}>
                   Email
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleShareSelect('facebook')}>
-                  Facebook
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleShareSelect('reddit')}>
-                  Reddit
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -488,16 +487,6 @@ export function Home() {
           </div>
         </div>
       </footer>
-
-      {/* Share Modal - Only for Facebook/Reddit */}
-      {shareEnabled && results && selectedPlatform && (
-        <ShareModal
-          open={shareModalOpen}
-          onOpenChange={setShareModalOpen}
-          results={results}
-          platform={selectedPlatform}
-        />
-      )}
     </div>
   );
 }
