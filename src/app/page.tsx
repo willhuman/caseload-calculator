@@ -163,10 +163,10 @@ export function Home() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none md:w-auto md:h-auto md:px-4"
+                  className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none md:size-auto md:h-10 md:px-5"
                   aria-label="Share"
                 >
-                  <span className="hidden md:inline md:mr-0">Share with others</span>
+                  <span className="hidden md:inline">Share</span>
                   <svg
                     className="md:hidden size-4"
                     fill="none"
