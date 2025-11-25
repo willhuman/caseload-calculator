@@ -46,7 +46,7 @@ export function ShareModal({ open, onOpenChange, results, platform }: ShareModal
           onOpenChange(false);
         }
       }, "image/png");
-    } catch (error) {
+    } catch {
       alert("Failed to generate image. Please try again.");
     } finally {
       setIsGenerating(false);

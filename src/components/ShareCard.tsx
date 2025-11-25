@@ -9,7 +9,7 @@ interface ShareCardProps {
   platform: Platform;
 }
 
-export function ShareCard({ results, platform }: ShareCardProps) {
+export function ShareCard({ results: _results, platform: _platform }: ShareCardProps) {
   // Platform-specific dimensions (both Facebook and Reddit use 1200x630)
   const dimensions = { width: 1200, height: 630 };
 
@@ -122,7 +122,7 @@ export function ShareCard({ results, platform }: ShareCardProps) {
               margin: 0,
             }}
           >
-            It's a really cool tool to help you plan the financial details of your practice.
+            It&apos;s a really cool tool to help you plan the financial details of your practice.
           </p>
         </div>
 
