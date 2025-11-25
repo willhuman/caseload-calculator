@@ -162,14 +162,13 @@ export function Home() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
-                  className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none md:size-auto md:h-10 md:px-5"
+                  className="text-[#493944] hover:text-[#493944] hover:bg-[#493944]/5 md:size-auto md:h-10 md:px-4 md:gap-2 font-semibold"
                   aria-label="Share"
                 >
-                  <span className="hidden md:inline">Share</span>
                   <svg
-                    className="md:hidden size-4"
+                    className="size-4 rotate-45"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -178,10 +177,11 @@ export function Home() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                      strokeWidth={2.5}
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                     />
                   </svg>
+                  <span className="hidden md:inline">Share</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -215,9 +215,9 @@ export function Home() {
               <TabsContent value="session" className="space-y-6 lg:space-y-3 lg:mt-0">
                 <Card>
                   <CardContent className="space-y-6 lg:space-y-4">
-                    {/* Workload and Fee Setup Section */}
+                    {/* Workload and Fees Section */}
                     <div className="space-y-4 lg:space-y-2.5">
-                      <h3 className="text-base font-semibold text-nesso-ink">Workload and Fee Setup</h3>
+                      <h3 className="text-base font-semibold text-nesso-ink">Workload and Fees</h3>
 
                       {/* Session Fee Slider */}
                       <div className="space-y-3 lg:space-y-1.5">
