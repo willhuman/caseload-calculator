@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { calculateProjection, formatCurrency } from '@/lib/calculations';
@@ -184,6 +185,7 @@ export function Home() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Share via</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => handleShareSelect('text')}>
                   Text
                 </DropdownMenuItem>
