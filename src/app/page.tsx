@@ -170,7 +170,7 @@ export function Home() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2.5}
-                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0V3"
                     />
                   </svg>
                   <span className="hidden md:inline">Share</span>

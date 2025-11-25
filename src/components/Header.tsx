@@ -42,9 +42,9 @@ export function Header({ rightContent }: HeaderProps) {
                   className="h-5"
                 />
               </a>
-              {/* Share button next to logo on mobile */}
+              {/* Share button next to logo on mobile - shifted right with margin */}
               {rightContent && (
-                <div className="md:hidden">
+                <div className="md:hidden ml-2">
                   {rightContent}
                 </div>
               )}
