@@ -5,10 +5,19 @@ import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { ExpenseInputs } from '@/components/ExpenseInputs';
 import { LiveResultsDashboard } from '@/components/LiveResultsDashboard';
+import { ShareModal } from '@/components/ShareModal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { calculateProjection, formatCurrency } from '@/lib/calculations';
 import { trackEvent } from '@/lib/analytics';
+import { isShareFeatureEnabled } from '@/lib/shareUtils';
 import { CalculatorStructuredData } from '@/components/StructuredData';
 import { FAQStructuredData } from '@/components/FAQStructuredData';
 import type { SessionInputs, ExpenseInputs as ExpenseInputsType, TimeOffInputs as TimeOffInputsType, ProjectionResults } from '@/lib/types';
@@ -50,6 +59,47 @@ export function Home() {
 
   // Mobile results visibility state (hide when near Results section)
   const [showMobileResultsBar, setShowMobileResultsBar] = useState(true);
+
+  // Share feature state
+  const [shareEnabled, setShareEnabled] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<'facebook' | 'reddit' | null>(null);
+
+  // Check if share feature is enabled
+  useEffect(() => {
+    setShareEnabled(isShareFeatureEnabled());
+  }, []);
+
+  const shareText = "Take a look at this really cool app I found to help me plan the financial details of my practice, caseloadcalculator.com";
+
+  const handleShareSelect = (platform: string) => {
+    if (!results) return;
+
+    switch (platform) {
+      case "text":
+        // Use SMS protocol to directly open messages app with pre-filled text
+        window.location.href = `sms:?&body=${encodeURIComponent(shareText)}`;
+        break;
+
+      case "whatsapp":
+        // Open WhatsApp directly with pre-filled text
+        window.location.href = `whatsapp://send?text=${encodeURIComponent(shareText)}`;
+        break;
+
+      case "email":
+        // Open email client with pre-filled content
+        const emailSubject = "Check out this Caseload Calculator";
+        window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(shareText)}`;
+        break;
+
+      case "facebook":
+      case "reddit":
+        // Show preview modal for Facebook/Reddit
+        setSelectedPlatform(platform as 'facebook' | 'reddit');
+        setShareModalOpen(true);
+        break;
+    }
+  };
 
   // Track scroll position to hide bar when Financial Projections card is visible
   useEffect(() => {
@@ -115,7 +165,39 @@ export function Home() {
     <div className="min-h-screen" style={{ backgroundColor: '#F4F7F3' }}>
       <CalculatorStructuredData />
       <FAQStructuredData />
-      <Header />
+      <Header
+        rightContent={
+          shareEnabled && results ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none"
+                >
+                  Share with others
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => handleShareSelect('text')}>
+                  Text
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShareSelect('whatsapp')}>
+                  WhatsApp
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShareSelect('email')}>
+                  Email
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShareSelect('facebook')}>
+                  Facebook
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShareSelect('reddit')}>
+                  Reddit
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null
+        }
+      />
 
       <main className="max-w-6xl mx-auto px-4 pt-2 lg:pt-3 pb-4 lg:pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-4">
@@ -405,6 +487,16 @@ export function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Share Modal - Only for Facebook/Reddit */}
+      {shareEnabled && results && selectedPlatform && (
+        <ShareModal
+          open={shareModalOpen}
+          onOpenChange={setShareModalOpen}
+          results={results}
+          platform={selectedPlatform}
+        />
+      )}
     </div>
   );
 }

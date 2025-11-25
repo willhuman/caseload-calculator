@@ -138,6 +138,7 @@ export function LiveResultsDashboard({ results }: LiveResultsDashboardProps) {
             </div>
           </div>
         </div>
+
       </CardContent>
     </Card>
   );
