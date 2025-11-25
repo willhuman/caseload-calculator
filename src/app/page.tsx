@@ -174,7 +174,8 @@ export function Home() {
                   variant="outline"
                   className="bg-[#FAB5A7] hover:bg-[#FAB5A7]/90 text-black border-none"
                 >
-                  Share with others
+                  <span className="hidden md:inline">Share with others</span>
+                  <span className="md:hidden">Share</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
