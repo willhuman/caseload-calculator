@@ -509,7 +509,7 @@ export function Home() {
 
       {/* Toast notification */}
       {showToast && (
-        <div className="fixed bottom-6 right-6 bg-[#F9F8F6] text-nesso-ink border border-nesso-ink/10 px-4 py-3 rounded-md z-50 animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="fixed top-4 left-4 md:bottom-6 md:top-auto md:left-auto md:right-6 bg-[#F9F8F6] text-nesso-ink border border-nesso-ink/10 px-4 py-3 rounded-md z-50 animate-in fade-in slide-in-from-left-4 md:slide-in-from-right-4 duration-300">
           URL copied to clipboard
         </div>
       )}
