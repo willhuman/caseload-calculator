@@ -59,8 +59,10 @@ export function Home() {
   // Mobile results visibility state (hide when near Results section)
   const [showMobileResultsBar, setShowMobileResultsBar] = useState(true);
 
+  // Toast notification state
+  const [showToast, setShowToast] = useState(false);
 
-  const shareText = "Take a look at this really cool app I found to help me plan the financial details of my practice, caseloadcalculator.com";
+  const shareText = "Take a look at this really cool app I found to help me plan the financial details of my practice: https://www.caseloadcalculator.com";
 
   const handleShareSelect = (platform: string) => {
     if (!results) return;
@@ -80,6 +82,14 @@ export function Home() {
         // Open email client with pre-filled content
         const emailSubject = "Check out this Caseload Calculator";
         window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(shareText)}`;
+        break;
+
+      case "copy":
+        // Copy link to clipboard
+        navigator.clipboard.writeText("https://www.caseloadcalculator.com").then(() => {
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
+        });
         break;
     }
   };
@@ -196,6 +206,12 @@ export function Home() {
                   </svg>
                   WhatsApp
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShareSelect('copy')} className="gap-2">
+                  <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  Copy URL
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : null
@@ -265,13 +281,13 @@ export function Home() {
                           onValueChange={(value) =>
                             setSession({ ...session, clientsScheduledPerWeek: value[0] })
                           }
-                          min={5}
+                          min={1}
                           max={40}
                           step={1}
                           className="w-full"
                         />
                         <div className="flex justify-between text-xs text-nesso-ink/50">
-                          <span>5 clients</span>
+                          <span>1 client</span>
                           <span>40 clients</span>
                         </div>
                       </div>
@@ -490,6 +506,13 @@ export function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Toast notification */}
+      {showToast && (
+        <div className="fixed bottom-6 right-6 bg-[#F9F8F6] text-nesso-ink border border-nesso-ink/10 px-4 py-3 rounded-md z-50 animate-in fade-in slide-in-from-right-4 duration-300">
+          URL copied to clipboard
+        </div>
+      )}
     </div>
   );
 }
