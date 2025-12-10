@@ -457,16 +457,16 @@ export function Home() {
         {/* Nesso Mission Footer */}
         <div className="mt-6 mb-6 lg:mb-0">
           <p className="text-base text-center text-nesso-navy">
-            At Nesso, we stand for small private practices.
+            This tool is a gift from Nesso, a new kind of EHR built to help therapists grow their practice and grow as business owners.
             <br className="md:hidden" />
             <span className="hidden md:inline"> </span>
             <a
-              href="https://www.nessoapp.com/about"
+              href="https://nessoapp.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-nesso-navy underline hover:no-underline font-medium"
             >
-              Learn why
+              Learn more
             </a>
           </p>
         </div>
