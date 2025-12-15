@@ -3,9 +3,10 @@ import type { ReactNode } from 'react';
 
 interface HeaderProps {
   rightContent?: ReactNode;
+  title?: string;
 }
 
-export function Header({ rightContent }: HeaderProps) {
+export function Header({ rightContent, title = "Therapist Caseload Calculator" }: HeaderProps) {
   return (
     <header className="w-full">
       <div className="container mx-auto max-w-6xl px-4 py-4 md:py-8">
@@ -21,12 +22,12 @@ export function Header({ rightContent }: HeaderProps) {
           <div className="text-center space-y-2 md:space-y-3">
             {/* Main title */}
             <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-nesso-navy">
-              Therapist Caseload Calculator
+              {title}
             </h1>
 
-            {/* Powered by Nesso row - centered on desktop, with share button on mobile */}
+            {/* Free tool provided by Nesso row - centered on desktop, with share button on mobile */}
             <div className="flex justify-center items-center gap-2 text-sm text-nesso-ink/80">
-              <span>Powered by</span>
+              <span>Free tool provided by</span>
               <a
                 href="https://nessoapp.com"
                 target="_blank"
