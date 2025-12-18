@@ -228,7 +228,7 @@ function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLab
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-nesso-navy text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity pointer-events-none w-56 text-left z-10 shadow-lg">
-                  Self-employment tax covers Social Security (12.4%) and Medicare (2.9%) that W-2 employees split with their employer. When you're self-employed or a 1099 contractor, you pay both portions. This is separate from federal and state income taxes.
+                  Self-employment tax covers Social Security (12.4%) and Medicare (2.9%) that W-2 employees split with their employer. When you&apos;re self-employed or a 1099 contractor, you pay both portions. This is separate from federal and state income taxes.
                   <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-nesso-navy" />
                 </span>
               </button>
