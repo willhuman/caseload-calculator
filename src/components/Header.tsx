@@ -2,10 +2,11 @@ import Image from 'next/image';
 import type { ReactNode } from 'react';
 
 interface HeaderProps {
+  title?: string;
   rightContent?: ReactNode;
 }
 
-export function Header({ rightContent }: HeaderProps) {
+export function Header({ title = 'Therapist Caseload Calculator', rightContent }: HeaderProps) {
   return (
     <header className="w-full">
       <div className="container mx-auto max-w-6xl px-4 py-4 md:py-8">
@@ -21,7 +22,7 @@ export function Header({ rightContent }: HeaderProps) {
           <div className="text-center space-y-2 md:space-y-3">
             {/* Main title */}
             <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-nesso-navy">
-              Therapist Caseload Calculator
+              {title}
             </h1>
 
             {/* Powered by Nesso row - centered on desktop, with share button on mobile */}
