@@ -1015,7 +1015,7 @@ function TrueRateContent() {
           <div className="mt-6 mb-6 lg:mb-0">
             <div className="bg-nesso-navy/5 rounded-lg p-4 border border-nesso-navy/10">
               <p className="text-base text-center text-nesso-navy">
-                This planning tool is a free service from <span className="font-semibold">Nesso</span>, a new kind of EHR built to help therapists grow their practice and grow as business owners.
+                This tool is a free service from <span className="font-semibold">Nesso</span>, a new kind of EHR built to help therapists grow their practice and grow as business owners.
                 <br className="md:hidden" />
                 <span className="hidden md:inline"> </span>
                 <a
