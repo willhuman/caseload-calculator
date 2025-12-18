@@ -624,9 +624,11 @@ function TrueRateContent() {
                     <div className="lg:col-span-3 space-y-6 lg:space-y-4">
                       {/* Income Details Section */}
                       <div className="space-y-4 lg:space-y-3">
+                        <h3 className="text-base font-semibold text-nesso-ink">Income</h3>
+
                         {/* Source Type */}
-                        <div className="space-y-1">
-                          <label className="text-xs font-medium text-nesso-ink/70">Type of work</label>
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-nesso-ink/70">Type of work</label>
                           <select
                             value={source.sourceType}
                             onChange={(e) => {
@@ -667,7 +669,7 @@ function TrueRateContent() {
                                   {/* Tier header with label and remove button */}
                                   <div className="flex items-center justify-between">
                                     {tierIndex === 0 ? (
-                                      <span className="text-xs font-medium text-nesso-ink/70">
+                                      <span className="text-sm font-medium text-nesso-ink/70">
                                         Your standard rate
                                       </span>
                                     ) : (
@@ -680,7 +682,7 @@ function TrueRateContent() {
                                           );
                                           updateIncomeSource(source.id, { rateTiers: updatedTiers });
                                         }}
-                                        className="text-xs font-medium text-nesso-ink/70 bg-transparent border-b border-dashed border-gray-300 focus:border-primary px-0.5 py-0.5 focus:outline-none focus:ring-0"
+                                        className="text-sm font-medium text-nesso-ink/70 bg-transparent border-b border-dashed border-gray-300 focus:border-primary px-0.5 py-0.5 focus:outline-none focus:ring-0"
                                         placeholder="Name this rate"
                                       />
                                     )}
@@ -698,8 +700,8 @@ function TrueRateContent() {
                                     )}
                                   </div>
                                   <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1">
-                                      <label className="text-xs font-medium text-nesso-ink/50">
+                                    <div className="space-y-1.5">
+                                      <label className="text-sm font-medium text-nesso-ink/70">
                                         {tierIndex === 0 ? 'Fee per session' : 'Rate'}
                                       </label>
                                       <div className="relative">
@@ -719,8 +721,8 @@ function TrueRateContent() {
                                         />
                                       </div>
                                     </div>
-                                    <div className="space-y-1">
-                                      <label className="text-xs font-medium text-nesso-ink/50">Sessions/week</label>
+                                    <div className="space-y-1.5">
+                                      <label className="text-sm font-medium text-nesso-ink/70">Sessions/week</label>
                                       <Input
                                         type="number"
                                         min={0}
@@ -763,7 +765,7 @@ function TrueRateContent() {
                           <>
                             {/* Tax Status */}
                             <div className="space-y-1.5">
-                              <label className="text-xs font-medium text-nesso-ink/70">Employment type</label>
+                              <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>
                               <div className="grid grid-cols-2 gap-2">
                                 {(['w2', '1099'] as TaxStatus[]).map((status) => (
                                   <button
@@ -783,7 +785,7 @@ function TrueRateContent() {
 
                             {/* Pay Type */}
                             <div className="space-y-1.5">
-                              <label className="text-xs font-medium text-nesso-ink/70">How are you paid?</label>
+                              <label className="text-sm font-medium text-nesso-ink/70">How are you paid?</label>
                               <div className="grid grid-cols-3 gap-2">
                                 {([
                                   { value: 'salary', label: 'Salary' },
@@ -808,8 +810,8 @@ function TrueRateContent() {
                             {/* Pay Details */}
                             {source.payType === 'salary' && (
                               <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                  <label className="text-xs font-medium text-nesso-ink/70">Annual salary</label>
+                                <div className="space-y-1.5">
+                                  <label className="text-sm font-medium text-nesso-ink/70">Annual salary</label>
                                   <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                                     <Input
@@ -822,8 +824,8 @@ function TrueRateContent() {
                                     />
                                   </div>
                                 </div>
-                                <div className="space-y-1">
-                                  <label className="text-xs font-medium text-nesso-ink/70">Sessions/week</label>
+                                <div className="space-y-1.5">
+                                  <label className="text-sm font-medium text-nesso-ink/70">Sessions/week</label>
                                   <Input
                                     type="number"
                                     min={0}
@@ -837,8 +839,8 @@ function TrueRateContent() {
 
                             {source.payType === 'hourly' && (
                               <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                  <label className="text-xs font-medium text-nesso-ink/70">Hourly rate</label>
+                                <div className="space-y-1.5">
+                                  <label className="text-sm font-medium text-nesso-ink/70">Hourly rate</label>
                                   <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                                     <Input
@@ -851,8 +853,8 @@ function TrueRateContent() {
                                     />
                                   </div>
                                 </div>
-                                <div className="space-y-1">
-                                  <label className="text-xs font-medium text-nesso-ink/70">Hours/week</label>
+                                <div className="space-y-1.5">
+                                  <label className="text-sm font-medium text-nesso-ink/70">Hours/week</label>
                                   <Input
                                     type="number"
                                     min={0}
@@ -866,8 +868,8 @@ function TrueRateContent() {
 
                             {source.payType === 'per-session' && (
                               <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                  <label className="text-xs font-medium text-nesso-ink/70">Rate per session</label>
+                                <div className="space-y-1.5">
+                                  <label className="text-sm font-medium text-nesso-ink/70">Rate per session</label>
                                   <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                                     <Input
@@ -880,8 +882,8 @@ function TrueRateContent() {
                                     />
                                   </div>
                                 </div>
-                                <div className="space-y-1">
-                                  <label className="text-xs font-medium text-nesso-ink/70">Sessions/week</label>
+                                <div className="space-y-1.5">
+                                  <label className="text-sm font-medium text-nesso-ink/70">Sessions/week</label>
                                   <Input
                                     type="number"
                                     min={0}
@@ -898,16 +900,16 @@ function TrueRateContent() {
                       </div>
 
                       {/* Your Time Section */}
-                      <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-2.5">
+                      <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-3">
                         <h3 className="text-base font-semibold text-nesso-ink">Your Time</h3>
 
                         {/* Session Length */}
-                        <div className="space-y-3 lg:space-y-1.5">
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium">Average session length</label>
-                            <div className="text-xl lg:text-base font-bold text-nesso-navy">
+                            <label className="text-sm font-medium text-nesso-ink/70">Average session length</label>
+                            <span className="text-sm font-semibold text-nesso-navy">
                               {source.sessionLengthMinutes} min
-                            </div>
+                            </span>
                           </div>
                           <Slider
                             value={[source.sessionLengthMinutes]}
@@ -924,14 +926,14 @@ function TrueRateContent() {
                       </div>
 
                       {/* Assumptions Section */}
-                      <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-2">
+                      <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-3">
                         <h3 className="text-base font-semibold text-nesso-ink">Assumptions</h3>
 
                         {/* Documentation Time */}
-                        <div className="space-y-1.5 lg:space-y-1">
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <label className="text-xs font-medium text-nesso-ink/70">Documentation time per session</label>
-                            <span className="text-xs font-semibold text-nesso-navy">{source.documentationMinutes} min</span>
+                            <label className="text-sm font-medium text-nesso-ink/70">Documentation per session</label>
+                            <span className="text-sm font-semibold text-nesso-navy">{source.documentationMinutes} min</span>
                           </div>
                           <Slider
                             value={[source.documentationMinutes]}
@@ -943,10 +945,10 @@ function TrueRateContent() {
                         </div>
 
                         {/* Weekly Admin */}
-                        <div className="space-y-1.5 lg:space-y-1">
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <label className="text-xs font-medium text-nesso-ink/70">Weekly admin hours</label>
-                            <span className="text-xs font-semibold text-nesso-navy">{source.weeklyAdminHours} hrs</span>
+                            <label className="text-sm font-medium text-nesso-ink/70">Weekly admin hours</label>
+                            <span className="text-sm font-semibold text-nesso-navy">{source.weeklyAdminHours} hrs</span>
                           </div>
                           <Slider
                             value={[source.weeklyAdminHours]}
@@ -962,49 +964,30 @@ function TrueRateContent() {
                       <div className="lg:hidden pt-4 border-t-2 border-navy/20">
                         <ResultsPanel source={source} sourceLabel={sourceLabel} />
                       </div>
-
-                      {/* Mobile: Add Another Source button */}
-                      {index === incomeSources.length - 1 && (
-                        <div className="lg:hidden flex justify-end pt-4 mt-4">
-                          <button
-                            onClick={addIncomeSource}
-                            className="text-xs font-medium text-primary hover:text-primary/80 bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            Add income source
-                          </button>
-                        </div>
-                      )}
                     </div>
 
                     {/* Right Column: Results (Desktop only - sticky) */}
-                    <div className="hidden lg:flex lg:flex-col lg:col-span-2">
+                    <div className="hidden lg:block lg:col-span-2">
                       <div className="sticky top-4">
                         <ResultsPanel source={source} sourceLabel={sourceLabel} />
                       </div>
-
-                      {/* Desktop: Add Another Source button - bottom right of card */}
-                      {index === incomeSources.length - 1 && (
-                        <div className="flex justify-end mt-auto pt-4">
-                          <button
-                            onClick={addIncomeSource}
-                            className="text-xs font-medium text-primary hover:text-primary/80 bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            Add income source
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </CardContent>
               </Card>
             );
           })}
+
+          {/* Add Income Source Button - Outside cards */}
+          <button
+            onClick={addIncomeSource}
+            className="w-full py-3 px-4 border-2 border-dashed border-gray-300 hover:border-primary/50 rounded-lg text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center justify-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add another income source
+          </button>
 
           {/* Combined Summary Panel - shown when 2+ income sources */}
           {incomeSources.length >= 2 && (
