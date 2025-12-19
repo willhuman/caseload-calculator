@@ -264,7 +264,7 @@ function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLab
       {/* Main Result Header */}
       <div className="text-center pb-2">
         <p className="text-sm text-nesso-ink/70 mb-1">
-          Your true hourly rate for your {sourceLabel.toLowerCase()} work is
+          Your true hourly rate for your {sourceLabel === 'My Private Practice' ? 'private practice' : sourceLabel.toLowerCase()} work is
         </p>
         <p className="text-3xl font-bold text-nesso-navy">
           {formatCurrency(results.trueHourlyRate, true)}
