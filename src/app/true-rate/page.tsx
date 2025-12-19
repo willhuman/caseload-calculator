@@ -315,6 +315,111 @@ function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLab
   );
 }
 
+// Collapsible Time Section Component
+function CollapsibleTimeSection({
+  source,
+  updateIncomeSource
+}: {
+  source: IncomeSource;
+  updateIncomeSource: (id: string, updates: Partial<IncomeSource>) => void;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Summary of current time settings
+  const timeSummary = `${source.sessionLengthMinutes} min sessions • ${source.documentationMinutes} min docs • ${source.weeklyAdminHours}h admin`;
+
+  return (
+    <div className="pt-4 lg:pt-3 border-t border-sand">
+      {/* Collapsible Header */}
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between text-left group"
+      >
+        <div className="space-y-0.5">
+          <h3 className="text-base font-semibold text-nesso-ink group-hover:text-primary transition-colors">
+            How do you spend your time?
+          </h3>
+          {!isExpanded && (
+            <p className="text-xs text-nesso-ink/50">
+              {timeSummary}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          {!isExpanded && (
+            <span className="text-xs text-primary font-medium">Edit</span>
+          )}
+          <svg
+            className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className="mt-4 space-y-4 lg:space-y-3">
+          {/* Session Length */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-nesso-ink/70">Average session length</label>
+              <span className="text-sm font-semibold text-nesso-navy">
+                {source.sessionLengthMinutes} min
+              </span>
+            </div>
+            <Slider
+              value={[source.sessionLengthMinutes]}
+              onValueChange={(v) => updateIncomeSource(source.id, { sessionLengthMinutes: v[0] })}
+              min={30}
+              max={90}
+              step={5}
+            />
+            <div className="flex justify-between text-xs text-nesso-ink/50">
+              <span>30 min</span>
+              <span>90 min</span>
+            </div>
+          </div>
+
+          {/* Documentation Time */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-nesso-ink/70">Documentation per session</label>
+              <span className="text-sm font-semibold text-nesso-navy">{source.documentationMinutes} min</span>
+            </div>
+            <Slider
+              value={[source.documentationMinutes]}
+              onValueChange={(v) => updateIncomeSource(source.id, { documentationMinutes: v[0] })}
+              min={0}
+              max={30}
+              step={5}
+            />
+          </div>
+
+          {/* Weekly Admin */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-nesso-ink/70">Weekly admin hours</label>
+              <span className="text-sm font-semibold text-nesso-navy">{source.weeklyAdminHours} hrs</span>
+            </div>
+            <Slider
+              value={[source.weeklyAdminHours]}
+              onValueChange={(v) => updateIncomeSource(source.id, { weeklyAdminHours: v[0] })}
+              min={0}
+              max={15}
+              step={1}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Combined Summary Panel for multiple income sources
 function CombinedSummaryPanel({ sources }: { sources: IncomeSource[] }) {
   const [hoursExpanded, setHoursExpanded] = useState(false);
@@ -622,14 +727,10 @@ function TrueRateContent() {
                   <div className="lg:grid lg:grid-cols-5 lg:gap-6">
                     {/* Left Column: Inputs */}
                     <div className="lg:col-span-3 space-y-6 lg:space-y-4">
-                      {/* Income Details Section */}
+                      {/* Step 1: What type of work? */}
                       <div className="space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">Income</h3>
-
-                        {/* Source Type */}
-                        <div className="space-y-1.5">
-                          <label className="text-sm font-medium text-nesso-ink/70">Type of work</label>
-                          <select
+                        <h3 className="text-base font-semibold text-nesso-ink">What type of work?</h3>
+                        <select
                             value={source.sourceType}
                             onChange={(e) => {
                               const newType = e.target.value as IncomeSourceType;
@@ -651,7 +752,11 @@ function TrueRateContent() {
                               </option>
                             ))}
                           </select>
-                        </div>
+                      </div>
+
+                      {/* Step 2: How much do you earn? */}
+                      <div className="space-y-4 lg:space-y-3">
+                        <h3 className="text-base font-semibold text-nesso-ink">How much do you earn?</h3>
 
                         {/* Private Practice - Rate Tiers UI */}
                         {isSelfEmployed ? (
@@ -899,66 +1004,8 @@ function TrueRateContent() {
                         )}
                       </div>
 
-                      {/* Your Time Section */}
-                      <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">Your Time</h3>
-
-                        {/* Session Length */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-nesso-ink/70">Average session length</label>
-                            <span className="text-sm font-semibold text-nesso-navy">
-                              {source.sessionLengthMinutes} min
-                            </span>
-                          </div>
-                          <Slider
-                            value={[source.sessionLengthMinutes]}
-                            onValueChange={(v) => updateIncomeSource(source.id, { sessionLengthMinutes: v[0] })}
-                            min={30}
-                            max={90}
-                            step={5}
-                          />
-                          <div className="flex justify-between text-xs text-nesso-ink/50">
-                            <span>30 min</span>
-                            <span>90 min</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Assumptions Section */}
-                      <div className="pt-4 lg:pt-3 border-t border-sand space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">Assumptions</h3>
-
-                        {/* Documentation Time */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-nesso-ink/70">Documentation per session</label>
-                            <span className="text-sm font-semibold text-nesso-navy">{source.documentationMinutes} min</span>
-                          </div>
-                          <Slider
-                            value={[source.documentationMinutes]}
-                            onValueChange={(v) => updateIncomeSource(source.id, { documentationMinutes: v[0] })}
-                            min={0}
-                            max={30}
-                            step={5}
-                          />
-                        </div>
-
-                        {/* Weekly Admin */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-nesso-ink/70">Weekly admin hours</label>
-                            <span className="text-sm font-semibold text-nesso-navy">{source.weeklyAdminHours} hrs</span>
-                          </div>
-                          <Slider
-                            value={[source.weeklyAdminHours]}
-                            onValueChange={(v) => updateIncomeSource(source.id, { weeklyAdminHours: v[0] })}
-                            min={0}
-                            max={15}
-                            step={1}
-                          />
-                        </div>
-                      </div>
+                      {/* Step 3: How do you spend your time? - Collapsible */}
+                      <CollapsibleTimeSection source={source} updateIncomeSource={updateIncomeSource} />
 
                       {/* Mobile: Results Section (shown below inputs on mobile) */}
                       <div className="lg:hidden pt-4 border-t-2 border-navy/20">
