@@ -30,13 +30,19 @@ const EMPLOYMENT_TYPE_OPTIONS: { value: EmploymentType; label: string }[] = [
 ];
 
 const INCOME_SOURCE_OPTIONS: { value: IncomeSourceType; label: string }[] = [
-  { value: 'private-practice', label: 'Private Practice' },
+  { value: 'private-practice', label: 'My Private Practice' },
   { value: 'group-practice', label: 'Group Practice' },
   { value: 'agency', label: 'Agency Work' },
   { value: 'workshops', label: 'Workshops' },
   { value: 'supervision', label: 'Supervision' },
   { value: 'coaching', label: 'Coaching' },
   { value: 'other', label: 'Other' },
+];
+
+const PAY_TYPE_OPTIONS: { value: PayType; label: string }[] = [
+  { value: 'salary', label: 'Salary' },
+  { value: 'hourly', label: 'Hourly' },
+  { value: 'per-session', label: 'Per Session' },
 ];
 
 // Rate tier for different client rates (full rate, reduced rate, insurance, etc.)
@@ -64,6 +70,9 @@ interface IncomeSource {
   sessionLengthMinutes: number;
   documentationMinutes: number;
   weeklyAdminHours: number;
+  // Progressive reveal state
+  showResults: boolean;
+  isCalculating: boolean;
 }
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -87,6 +96,8 @@ const createIncomeSource = (): IncomeSource => ({
   sessionLengthMinutes: 50,
   documentationMinutes: 10,
   weeklyAdminHours: 3,
+  showResults: false,
+  isCalculating: false,
 });
 
 const calculateWeeklyIncome = (source: IncomeSource): number => {
@@ -202,6 +213,45 @@ const calculateCombinedResults = (sources: IncomeSource[]) => {
     sortedByRate,
   };
 };
+
+// Helper to check if income step is complete
+const isIncomeStepComplete = (source: IncomeSource): boolean => {
+  if (source.sourceType === 'private-practice') {
+    // Check if at least one rate tier has both rate and sessions
+    return source.rateTiers.some(tier => tier.rate > 0 && tier.sessionsPerWeek > 0);
+  }
+
+  switch (source.payType) {
+    case 'salary':
+      return (source.annualSalary || 0) > 0 && (source.sessionsPerWeek || 0) > 0;
+    case 'hourly':
+      return (source.hourlyRate || 0) > 0 && (source.hoursPerWeek || 0) > 0;
+    case 'per-session':
+      return (source.ratePerSession || 0) > 0 && (source.sessionsPerWeek || 0) > 0;
+    default:
+      return false;
+  }
+};
+
+// Loading Results Component
+function LoadingResults() {
+  return (
+    <div className="bg-[#E0EAE0] rounded-lg p-6 space-y-4 animate-pulse">
+      <div className="flex items-center justify-center gap-3">
+        <svg className="w-5 h-5 text-nesso-navy animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+        <span className="text-base font-medium text-nesso-navy">Calculating your true rate...</span>
+      </div>
+      <div className="space-y-3">
+        <div className="h-4 bg-nesso-navy/10 rounded w-3/4" />
+        <div className="h-4 bg-nesso-navy/10 rounded w-1/2" />
+        <div className="h-6 bg-nesso-navy/20 rounded w-2/3 mt-4" />
+      </div>
+    </div>
+  );
+}
 
 // Results Panel Component
 function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLabel: string }) {
@@ -907,25 +957,17 @@ function TrueRateContent() {
                             {/* Pay Type */}
                             <div className="space-y-1.5">
                               <label className="text-sm font-medium text-nesso-ink/70">How are you paid?</label>
-                              <div className="grid grid-cols-3 gap-2">
-                                {([
-                                  { value: 'salary', label: 'Salary' },
-                                  { value: 'hourly', label: 'Hourly' },
-                                  { value: 'per-session', label: 'Per Session' },
-                                ] as { value: PayType; label: string }[]).map((option) => (
-                                  <button
-                                    key={option.value}
-                                    onClick={() => updateIncomeSource(source.id, { payType: option.value })}
-                                    className={`py-2 px-3 rounded-md border text-sm font-medium transition-all ${
-                                      source.payType === option.value
-                                        ? 'border-primary bg-primary/10 text-primary'
-                                        : 'border-gray-200 hover:border-gray-300 text-nesso-ink'
-                                    }`}
-                                  >
+                              <select
+                                value={source.payType}
+                                onChange={(e) => updateIncomeSource(source.id, { payType: e.target.value as PayType })}
+                                className="w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
+                              >
+                                {PAY_TYPE_OPTIONS.map((option) => (
+                                  <option key={option.value} value={option.value}>
                                     {option.label}
-                                  </button>
+                                  </option>
                                 ))}
-                              </div>
+                              </select>
                             </div>
 
                             {/* Pay Details */}
@@ -1020,19 +1062,65 @@ function TrueRateContent() {
                         )}
                       </div>
 
-                      {/* Step 3: How do you spend your time? - Collapsible */}
-                      <CollapsibleTimeSection source={source} updateIncomeSource={updateIncomeSource} />
+                      {/* Step 3: How do you spend your time? - Only show after income is entered */}
+                      {isIncomeStepComplete(source) && (
+                        <CollapsibleTimeSection source={source} updateIncomeSource={updateIncomeSource} />
+                      )}
+
+                      {/* Show Results Button - Only show after income is entered and results not yet shown */}
+                      {isIncomeStepComplete(source) && !source.showResults && (
+                        <div className="pt-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateIncomeSource(source.id, { isCalculating: true });
+                              // Simulate calculation delay for effect
+                              setTimeout(() => {
+                                updateIncomeSource(source.id, { isCalculating: false, showResults: true });
+                              }, 1200);
+                            }}
+                            className="w-full py-3 px-6 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            Show me my results
+                          </button>
+                        </div>
+                      )}
 
                       {/* Mobile: Results Section (shown below inputs on mobile) */}
-                      <div className="lg:hidden pt-4 border-t-2 border-navy/20">
-                        <ResultsPanel source={source} sourceLabel={sourceLabel} />
-                      </div>
+                      {source.isCalculating && (
+                        <div className="lg:hidden pt-4 border-t-2 border-navy/20">
+                          <LoadingResults />
+                        </div>
+                      )}
+                      {source.showResults && !source.isCalculating && (
+                        <div className="lg:hidden pt-4 border-t-2 border-navy/20">
+                          <ResultsPanel source={source} sourceLabel={sourceLabel} />
+                        </div>
+                      )}
                     </div>
 
                     {/* Right Column: Results (Desktop only - sticky) */}
                     <div className="hidden lg:block lg:col-span-2">
                       <div className="sticky top-4">
-                        <ResultsPanel source={source} sourceLabel={sourceLabel} />
+                        {source.isCalculating ? (
+                          <LoadingResults />
+                        ) : source.showResults ? (
+                          <ResultsPanel source={source} sourceLabel={sourceLabel} />
+                        ) : (
+                          <div className="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-200 text-center">
+                            <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <p className="text-sm text-gray-400">
+                              {isIncomeStepComplete(source)
+                                ? 'Click "Show me my results" to see your true hourly rate'
+                                : 'Enter your income details to calculate your true hourly rate'}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
