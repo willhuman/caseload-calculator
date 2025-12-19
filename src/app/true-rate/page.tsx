@@ -19,8 +19,15 @@ const ACCESS_KEY = 'nesso2025';
 
 // Types
 type PayType = 'salary' | 'hourly' | 'per-session';
-type TaxStatus = 'w2' | '1099';
+type EmploymentType = 'self-employed' | 'w2' | '1099';
+type TaxStatus = 'w2' | '1099'; // Keep for backwards compatibility in calculations
 type IncomeSourceType = 'private-practice' | 'group-practice' | 'agency' | 'workshops' | 'supervision' | 'coaching' | 'other';
+
+const EMPLOYMENT_TYPE_OPTIONS: { value: EmploymentType; label: string }[] = [
+  { value: 'self-employed', label: 'Self-employed' },
+  { value: 'w2', label: 'Employee (W-2)' },
+  { value: '1099', label: 'Contractor (1099)' },
+];
 
 const INCOME_SOURCE_OPTIONS: { value: IncomeSourceType; label: string }[] = [
   { value: 'private-practice', label: 'Private Practice' },
@@ -43,8 +50,9 @@ interface RateTier {
 interface IncomeSource {
   id: string;
   sourceType: IncomeSourceType;
+  employmentType: EmploymentType;
   payType: PayType;
-  taxStatus: TaxStatus;
+  taxStatus: TaxStatus; // Derived from employmentType for calculations
   annualSalary?: number;
   hourlyRate?: number;
   hoursPerWeek?: number;
@@ -70,8 +78,9 @@ const createRateTier = (label: string = 'Full rate'): RateTier => ({
 const createIncomeSource = (): IncomeSource => ({
   id: generateId(),
   sourceType: 'private-practice',
+  employmentType: 'self-employed',
   payType: 'per-session',
-  taxStatus: '1099',
+  taxStatus: '1099', // self-employed uses 1099 tax treatment
   sessionsPerWeek: 0,
   ratePerSession: 0,
   rateTiers: [createRateTier('Full rate')],
@@ -737,6 +746,7 @@ function TrueRateContent() {
                               if (newType === 'private-practice') {
                                 updateIncomeSource(source.id, {
                                   sourceType: newType,
+                                  employmentType: 'self-employed',
                                   taxStatus: '1099',
                                   payType: 'per-session'
                                 });
@@ -752,6 +762,38 @@ function TrueRateContent() {
                               </option>
                             ))}
                           </select>
+
+                        {/* Employment Type */}
+                        <div className="space-y-1.5">
+                          <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>
+                          <select
+                            value={source.employmentType}
+                            onChange={(e) => {
+                              const newEmploymentType = e.target.value as EmploymentType;
+                              // Map employment type to tax status for calculations
+                              const newTaxStatus: TaxStatus = newEmploymentType === 'w2' ? 'w2' : '1099';
+                              updateIncomeSource(source.id, {
+                                employmentType: newEmploymentType,
+                                taxStatus: newTaxStatus
+                              });
+                            }}
+                            disabled={isSelfEmployed}
+                            className={`w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none ${isSelfEmployed ? 'opacity-60 cursor-not-allowed bg-gray-50' : ''}`}
+                          >
+                            {EMPLOYMENT_TYPE_OPTIONS.map((option) => (
+                              <option
+                                key={option.value}
+                                value={option.value}
+                                disabled={isSelfEmployed && option.value !== 'self-employed'}
+                              >
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                          {isSelfEmployed && (
+                            <p className="text-xs text-nesso-ink/50">Private practice owners are self-employed</p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Step 2: How much do you earn? */}
@@ -761,12 +803,6 @@ function TrueRateContent() {
                         {/* Private Practice - Rate Tiers UI */}
                         {isSelfEmployed ? (
                           <>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-md font-medium">
-                                Self-employed
-                              </span>
-                            </div>
-
                             {/* Rate Tiers */}
                             <div className="space-y-3">
                               {source.rateTiers.map((tier, tierIndex) => (
@@ -868,26 +904,6 @@ function TrueRateContent() {
                           </>
                         ) : (
                           <>
-                            {/* Tax Status */}
-                            <div className="space-y-1.5">
-                              <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>
-                              <div className="grid grid-cols-2 gap-2">
-                                {(['w2', '1099'] as TaxStatus[]).map((status) => (
-                                  <button
-                                    key={status}
-                                    onClick={() => updateIncomeSource(source.id, { taxStatus: status })}
-                                    className={`py-2 px-3 rounded-md border text-sm font-medium transition-all ${
-                                      source.taxStatus === status
-                                        ? 'border-primary bg-primary/10 text-primary'
-                                        : 'border-gray-200 hover:border-gray-300 text-nesso-ink'
-                                    }`}
-                                  >
-                                    {status === 'w2' ? 'W-2 Employee' : '1099 Contractor'}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
                             {/* Pay Type */}
                             <div className="space-y-1.5">
                               <label className="text-sm font-medium text-nesso-ink/70">How are you paid?</label>
