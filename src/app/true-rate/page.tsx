@@ -21,7 +21,7 @@ const ACCESS_KEY = 'nesso2025';
 type PayType = 'salary' | 'hourly' | 'per-session';
 type EmploymentType = 'self-employed' | 'w2' | '1099';
 type TaxStatus = 'w2' | '1099'; // Keep for backwards compatibility in calculations
-type IncomeSourceType = 'private-practice' | 'group-practice' | 'agency' | 'workshops' | 'supervision' | 'coaching' | 'other';
+type IncomeSourceType = '' | 'private-practice' | 'group-practice' | 'agency' | 'workshops' | 'supervision' | 'coaching' | 'other';
 
 const EMPLOYMENT_TYPE_OPTIONS: { value: EmploymentType; label: string }[] = [
   { value: 'self-employed', label: 'Self-employed' },
@@ -29,7 +29,8 @@ const EMPLOYMENT_TYPE_OPTIONS: { value: EmploymentType; label: string }[] = [
   { value: '1099', label: 'Contractor (1099)' },
 ];
 
-const INCOME_SOURCE_OPTIONS: { value: IncomeSourceType; label: string }[] = [
+const INCOME_SOURCE_OPTIONS: { value: IncomeSourceType; label: string; disabled?: boolean }[] = [
+  { value: '', label: 'Select a type of work to begin', disabled: true },
   { value: 'private-practice', label: 'My Private Practice' },
   { value: 'group-practice', label: 'Group Practice' },
   { value: 'agency', label: 'Agency Work' },
@@ -86,7 +87,7 @@ const createRateTier = (label: string = 'Full rate'): RateTier => ({
 
 const createIncomeSource = (): IncomeSource => ({
   id: generateId(),
-  sourceType: 'private-practice',
+  sourceType: '',
   employmentType: 'self-employed',
   payType: 'per-session',
   taxStatus: '1099', // self-employed uses 1099 tax treatment
@@ -759,6 +760,7 @@ function TrueRateContent() {
           {incomeSources.map((source, index) => {
             const sourceLabel = INCOME_SOURCE_OPTIONS.find(o => o.value === source.sourceType)?.label || 'Income Source';
             const isSelfEmployed = source.sourceType === 'private-practice';
+            const hasSelectedWorkType = source.sourceType !== '';
 
             return (
               <Card key={source.id}>
@@ -804,47 +806,50 @@ function TrueRateContent() {
                             className="w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
                           >
                             {INCOME_SOURCE_OPTIONS.map((option) => (
-                              <option key={option.value} value={option.value}>
+                              <option key={option.value} value={option.value} disabled={option.disabled}>
                                 {option.label}
                               </option>
                             ))}
                           </select>
 
-                        {/* Employment Type */}
-                        <div className="space-y-1.5">
-                          <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>
-                          <select
-                            value={source.employmentType}
-                            onChange={(e) => {
-                              const newEmploymentType = e.target.value as EmploymentType;
-                              // Map employment type to tax status for calculations
-                              const newTaxStatus: TaxStatus = newEmploymentType === 'w2' ? 'w2' : '1099';
-                              updateIncomeSource(source.id, {
-                                employmentType: newEmploymentType,
-                                taxStatus: newTaxStatus,
-                                showResults: false
-                              });
-                            }}
-                            disabled={isSelfEmployed}
-                            className={`w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none ${isSelfEmployed ? 'opacity-60 cursor-not-allowed bg-gray-50' : ''}`}
-                          >
-                            {EMPLOYMENT_TYPE_OPTIONS.map((option) => (
-                              <option
-                                key={option.value}
-                                value={option.value}
-                                disabled={isSelfEmployed && option.value !== 'self-employed'}
-                              >
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                          {isSelfEmployed && (
-                            <p className="text-xs text-nesso-ink/50">Private practice owners are self-employed</p>
-                          )}
-                        </div>
+                        {/* Employment Type - only show after work type selected */}
+                        {hasSelectedWorkType && (
+                          <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>
+                            <select
+                              value={source.employmentType}
+                              onChange={(e) => {
+                                const newEmploymentType = e.target.value as EmploymentType;
+                                // Map employment type to tax status for calculations
+                                const newTaxStatus: TaxStatus = newEmploymentType === 'w2' ? 'w2' : '1099';
+                                updateIncomeSource(source.id, {
+                                  employmentType: newEmploymentType,
+                                  taxStatus: newTaxStatus,
+                                  showResults: false
+                                });
+                              }}
+                              disabled={isSelfEmployed}
+                              className={`w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none ${isSelfEmployed ? 'opacity-60 cursor-not-allowed bg-gray-50' : ''}`}
+                            >
+                              {EMPLOYMENT_TYPE_OPTIONS.map((option) => (
+                                <option
+                                  key={option.value}
+                                  value={option.value}
+                                  disabled={isSelfEmployed && option.value !== 'self-employed'}
+                                >
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                            {isSelfEmployed && (
+                              <p className="text-xs text-nesso-ink/50">Private practice owners are self-employed</p>
+                            )}
+                          </div>
+                        )}
                       </div>
 
-                      {/* Step 2: How much do you earn? */}
+                      {/* Step 2: How much do you earn? - Only show after work type selected */}
+                      {hasSelectedWorkType && (
                       <div className="space-y-4 lg:space-y-3">
                         <h3 className="text-base font-semibold text-nesso-ink">How much do you earn?</h3>
 
@@ -1059,6 +1064,7 @@ function TrueRateContent() {
                           </>
                         )}
                       </div>
+                      )}
 
                       {/* Step 3: How do you spend your time? - Only show after income is entered */}
                       {isIncomeStepComplete(source) && (
