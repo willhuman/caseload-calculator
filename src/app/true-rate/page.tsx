@@ -697,7 +697,9 @@ function TrueRateContent() {
                     <div className="lg:col-span-3 space-y-6 lg:space-y-4">
                       {/* Step 1: What type of work? */}
                       <div className="space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">What type of work?</h3>
+                        <h3 className="text-base font-semibold text-nesso-ink">
+                          <span className="text-nesso-ink/40 font-normal">1.</span> What type of work?
+                        </h3>
                         <select
                             value={source.sourceType}
                             onChange={(e) => {
@@ -711,10 +713,11 @@ function TrueRateContent() {
                                   showResults: false
                                 });
                               } else {
-                                // Reset employment type when switching to non-private-practice
+                                // Reset employment type and pay type when switching to non-private-practice
                                 updateIncomeSource(source.id, {
                                   sourceType: newType,
                                   employmentType: '',
+                                  payType: '',
                                   showResults: false
                                 });
                               }
@@ -729,9 +732,14 @@ function TrueRateContent() {
                           </select>
 
                         {/* Employment Type - only show after work type selected */}
+                        {hasSelectedWorkType && !isSelfEmployed && (
+                          <h3 className="text-base font-semibold text-nesso-ink pt-2">
+                            <span className="text-nesso-ink/40 font-normal">2.</span> What is your employment type?
+                          </h3>
+                        )}
                         {hasSelectedWorkType && (
                           <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>
+                            {isSelfEmployed && <label className="text-sm font-medium text-nesso-ink/70">Employment type</label>}
                             <select
                               value={source.employmentType}
                               onChange={(e) => {
@@ -764,10 +772,12 @@ function TrueRateContent() {
                         )}
                       </div>
 
-                      {/* Step 2: How are you paid? - Only show for non-private-practice after employment type selected */}
+                      {/* Step 3: How are you paid? - Only show for non-private-practice after employment type selected */}
                       {hasSelectedEmploymentType && !isSelfEmployed && (
                       <div className="space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">How are you paid?</h3>
+                        <h3 className="text-base font-semibold text-nesso-ink">
+                          <span className="text-nesso-ink/40 font-normal">3.</span> How are you paid?
+                        </h3>
                         <select
                           value={source.payType}
                           onChange={(e) => updateIncomeSource(source.id, { payType: e.target.value as PayType, showResults: false })}
@@ -782,11 +792,11 @@ function TrueRateContent() {
                       </div>
                       )}
 
-                      {/* Step 3: Pay Details - Only show after pay type selected (or for private practice after employment type) */}
+                      {/* Step 4: Pay Details - Only show after pay type selected (or for private practice after employment type) */}
                       {((isSelfEmployed && hasSelectedEmploymentType) || (!isSelfEmployed && hasSelectedPayType)) && (
                       <div className="space-y-4 lg:space-y-3">
                         <h3 className="text-base font-semibold text-nesso-ink">
-                          How much do you earn?
+                          <span className="text-nesso-ink/40 font-normal">{isSelfEmployed ? '2' : '4'}.</span> How much do you earn?
                         </h3>
 
                         {isSelfEmployed ? (
@@ -987,10 +997,12 @@ function TrueRateContent() {
                       </div>
                       )}
 
-                      {/* Step 4: How do you spend your time? - Only show after income is entered */}
+                      {/* Step 5: How do you spend your time? - Only show after income is entered */}
                       {isIncomeStepComplete(source) && (
                       <div className="space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">How do you spend your time?</h3>
+                        <h3 className="text-base font-semibold text-nesso-ink">
+                          <span className="text-nesso-ink/40 font-normal">{isSelfEmployed ? '3' : '5'}.</span> How do you spend your time?
+                        </h3>
 
                         <div className="grid grid-cols-3 gap-3">
                           {/* Session Length */}
