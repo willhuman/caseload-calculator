@@ -19,11 +19,12 @@ const ACCESS_KEY = 'nesso2025';
 
 // Types
 type PayType = 'salary' | 'hourly' | 'per-session';
-type EmploymentType = 'self-employed' | 'w2' | '1099';
+type EmploymentType = '' | 'self-employed' | 'w2' | '1099';
 type TaxStatus = 'w2' | '1099'; // Keep for backwards compatibility in calculations
 type IncomeSourceType = '' | 'private-practice' | 'group-practice' | 'agency' | 'workshops' | 'supervision' | 'coaching' | 'other';
 
-const EMPLOYMENT_TYPE_OPTIONS: { value: EmploymentType; label: string }[] = [
+const EMPLOYMENT_TYPE_OPTIONS: { value: EmploymentType; label: string; disabled?: boolean }[] = [
+  { value: '', label: 'Select an employment type to continue', disabled: true },
   { value: 'self-employed', label: 'Self-employed' },
   { value: 'w2', label: 'Employee (W-2)' },
   { value: '1099', label: 'Contractor (1099)' },
@@ -88,7 +89,7 @@ const createRateTier = (label: string = 'Full rate'): RateTier => ({
 const createIncomeSource = (): IncomeSource => ({
   id: generateId(),
   sourceType: '',
-  employmentType: 'self-employed',
+  employmentType: '',
   payType: 'per-session',
   taxStatus: '1099', // self-employed uses 1099 tax treatment
   sessionsPerWeek: 0,
@@ -761,6 +762,8 @@ function TrueRateContent() {
             const sourceLabel = INCOME_SOURCE_OPTIONS.find(o => o.value === source.sourceType)?.label || 'Income Source';
             const isSelfEmployed = source.sourceType === 'private-practice';
             const hasSelectedWorkType = source.sourceType !== '';
+            // For private practice, employment type is auto-set to self-employed, so consider it selected
+            const hasSelectedEmploymentType = isSelfEmployed || source.employmentType !== '';
 
             return (
               <Card key={source.id}>
@@ -800,7 +803,12 @@ function TrueRateContent() {
                                   showResults: false
                                 });
                               } else {
-                                updateIncomeSource(source.id, { sourceType: newType, showResults: false });
+                                // Reset employment type when switching to non-private-practice
+                                updateIncomeSource(source.id, {
+                                  sourceType: newType,
+                                  employmentType: '',
+                                  showResults: false
+                                });
                               }
                             }}
                             className="w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
@@ -835,7 +843,7 @@ function TrueRateContent() {
                                 <option
                                   key={option.value}
                                   value={option.value}
-                                  disabled={isSelfEmployed && option.value !== 'self-employed'}
+                                  disabled={option.disabled || (isSelfEmployed && option.value !== 'self-employed')}
                                 >
                                   {option.label}
                                 </option>
@@ -848,8 +856,8 @@ function TrueRateContent() {
                         )}
                       </div>
 
-                      {/* Step 2: How much do you earn? - Only show after work type selected */}
-                      {hasSelectedWorkType && (
+                      {/* Step 2: How much do you earn? - Only show after employment type selected */}
+                      {hasSelectedEmploymentType && (
                       <div className="space-y-4 lg:space-y-3">
                         <h3 className="text-base font-semibold text-nesso-ink">How much do you earn?</h3>
 
