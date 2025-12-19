@@ -4,7 +4,6 @@ import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +17,7 @@ import {
 const ACCESS_KEY = 'nesso2025';
 
 // Types
-type PayType = 'salary' | 'hourly' | 'per-session';
+type PayType = '' | 'salary' | 'hourly' | 'per-session';
 type EmploymentType = '' | 'self-employed' | 'w2' | '1099';
 type TaxStatus = 'w2' | '1099'; // Keep for backwards compatibility in calculations
 type IncomeSourceType = '' | 'private-practice' | 'group-practice' | 'agency' | 'workshops' | 'supervision' | 'coaching' | 'other';
@@ -41,7 +40,8 @@ const INCOME_SOURCE_OPTIONS: { value: IncomeSourceType; label: string; disabled?
   { value: 'other', label: 'Other' },
 ];
 
-const PAY_TYPE_OPTIONS: { value: PayType; label: string }[] = [
+const PAY_TYPE_OPTIONS: { value: PayType; label: string; disabled?: boolean }[] = [
+  { value: '', label: 'Select how you are paid', disabled: true },
   { value: 'salary', label: 'Salary' },
   { value: 'hourly', label: 'Hourly' },
   { value: 'per-session', label: 'Per Session' },
@@ -90,7 +90,7 @@ const createIncomeSource = (): IncomeSource => ({
   id: generateId(),
   sourceType: '',
   employmentType: '',
-  payType: 'per-session',
+  payType: '',
   taxStatus: '1099', // self-employed uses 1099 tax treatment
   sessionsPerWeek: 0,
   ratePerSession: 0,
@@ -372,116 +372,13 @@ function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLab
   );
 }
 
-// Collapsible Time Section Component
-function CollapsibleTimeSection({
-  source,
-  updateIncomeSource
-}: {
-  source: IncomeSource;
-  updateIncomeSource: (id: string, updates: Partial<IncomeSource>) => void;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  // Summary of current time settings
-  const timeSummary = `${source.sessionLengthMinutes} min sessions • ${source.documentationMinutes} min docs • ${source.weeklyAdminHours}h admin`;
-
-  return (
-    <div className="pt-4 lg:pt-3 border-t border-sand">
-      {/* Collapsible Header */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between text-left group"
-      >
-        <div className="space-y-0.5">
-          <h3 className="text-base font-semibold text-nesso-ink group-hover:text-primary transition-colors">
-            How do you spend your time?
-          </h3>
-          {!isExpanded && (
-            <p className="text-xs text-nesso-ink/50">
-              {timeSummary}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {!isExpanded && (
-            <span className="text-xs text-primary font-medium">Edit</span>
-          )}
-          <svg
-            className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
-      </button>
-
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className="mt-4 space-y-4 lg:space-y-3">
-          {/* Session Length */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-nesso-ink/70">Average session length</label>
-              <span className="text-sm font-semibold text-nesso-navy">
-                {source.sessionLengthMinutes} min
-              </span>
-            </div>
-            <Slider
-              value={[source.sessionLengthMinutes]}
-              onValueChange={(v) => updateIncomeSource(source.id, { sessionLengthMinutes: v[0] })}
-              min={30}
-              max={90}
-              step={5}
-            />
-            <div className="flex justify-between text-xs text-nesso-ink/50">
-              <span>30 min</span>
-              <span>90 min</span>
-            </div>
-          </div>
-
-          {/* Documentation Time */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-nesso-ink/70">Documentation per session</label>
-              <span className="text-sm font-semibold text-nesso-navy">{source.documentationMinutes} min</span>
-            </div>
-            <Slider
-              value={[source.documentationMinutes]}
-              onValueChange={(v) => updateIncomeSource(source.id, { documentationMinutes: v[0] })}
-              min={0}
-              max={30}
-              step={5}
-            />
-          </div>
-
-          {/* Weekly Admin */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-nesso-ink/70">Weekly admin hours</label>
-              <span className="text-sm font-semibold text-nesso-navy">{source.weeklyAdminHours} hrs</span>
-            </div>
-            <Slider
-              value={[source.weeklyAdminHours]}
-              onValueChange={(v) => updateIncomeSource(source.id, { weeklyAdminHours: v[0] })}
-              min={0}
-              max={15}
-              step={1}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // Combined Summary Panel for multiple income sources
 function CombinedSummaryPanel({ sources }: { sources: IncomeSource[] }) {
-  const [hoursExpanded, setHoursExpanded] = useState(false);
   const combined = calculateCombinedResults(sources);
   const { totals, blendedHourlyRate, sortedByRate } = combined;
+
+  // Find the max rate for scaling the bars
+  const maxRate = Math.max(...sortedByRate.map(s => s.results.trueHourlyRate));
 
   // Generate insights
   const hasMultipleRates = sortedByRate.length >= 2 &&
@@ -504,144 +401,141 @@ function CombinedSummaryPanel({ sources }: { sources: IncomeSource[] }) {
     rate: results.trueHourlyRate,
   }));
 
+  // Subtle colors that match the app style (using nesso-navy based tones)
+  const sourceColors = [
+    { bg: 'bg-nesso-navy', light: 'bg-nesso-navy/10' },
+    { bg: 'bg-nesso-navy/60', light: 'bg-nesso-navy/10' },
+    { bg: 'bg-nesso-navy/40', light: 'bg-nesso-navy/10' },
+    { bg: 'bg-nesso-navy/25', light: 'bg-nesso-navy/10' },
+  ];
+
   return (
-    <Card className="border-2 border-primary/30 bg-primary/5">
+    <Card className="border border-gray-200">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
+        <CardTitle className="text-base font-semibold text-nesso-ink">
           Combined Overview
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Combined Results */}
-        <div className="bg-white rounded-lg p-4 space-y-3">
-          {/* Total Weekly Income */}
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Total weekly income</span>
-            <span className="font-medium text-navy">{formatCurrency(totals.weeklyIncome)}</span>
-          </div>
+        {/* Blended Rate - Hero Section */}
+        <div className="bg-[#E0EAE0] rounded-lg p-4 text-center">
+          <p className="text-xs text-nesso-ink/60 mb-0.5">Your blended hourly rate</p>
+          <p className="text-2xl font-bold text-nesso-navy">
+            {formatCurrency(blendedHourlyRate, true)}
+          </p>
+          <p className="text-xs text-nesso-ink/50 mt-1">
+            {formatCurrency(totals.effectiveWeeklyIncome)}/week ÷ {totals.totalWeeklyHours.toFixed(1)}h
+          </p>
+        </div>
 
-          {/* SE Taxes - if any */}
-          {totals.weeklySETax > 0 && (
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-600">SE taxes</span>
-              <span className="font-medium text-red-600">-{formatCurrency(totals.weeklySETax)}</span>
-            </div>
-          )}
+        {/* Rate Comparison - Visual Bars */}
+        <div className="space-y-2">
+          <h4 className="text-xs font-medium text-nesso-ink/70">Rate comparison</h4>
+          <div className="space-y-2">
+            {sortedByRate.map(({ label, results }, index) => {
+              const barWidth = maxRate > 0 ? (results.trueHourlyRate / maxRate) * 100 : 0;
+              const colors = sourceColors[index % sourceColors.length];
+              const isHighest = index === 0 && results.trueHourlyRate > 0;
 
-          {/* Net Weekly Income */}
-          {totals.weeklySETax > 0 && (
-            <>
-              <div className="h-px bg-navy/20" />
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600">Net weekly income</span>
-                <span className="font-medium text-navy">{formatCurrency(totals.effectiveWeeklyIncome)}</span>
-              </div>
-            </>
-          )}
-
-          {/* Total Work Hours - Expandable */}
-          <div className="pt-1">
-            <button
-              type="button"
-              onClick={() => setHoursExpanded(!hoursExpanded)}
-              className="w-full flex justify-between items-center text-left hover:bg-navy/5 -mx-1 px-1 py-0.5 rounded transition-colors text-sm"
-            >
-              <span className="text-gray-600 flex items-center gap-1">
-                Total work hours
-                <svg
-                  className={`w-3.5 h-3.5 text-gray-400 transition-transform ${hoursExpanded ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </span>
-              <span className="font-medium text-navy">{totals.totalWeeklyHours.toFixed(1)}h</span>
-            </button>
-
-            {/* Expanded Hours Breakdown by Source */}
-            {hoursExpanded && (
-              <div className="mt-2 ml-2 pl-2 border-l-2 border-navy/10 space-y-1 text-xs">
-                {hoursBySource.map(({ label, hours, percentage }) => (
-                  <div key={label} className="flex justify-between items-center text-gray-500">
-                    <span>{label}</span>
-                    <span>{hours.toFixed(1)}h ({percentage.toFixed(0)}%)</span>
+              return (
+                <div key={label} className="space-y-1">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-nesso-ink/70 flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${colors.bg}`} />
+                      {label}
+                      {isHighest && (
+                        <span className="text-[10px] text-primary font-medium">
+                          Highest
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-medium text-nesso-navy">
+                      {formatCurrency(results.trueHourlyRate, true)}/hr
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
+                  {/* Progress bar */}
+                  <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${colors.bg} rounded-full transition-all duration-500`}
+                      style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Divider */}
-          <div className="h-px bg-navy/30" />
-
-          {/* Blended True Hourly Rate */}
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-navy">Blended hourly rate</span>
-              <span className="text-xl font-bold text-navy">
-                {formatCurrency(blendedHourlyRate, true)}
-              </span>
+        {/* Hours Distribution - Stacked Bar */}
+        <div className="space-y-2">
+          <h4 className="text-xs font-medium text-nesso-ink/70">Weekly hours breakdown</h4>
+          <div className="space-y-2">
+            {/* Stacked horizontal bar */}
+            <div className="h-4 bg-gray-100 rounded-full overflow-hidden flex">
+              {hoursBySource.map(({ label, percentage }, index) => {
+                const colors = sourceColors[index % sourceColors.length];
+                return (
+                  <div
+                    key={label}
+                    className={`h-full ${colors.bg} transition-all duration-500 first:rounded-l-full last:rounded-r-full`}
+                    style={{ width: `${percentage}%` }}
+                    title={`${label}: ${percentage.toFixed(0)}%`}
+                  />
+                );
+              })}
             </div>
-            <div className="text-xs text-gray-500 text-right">
-              {formatCurrency(totals.effectiveWeeklyIncome)} ÷ {totals.totalWeeklyHours.toFixed(1)}h
+            {/* Legend */}
+            <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+              {hoursBySource.map(({ label, hours }, index) => {
+                const colors = sourceColors[index % sourceColors.length];
+                return (
+                  <div key={label} className="flex items-center gap-1 text-[11px] text-nesso-ink/60">
+                    <span className={`w-2 h-2 rounded-full ${colors.bg}`} />
+                    <span>{label}</span>
+                    <span className="text-nesso-ink/40">({hours.toFixed(1)}h)</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* Per-Source Comparison */}
-        <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-nesso-ink">Rate by source</h4>
-          <div className="space-y-2">
-            {sortedByRate.map(({ label, results }, index) => (
-              <div
-                key={label}
-                className={`flex justify-between items-center text-sm p-2 rounded-md ${
-                  index === 0 && results.trueHourlyRate > 0 ? 'bg-green-50 border border-green-200' : 'bg-gray-50'
-                }`}
-              >
-                <span className="text-gray-700 flex items-center gap-1.5">
-                  {index === 0 && results.trueHourlyRate > 0 && (
-                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                  )}
-                  {label}
-                </span>
-                <span className={`font-semibold ${index === 0 && results.trueHourlyRate > 0 ? 'text-green-700' : 'text-navy'}`}>
-                  {formatCurrency(results.trueHourlyRate, true)}/hr
-                </span>
-              </div>
-            ))}
+        {/* Income Summary */}
+        <div className="space-y-1.5 pt-2 border-t border-gray-100">
+          <div className="flex justify-between items-center text-xs">
+            <span className="text-nesso-ink/60">Weekly income</span>
+            <span className="font-medium text-nesso-navy">{formatCurrency(totals.weeklyIncome)}</span>
           </div>
+          {totals.weeklySETax > 0 && (
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-nesso-ink/60">SE taxes (15.3%)</span>
+              <span className="font-medium text-red-600">-{formatCurrency(totals.weeklySETax)}</span>
+            </div>
+          )}
+          {totals.weeklySETax > 0 && (
+            <div className="flex justify-between items-center text-xs pt-1 border-t border-gray-100">
+              <span className="text-nesso-ink/70 font-medium">Net weekly income</span>
+              <span className="font-semibold text-nesso-navy">{formatCurrency(totals.effectiveWeeklyIncome)}</span>
+            </div>
+          )}
         </div>
 
         {/* Insights */}
         {hasMultipleRates && rateDifference > 5 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 space-y-2">
-            <h4 className="text-sm font-semibold text-amber-800 flex items-center gap-1.5">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              Insight
-            </h4>
-            <p className="text-sm text-amber-900">
-              Your <span className="font-semibold">{highestPaying.label}</span> pays{' '}
-              <span className="font-semibold">{formatCurrency(rateDifference, true)}/hr more</span> than {lowestPaying.label}.
+          <div className="bg-primary/5 border border-primary/20 rounded-md p-3">
+            <p className="text-xs text-nesso-ink/80">
+              <span className="font-medium">{highestPaying.label}</span> pays{' '}
+              <span className="font-medium">{formatCurrency(rateDifference, true)}/hr more</span> than {lowestPaying.label}.
               {highestPaying.results.totalWeeklyHours < lowestPaying.results.totalWeeklyHours && (
-                <> Shifting more hours to {highestPaying.label} could increase your overall earnings.</>
+                <> Shifting more hours there could increase your earnings.</>
               )}
             </p>
           </div>
         )}
 
         {/* Tax Note */}
-        <p className="text-xs text-navy/60">
-          Federal and state income taxes not included.
+        <p className="text-[10px] text-center text-nesso-ink/40">
+          Federal and state income taxes not included
         </p>
       </CardContent>
     </Card>
@@ -758,12 +652,26 @@ function TrueRateContent() {
 
       <main className="max-w-6xl mx-auto px-4 pt-2 lg:pt-3 pb-4 lg:pb-4">
         <div className="space-y-6 lg:space-y-4 pb-20 lg:pb-0">
+          {/* Intro section - shown until user selects a work type */}
+          {incomeSources.length === 1 && incomeSources[0].sourceType === '' && (
+            <div className="text-center max-w-2xl mx-auto py-4 space-y-3">
+              <p className="text-lg text-nesso-ink">
+                As a therapist, your session rate doesn&apos;t tell the whole story.
+              </p>
+              <p className="text-base text-nesso-ink/70">
+                This calculator factors in taxes, documentation time, and admin work to reveal what you&apos;re actually earning per hour across all your income sources.
+              </p>
+            </div>
+          )}
+
           {incomeSources.map((source, index) => {
             const sourceLabel = INCOME_SOURCE_OPTIONS.find(o => o.value === source.sourceType)?.label || 'Income Source';
             const isSelfEmployed = source.sourceType === 'private-practice';
             const hasSelectedWorkType = source.sourceType !== '';
             // For private practice, employment type is auto-set to self-employed, so consider it selected
             const hasSelectedEmploymentType = isSelfEmployed || source.employmentType !== '';
+            // For non-private-practice, user must select pay type before entering details
+            const hasSelectedPayType = source.payType !== '';
 
             return (
               <Card key={source.id}>
@@ -856,12 +764,31 @@ function TrueRateContent() {
                         )}
                       </div>
 
-                      {/* Step 2: How much do you earn? - Only show after employment type selected */}
-                      {hasSelectedEmploymentType && (
+                      {/* Step 2: How are you paid? - Only show for non-private-practice after employment type selected */}
+                      {hasSelectedEmploymentType && !isSelfEmployed && (
                       <div className="space-y-4 lg:space-y-3">
-                        <h3 className="text-base font-semibold text-nesso-ink">How much do you earn?</h3>
+                        <h3 className="text-base font-semibold text-nesso-ink">How are you paid?</h3>
+                        <select
+                          value={source.payType}
+                          onChange={(e) => updateIncomeSource(source.id, { payType: e.target.value as PayType, showResults: false })}
+                          className="w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
+                        >
+                          {PAY_TYPE_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value} disabled={option.disabled}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      )}
 
-                        {/* Private Practice - Rate Tiers UI */}
+                      {/* Step 3: Pay Details - Only show after pay type selected (or for private practice after employment type) */}
+                      {((isSelfEmployed && hasSelectedEmploymentType) || (!isSelfEmployed && hasSelectedPayType)) && (
+                      <div className="space-y-4 lg:space-y-3">
+                        <h3 className="text-base font-semibold text-nesso-ink">
+                          How much do you earn?
+                        </h3>
+
                         {isSelfEmployed ? (
                           <>
                             {/* Rate Tiers */}
@@ -943,44 +870,26 @@ function TrueRateContent() {
                               ))}
 
                               {/* Add Rate Tier Button */}
-                              <div className="flex justify-end pt-1">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const suggestedLabels = ['Reduced rate', 'Sliding scale', 'Insurance rate', 'Pro bono'];
-                                    const usedLabels = source.rateTiers.map(t => t.label);
-                                    const nextLabel = suggestedLabels.find(l => !usedLabels.includes(l)) || `Rate ${source.rateTiers.length + 1}`;
-                                    const updatedTiers = [...source.rateTiers, createRateTier(nextLabel)];
-                                    updateIncomeSource(source.id, { rateTiers: updatedTiers });
-                                  }}
-                                  className="text-xs font-medium text-primary hover:text-primary/80 bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                  </svg>
-                                  Add additional rate
-                                </button>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const suggestedLabels = ['Reduced rate', 'Sliding scale', 'Insurance rate', 'Pro bono'];
+                                  const usedLabels = source.rateTiers.map(t => t.label);
+                                  const nextLabel = suggestedLabels.find(l => !usedLabels.includes(l)) || `Rate ${source.rateTiers.length + 1}`;
+                                  const updatedTiers = [...source.rateTiers, createRateTier(nextLabel)];
+                                  updateIncomeSource(source.id, { rateTiers: updatedTiers });
+                                }}
+                                className="w-full mt-2 py-2.5 px-3 bg-gray-50 hover:bg-primary/5 border border-dashed border-gray-300 hover:border-primary/50 rounded-md transition-colors flex items-center justify-center gap-2 text-sm text-nesso-ink/60 hover:text-primary"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                </svg>
+                                Add another rate (sliding scale, insurance, etc.)
+                              </button>
                             </div>
                           </>
                         ) : (
                           <>
-                            {/* Pay Type */}
-                            <div className="space-y-1.5">
-                              <label className="text-sm font-medium text-nesso-ink/70">How are you paid?</label>
-                              <select
-                                value={source.payType}
-                                onChange={(e) => updateIncomeSource(source.id, { payType: e.target.value as PayType })}
-                                className="w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
-                              >
-                                {PAY_TYPE_OPTIONS.map((option) => (
-                                  <option key={option.value} value={option.value}>
-                                    {option.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-
                             {/* Pay Details */}
                             {source.payType === 'salary' && (
                               <div className="grid grid-cols-2 gap-3">
@@ -989,12 +898,16 @@ function TrueRateContent() {
                                   <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                                     <Input
-                                      type="number"
-                                      min={0}
+                                      type="text"
+                                      inputMode="numeric"
                                       className="pl-7"
-                                      value={source.annualSalary || ''}
-                                      onChange={(e) => updateIncomeSource(source.id, { annualSalary: parseFloat(e.target.value) || 0 })}
-                                      placeholder="60000"
+                                      value={source.annualSalary ? source.annualSalary.toLocaleString('en-US') : ''}
+                                      onChange={(e) => {
+                                        const rawValue = e.target.value.replace(/,/g, '');
+                                        const numValue = parseFloat(rawValue) || 0;
+                                        updateIncomeSource(source.id, { annualSalary: numValue });
+                                      }}
+                                      placeholder="60,000"
                                     />
                                   </div>
                                 </div>
@@ -1074,9 +987,64 @@ function TrueRateContent() {
                       </div>
                       )}
 
-                      {/* Step 3: How do you spend your time? - Only show after income is entered */}
+                      {/* Step 4: How do you spend your time? - Only show after income is entered */}
                       {isIncomeStepComplete(source) && (
-                        <CollapsibleTimeSection source={source} updateIncomeSource={updateIncomeSource} />
+                      <div className="space-y-4 lg:space-y-3">
+                        <h3 className="text-base font-semibold text-nesso-ink">How do you spend your time?</h3>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          {/* Session Length */}
+                          <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-nesso-ink/70">Session length</label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                min={15}
+                                max={120}
+                                value={source.sessionLengthMinutes || ''}
+                                onChange={(e) => updateIncomeSource(source.id, { sessionLengthMinutes: parseInt(e.target.value) || 0 })}
+                                placeholder="50"
+                                className="pr-12"
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">min</span>
+                            </div>
+                          </div>
+
+                          {/* Documentation Time */}
+                          <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-nesso-ink/70">Documentation</label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                min={0}
+                                max={60}
+                                value={source.documentationMinutes || ''}
+                                onChange={(e) => updateIncomeSource(source.id, { documentationMinutes: parseInt(e.target.value) || 0 })}
+                                placeholder="10"
+                                className="pr-12"
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">min</span>
+                            </div>
+                          </div>
+
+                          {/* Weekly Admin */}
+                          <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-nesso-ink/70">Admin hours</label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                min={0}
+                                max={40}
+                                value={source.weeklyAdminHours || ''}
+                                onChange={(e) => updateIncomeSource(source.id, { weeklyAdminHours: parseInt(e.target.value) || 0 })}
+                                placeholder="3"
+                                className="pr-12"
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">hrs</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       )}
 
                       {/* Show Results Button - Only show after income is entered and results not yet shown */}
@@ -1144,7 +1112,7 @@ function TrueRateContent() {
           {/* Add Income Source Button - Outside cards */}
           <button
             onClick={addIncomeSource}
-            className="w-full py-3 px-4 border-2 border-dashed border-gray-300 hover:border-primary/50 rounded-lg text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-white border border-gray-200 hover:border-primary/50 hover:bg-primary/5 rounded-lg text-sm font-medium text-nesso-ink/70 hover:text-primary transition-colors flex items-center justify-center gap-2 shadow-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
