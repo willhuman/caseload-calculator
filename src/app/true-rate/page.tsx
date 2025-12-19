@@ -261,9 +261,21 @@ function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLab
 
   return (
     <div className="bg-[#E0EAE0] rounded-lg p-4 space-y-3">
-      <h3 className="text-base font-semibold text-nesso-ink">
-        {sourceLabel} Results
-      </h3>
+      {/* Main Result Header */}
+      <div className="text-center pb-2">
+        <p className="text-sm text-nesso-ink/70 mb-1">
+          Your true hourly rate for your {sourceLabel.toLowerCase()} work is
+        </p>
+        <p className="text-3xl font-bold text-nesso-navy">
+          {formatCurrency(results.trueHourlyRate, true)}
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          {formatCurrency(results.effectiveWeeklyIncome)}/week ÷ {results.totalWeeklyHours.toFixed(1)}h
+        </p>
+      </div>
+
+      {/* Divider */}
+      <div className="h-px bg-navy/20" />
 
       {/* Calculation Breakdown */}
       <div className="space-y-2 text-sm">
@@ -345,22 +357,6 @@ function ResultsPanel({ source, sourceLabel }: { source: IncomeSource; sourceLab
               </div>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Divider */}
-      <div className="h-px bg-navy/30" />
-
-      {/* True Hourly Rate - The Result */}
-      <div className="space-y-1">
-        <div className="flex justify-between items-center">
-          <span className="text-sm font-semibold text-navy">True hourly rate</span>
-          <span className="text-xl font-bold text-navy">
-            {formatCurrency(results.trueHourlyRate, true)}
-          </span>
-        </div>
-        <div className="text-xs text-gray-500 text-right">
-          {formatCurrency(results.effectiveWeeklyIncome)} ÷ {results.totalWeeklyHours.toFixed(1)}h
         </div>
       </div>
 
