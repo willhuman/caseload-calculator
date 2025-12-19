@@ -794,10 +794,11 @@ function TrueRateContent() {
                                   sourceType: newType,
                                   employmentType: 'self-employed',
                                   taxStatus: '1099',
-                                  payType: 'per-session'
+                                  payType: 'per-session',
+                                  showResults: false
                                 });
                               } else {
-                                updateIncomeSource(source.id, { sourceType: newType });
+                                updateIncomeSource(source.id, { sourceType: newType, showResults: false });
                               }
                             }}
                             className="w-full h-11 lg:h-9 px-3 py-2 lg:py-1.5 text-base md:text-sm rounded-md border border-input bg-transparent shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none"
@@ -820,7 +821,8 @@ function TrueRateContent() {
                               const newTaxStatus: TaxStatus = newEmploymentType === 'w2' ? 'w2' : '1099';
                               updateIncomeSource(source.id, {
                                 employmentType: newEmploymentType,
-                                taxStatus: newTaxStatus
+                                taxStatus: newTaxStatus,
+                                showResults: false
                               });
                             }}
                             disabled={isSelfEmployed}
